@@ -72,18 +72,18 @@ module.exports = function (sequelize, DataTypes) {
   });
 
   User.associate = function (models) {
-    models.User.hasMany(models.Post, {
-      foreignKey: 'user_id'
-    });
-    models.User.hasMany(models.Follow, {
-      foreignKey: 'user_id'
-    });
-    models.User.hasMany(models.Like, {
-      foreignKey: 'user_id'
-    })
-    models.User.hasMany(models.Comment, {
-      foreignKey: 'user_id'
-    })
+    // models.User.hasMany(models.Post, {
+    //   foreignKey: 'user_id'
+    // });
+    // models.User.hasMany(models.Follow, {
+    //   foreignKey: 'user_id'
+    // });
+    // models.User.hasMany(models.Like, {
+    //   foreignKey: 'user_id'
+    // })
+    // models.User.hasMany(models.Comment, {
+    //   foreignKey: 'user_id'
+    // })
   }
   return User;
 };

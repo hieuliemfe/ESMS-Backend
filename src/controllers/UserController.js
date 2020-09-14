@@ -1,22 +1,24 @@
 'use strict';
-import {query} from "express-validator";
+import { query } from "express-validator";
 
 const models = require('../db/models/index');
 const status = require('http-status');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {Op} = require("sequelize");
+const { Op } = require("sequelize");
 const sequelize = require('sequelize');
-const {validationResult} = require('express-validator');
+const { validationResult } = require('express-validator');
 const url = require('url');
+const nodemailer = require('nodemailer');
 
-import {DefaultError} from '../utils/errorHandler';
-import {JWT_SECRET} from '../configurations';
+import { DefaultError } from '../utils/errorHandler';
+import { JWT_SECRET } from '../configurations';
 
 module.exports = {
   // Public Routes
   login: {
     async post(req, res, next) {
+      
       try {
         const user = await models.User.findOne({
           where: {
@@ -27,8 +29,8 @@ module.exports = {
         if (!user) throw new DefaultError(status.BAD_REQUEST, 'Invalid Username or password');
         const isValidPassword = bcrypt.compareSync(req.body.password, user.password);
         if (!isValidPassword) throw new DefaultError(status.BAD_REQUEST, 'Invalid Username or password');
-        const {id: userId, username, roleName = 'admin'} = user;
-        const token = jwt.sign({userId, username, roleName}, JWT_SECRET);
+        const { id: userId, username, roleName = 'admin' } = user;
+        const token = jwt.sign({ userId, username, roleName }, JWT_SECRET);
         return res.status(status.OK).send({
           status: true,
           message: "Login successfully.",
@@ -47,9 +49,9 @@ module.exports = {
         if (!errors.isEmpty()) {
           throw new DefaultError(status.BAD_REQUEST, 'Please enter valid values!', errors.array());
         }
-        const {email, username, password, confirmPassword} = req.body;
+        const { email, username, password, confirmPassword } = req.body;
         const duplicateUser = await models.User.findOne({
-          where: {username},
+          where: { username },
           attributes: ['username']
         });
         if (duplicateUser) {
@@ -93,6 +95,48 @@ module.exports = {
     }
   },
 
+  send_email: {
+    async post(req, res, next) {
+      try {
+        const user = await models.User.findOne({
+          where: {
+            username: req.body.username,
+          },
+        });
+        if (!user) throw new DefaultError(status.BAD_REQUEST, 'Invalid user');
+        else {
+          let transport = nodemailer.createTransport({
+            host: process.env.EMAIL_SERVICE_HOST,
+            port: process.env.EMAIL_SERVICE_PORT,
+            auth: {
+              user: process.env.EMAIL_SERVICE_USERNAME,
+              pass: process.env.EMAIL_SERVICE_PASSWORD
+            }
+          });
+          const message = {
+            from: process.env.EMAIL_SERVICE_SENDER, // Sender address
+            to: user.email,         // List of recipients
+            subject: "Test nodemailer", // Subject line
+            text: req.body.description // Plain text body
+          };
+          transport.sendMail(message, function (err, info) {
+            if (err) {
+              console.log(err)
+            } else {
+              console.log(info);
+              res.status(status.OK)
+                .send({
+                  status: true,
+                  message: "Email sent!",
+                });
+            }
+          });
+        }
+      } catch (error) {
+        next(error);
+      }
+    }
+  },
   view: {
     async get(req, res, next) {
       try {
@@ -116,8 +160,8 @@ module.exports = {
             //RoleID + isDeleted
             whereCondition = {
               [Op.or]: [
-                {username: {[Op.iLike]: '%' + query + '%'}},
-                {fullname: {[Op.iLike]: '%' + query + '%'}}
+                { username: { [Op.iLike]: '%' + query + '%' } },
+                { fullname: { [Op.iLike]: '%' + query + '%' } }
               ],
               role_id: roleID,
               is_deleted: isDeleted,
@@ -126,8 +170,8 @@ module.exports = {
             //RoleID only
             whereCondition = {
               [Op.or]: [
-                {username: {[Op.iLike]: '%' + query + '%'}},
-                {fullname: {[Op.iLike]: '%' + query + '%'}}
+                { username: { [Op.iLike]: '%' + query + '%' } },
+                { fullname: { [Op.iLike]: '%' + query + '%' } }
               ],
               role_id: roleID,
             }
@@ -136,8 +180,8 @@ module.exports = {
           //isDeleted only
           whereCondition = {
             [Op.or]: [
-              {username: {[Op.iLike]: '%' + query + '%'}},
-              {fullname: {[Op.iLike]: '%' + query + '%'}}
+              { username: { [Op.iLike]: '%' + query + '%' } },
+              { fullname: { [Op.iLike]: '%' + query + '%' } }
             ],
             is_deleted: isDeleted,
           }
@@ -145,8 +189,8 @@ module.exports = {
           //username & fullname only
           whereCondition = {
             [Op.or]: [
-              {username: {[Op.iLike]: '%' + query + '%'}},
-              {fullname: {[Op.iLike]: '%' + query + '%'}}
+              { username: { [Op.iLike]: '%' + query + '%' } },
+              { fullname: { [Op.iLike]: '%' + query + '%' } }
             ],
           }
         }
@@ -171,50 +215,13 @@ module.exports = {
           raw: false,
           distinct: true,
         });
-        const finalUserResult = await Promise.all(users.map(async user => {
-          var likeCount = 0, commentCount = 0;
-          const foundUserID = user.dataValues.id;
-          //Additional data
-          const totalPosts = await models.Post
-            .findAndCountAll({
-              where: {user_id: foundUserID}
-            });
-          await Promise.all(totalPosts.rows.map(async post => {
-            const foundPostID = post.dataValues.id;
-            const totalLikes = await models.Like
-              .findAndCountAll({
-                where: {post_id: foundPostID, is_liked: true}
-              });
-            const totalComments = await models.Comment
-              .findAndCountAll({
-                where: {post_id: foundPostID, is_deleted: false}
-              });
-            likeCount += totalLikes.count;
-            commentCount += totalComments.count;
-          }));
-          const totalFollowers = await models.Follow
-            .findAndCountAll({
-              where: {following_id: foundUserID, is_following: true}
-            });
-          const totalFollowings = await models.Follow
-            .findAndCountAll({
-              where: {user_id: foundUserID, is_following: true}
-            });
-
-          //count additional data objects
-          const postCount = totalPosts.count;
-          const followerCount = totalFollowers.count;
-          const followingCount = totalFollowings.count;
-
-          return {...user.dataValues, postCount, likeCount, commentCount, followerCount, followingCount}
-        }));
         res.status(status.OK)
           .send({
             status: true,
-            message: finalUserResult,
+            message: users,
           });
       } catch
-        (error) {
+      (error) {
         next(error);
       }
     }
@@ -224,24 +231,24 @@ module.exports = {
     async get(req, res, next) {
       try {
         const user = await models.User.findOne({
-            attributes: [
-              'id',
-              'username',
-              'email',
-              'fullname',
-              'phoneNumber',
-              'roleId',
-              'isDeleted',
-              'createdAt',
-              'updatedAt',
-              'avatarUrl'
-            ],
-            where: {
-              username: req.params.username
-            }
-          },
+          attributes: [
+            'id',
+            'username',
+            'email',
+            'fullname',
+            'phoneNumber',
+            'roleId',
+            'isDeleted',
+            'createdAt',
+            'updatedAt',
+            'avatarUrl'
+          ],
+          where: {
+            username: req.params.username
+          }
+        },
         );
-        if(user == null){
+        if (user == null) {
           res.status(status.BAD_REQUEST)
             .send({
               status: false,
@@ -253,8 +260,8 @@ module.exports = {
         //Additional data
         const totalPosts = await models.Post
           .findAndCountAll({
-            attributes: {exclude: ['category_id', 'user_id', 'userId']},
-            where: {user_id: foundUserID},
+            attributes: { exclude: ['category_id', 'user_id', 'userId'] },
+            where: { user_id: foundUserID },
             order: [
               ['createdAt', 'desc'],
             ],
@@ -267,31 +274,31 @@ module.exports = {
           return activePostsCount;
         }));
         const posts = await Promise.all(totalPosts.rows.map(async post => {
-            const foundPostID = post.dataValues.id;
-            const likes = await models.Like
-              .findAndCountAll({
-                where: {post_id: foundPostID, is_liked: true}
-              });
-            const likeCount = likes.count;
-            const comments = await models.Comment
-              .findAndCountAll({
-                where: {post_id: foundPostID, is_deleted: false}
-              });
-            const commentCount = comments.count;
+          const foundPostID = post.dataValues.id;
+          const likes = await models.Like
+            .findAndCountAll({
+              where: { post_id: foundPostID, is_liked: true }
+            });
+          const likeCount = likes.count;
+          const comments = await models.Comment
+            .findAndCountAll({
+              where: { post_id: foundPostID, is_deleted: false }
+            });
+          const commentCount = comments.count;
 
-            totalLikes += likeCount;
-            totalComments += commentCount;
-            return {...post.dataValues, likeCount, commentCount}
-          }
-          )
+          totalLikes += likeCount;
+          totalComments += commentCount;
+          return { ...post.dataValues, likeCount, commentCount }
+        }
+        )
         );
         const totalFollowers = await models.Follow
           .findAndCountAll({
-            where: {following_id: foundUserID, is_following: true}
+            where: { following_id: foundUserID, is_following: true }
           });
         const totalFollowings = await models.Follow
           .findAndCountAll({
-            where: {user_id: foundUserID, is_following: true}
+            where: { user_id: foundUserID, is_following: true }
           });
 
         //count additional data objects
@@ -315,7 +322,7 @@ module.exports = {
             message: finalUserResult,
           });
       } catch
-        (error) {
+      (error) {
         next(error);
       }
     }
@@ -325,17 +332,17 @@ module.exports = {
     async put(req, res, next) {
       try {
         const user = await models.User.findOne({
-            attributes: [
-              'is_deleted',
-            ],
-            where: {
-              username: req.params.username
-            }
-          },
+          attributes: [
+            'is_deleted',
+          ],
+          where: {
+            username: req.params.username
+          }
+        },
         );
         const newStatus = !user.dataValues.is_deleted;
         const result = await models.User.update(
-          {isDeleted: newStatus},
+          { isDeleted: newStatus },
           {
             where: {
               username: req.params.username
@@ -366,7 +373,7 @@ module.exports = {
             });
         } else {
           const result = await models.User.update(
-            {avatarUrl: newAvatarURL},
+            { avatarUrl: newAvatarURL },
             {
               where: {
                 username: req.params.username
@@ -397,7 +404,7 @@ module.exports = {
             });
         } else {
           const result = await models.User.update(
-            {fullname: newFullname},
+            { fullname: newFullname },
             {
               where: {
                 username: req.params.username

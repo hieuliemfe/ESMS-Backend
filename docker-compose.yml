@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  facefood-postgres-compose:
+  esms-postgres-compose:
     image: postgres
     environment: 
       POSTGRES_USER: username
@@ -12,7 +12,7 @@ services:
     volumes:
       - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
 
-  facefood-pgadmin-compose:
+  esms-pgadmin-compose:
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: 'admin@admin.com'

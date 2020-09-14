@@ -2,24 +2,24 @@
 const models = require('../db/models/index');
 const status = require('http-status');
 const axios = require('axios');
-let imageUrl = 'https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/ComputerVision/Images/faces.jpg';
+let imageUrl = 'https://scontent.fsgn1-1.fna.fbcdn.net/v/t1.0-0/p640x640/92460399_10216285896955748_1654391827274399744_o.jpg?_nc_cat=102&_nc_sid=0be424&_nc_ohc=pALWvb7S694AX-cafrc&_nc_ht=scontent.fsgn1-1.fna&tp=6&oh=269ba3fd8f630c8d720024fe1f1096bb&oe=5F824E46';
 module.exports = {
   upload: {
-    async post(req, res, next) {  
+    async get(req, res, next) {
       try {
         axios({
           method: 'post',
-          url: process.env.FACEAPI_ENDPOINT,
-          params : {
-              returnFaceId: true,
-              returnFaceLandmarks: false,
-              returnFaceAttributes: 'age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise'
+          url: process.env.FACEAPI_URL,
+          params: {
+            returnFaceId: true,
+            returnFaceLandmarks: false,
+            returnFaceAttributes: 'age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise'
           },
           data: {
-              url: imageUrl,
+            url: imageUrl,
           },
-          headers: { 'Ocp-Apim-Subscription-Key': ev }
-      }).then(function (response) {
+          headers: { 'Ocp-Apim-Subscription-Key': process.env.FACEAPI_KEY }
+        }).then(function (response) {
           console.log('Status text: ' + response.status)
           console.log('Status text: ' + response.statusText)
           console.log()
@@ -43,9 +43,15 @@ module.exports = {
             console.log('Hair: ' + JSON.stringify(face.faceAttributes.hair))
             console.log()
           });
-      }).catch(function (error) {
+          res.status(status.OK)
+            .send({
+              success: true,
+              message: response.data,
+            });
+        }).catch(function (error) {
           console.log(error)
-      });
+        });
+
       } catch (error) {
         next(error);
       }
