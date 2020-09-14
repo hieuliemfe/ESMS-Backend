@@ -9,16 +9,16 @@ const { Op } = require("sequelize");
 const sequelize = require('sequelize');
 const { validationResult } = require('express-validator');
 const url = require('url');
-const nodemailer = require('nodemailer');
-
+const emailService = require('../services/email-service/service.js')
 import { DefaultError } from '../utils/errorHandler';
 import { JWT_SECRET } from '../configurations';
+
 
 module.exports = {
   // Public Routes
   login: {
     async post(req, res, next) {
-      
+
       try {
         const user = await models.User.findOne({
           where: {
@@ -105,33 +105,22 @@ module.exports = {
         });
         if (!user) throw new DefaultError(status.BAD_REQUEST, 'Invalid user');
         else {
-          let transport = nodemailer.createTransport({
-            host: process.env.EMAIL_SERVICE_HOST,
-            port: process.env.EMAIL_SERVICE_PORT,
-            auth: {
-              user: process.env.EMAIL_SERVICE_USERNAME,
-              pass: process.env.EMAIL_SERVICE_PASSWORD
-            }
-          });
-          const message = {
-            from: process.env.EMAIL_SERVICE_SENDER, // Sender address
-            to: user.email,         // List of recipients
-            subject: "Test nodemailer", // Subject line
-            text: req.body.description // Plain text body
-          };
-          transport.sendMail(message, function (err, info) {
-            if (err) {
-              console.log(err)
-            } else {
-              console.log(info);
-              res.status(status.OK)
-                .send({
-                  status: true,
-                  message: "Email sent!",
-                });
-            }
-          });
-        }
+          const isSent = Promise.resolve(emailService.send(user.email));
+          if (isSent) {
+            res.status(status.OK)
+              .send({
+                status: true,
+                message: "OK",
+              });
+          } else {
+            res.status(status.OK)
+              .send({
+                status: false,
+                message: "Send failed",
+              });
+          }
+        };
+
       } catch (error) {
         next(error);
       }
@@ -203,6 +192,7 @@ module.exports = {
             'fullname',
             'phoneNumber',
             'roleId',
+            'isSubscribed',
             'isDeleted',
             'createdAt',
             'updatedAt',
@@ -255,71 +245,10 @@ module.exports = {
               message: "User not found!",
             });
         }
-        var totalLikes = 0, totalComments = 0, activePostsCount = 0;
-        const foundUserID = user.dataValues.id;
-        //Additional data
-        const totalPosts = await models.Post
-          .findAndCountAll({
-            attributes: { exclude: ['category_id', 'user_id', 'userId'] },
-            where: { user_id: foundUserID },
-            order: [
-              ['createdAt', 'desc'],
-            ],
-          });
-        await Promise.all(totalPosts.rows.map(async post => {
-          const isDeleted = post.dataValues.isDeleted;
-          if (!isDeleted) {
-            activePostsCount++;
-          }
-          return activePostsCount;
-        }));
-        const posts = await Promise.all(totalPosts.rows.map(async post => {
-          const foundPostID = post.dataValues.id;
-          const likes = await models.Like
-            .findAndCountAll({
-              where: { post_id: foundPostID, is_liked: true }
-            });
-          const likeCount = likes.count;
-          const comments = await models.Comment
-            .findAndCountAll({
-              where: { post_id: foundPostID, is_deleted: false }
-            });
-          const commentCount = comments.count;
-
-          totalLikes += likeCount;
-          totalComments += commentCount;
-          return { ...post.dataValues, likeCount, commentCount }
-        }
-        )
-        );
-        const totalFollowers = await models.Follow
-          .findAndCountAll({
-            where: { following_id: foundUserID, is_following: true }
-          });
-        const totalFollowings = await models.Follow
-          .findAndCountAll({
-            where: { user_id: foundUserID, is_following: true }
-          });
-
-        //count additional data objects
-        const postCount = totalPosts.count;
-        const followerCount = totalFollowers.count;
-        const followingCount = totalFollowings.count;
-        const finalUserResult = {
-          ...user.dataValues,
-          totalLikes,
-          totalComments,
-          followerCount,
-          followingCount,
-          postCount,
-          activePostsCount,
-          posts,
-
-        };
         res.status(status.OK)
           .send({
             status: true,
-            message: finalUserResult,
+            message: user,
           });
       } catch
       (error) {

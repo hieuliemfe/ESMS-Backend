@@ -38,6 +38,11 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true,
       field: 'avatar_url'
     },
+    isSubscribed: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      field: 'is_subscribed'
+    },
     isDeleted: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
