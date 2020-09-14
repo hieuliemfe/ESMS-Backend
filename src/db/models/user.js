@@ -6,7 +6,7 @@ module.exports = function (sequelize, DataTypes) {
   var User = sequelize.define('User', {
     id: {
       type: DataTypes.UUID,
-      defaultValue: () => uuid.v4(),
+      defaultValue: () => uuid.v4,
       primaryKey: true,
       field: 'id',
     },
