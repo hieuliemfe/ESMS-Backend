@@ -289,6 +289,38 @@ module.exports = {
     }
   },
 
+  set_subscription_status: {
+    async put(req, res, next) {
+      try {
+        const user = await models.User.findOne({
+          attributes: [
+            'is_subscribed',
+          ],
+          where: {
+            username: req.params.username
+          }
+        },
+        );
+        const newStatus = !user.dataValues.is_subscribed;
+        const result = await models.User.update(
+          { isSubscribed: newStatus },
+          {
+            where: {
+              username: req.params.username
+            }
+          }
+        );
+        res.status(status.OK)
+          .send({
+            success: true,
+            message: result
+          });
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
   update_avatar_url: {
     async put(req, res, next) {
       try {
