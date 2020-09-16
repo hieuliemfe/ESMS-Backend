@@ -7,9 +7,26 @@ import { handleError } from './utils/errorHandler';
 import db from './db/models';
 import passport from 'passport';
 import { FRONTEND_URL } from './configurations';
-import { swaggerDocument } from "./configurations/swagger.js";
-
+global.__basedir = __dirname + "/..";
+//Swagger Config
+const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+var swaggerDefinition = {
+  info: {
+    title: 'ESMS Swagger API',
+    version: '1.0.0',
+    description: 'Demonstrating how to describe a RESTful API with Swagger',
+  },
+  host: 'localhost:4000',
+  basePath: '/',
+};
+// options for the swagger docs
+var options = {
+  swaggerDefinition: swaggerDefinition,
+  // path to the API docs
+  apis: ['src/routes/*.js'],
+};
+var swaggerSpec = swaggerJSDoc(options);
 
 db.sequelize.authenticate()
   .then(() => {
@@ -21,6 +38,12 @@ db.sequelize.authenticate()
 db.sequelize.sync({ force: true, logging: false });
 
 const app = express();
+// serve swagger
+app.get('/swagger.json', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
 app.use(
   cors({
     origin: FRONTEND_URL,
@@ -36,7 +59,7 @@ require('./services/passport')(passport);
 app.get('/', (req, res) => res.status(200).send({
   message: 'Welcome to this API.'
 }));
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument,{explorer: true}));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 Router.forEach(route => {
   app.use(route.path, route.handler);

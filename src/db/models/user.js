@@ -1,12 +1,36 @@
 /* jshint indent: 1 */
 const bcrypt = require('bcryptjs')
 const uuid = require('uuid/v4');
-
+import { v4 as uuidv4 } from 'uuid';
+/**
+ * @swagger
+ * definitions:
+ * User:
+ *  type: object
+ *  properties:
+ *    id:
+ *      type: integer
+ *    username:
+ *      type: string
+ *    password:
+ *      type: string
+ *    email:
+ *      type: string
+ *    fullName:
+ *      type: string
+ *    phoneNumber:
+ *      type: string
+ *    avatarUrl:
+ *      type: string
+ *    isSubscribed:
+ *      type: boolean
+ * 
+ */
 module.exports = function (sequelize, DataTypes) {
   var User = sequelize.define('User', {
     id: {
       type: DataTypes.UUID,
-      defaultValue: () => uuid.v4,
+      defaultValue: () => uuidv4(),
       primaryKey: true,
       field: 'id',
     },
@@ -72,6 +96,14 @@ module.exports = function (sequelize, DataTypes) {
         const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
         const hash = bcrypt.hashSync(user.password, salt);
         user.password = hash;
+      },
+      beforeBulkCreate: (users, options) => {
+        for (const user of users) {
+          const SALT_WORK_FACTOR = 10;
+          const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
+          const hash = bcrypt.hashSync(user.password, salt);
+          user.password = hash;
+        }
       }
     }
   });

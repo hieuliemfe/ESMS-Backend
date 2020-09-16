@@ -9,7 +9,39 @@ let express = require('express');
 let UserController = require('../controllers/UserController');
 const { check, body } = require('express-validator');
 let router = express.Router();
-
+const fileUpload = require("../middlewares/fileUpload.js");
+/**
+* @swagger
+* /login:
+*   post:
+*     tags:
+*       - Users
+*     name: Login
+*     summary: Login a user
+*     consumes:
+*       - application/json
+*     parameters:
+*       - name: body
+*         in: body
+*         schema:
+*           type: object
+*           properties:
+*             username:
+*               type: string
+*             password:
+*               type: string
+*               format: password
+*         required:
+*           - username
+*           - password
+*     responses:
+*       200:
+*         description: User found and logged in successfully
+*       401:
+*         description: Bad username, not found in db
+*       403:
+*         description: Username and password don't match
+*/
 router.post('/login', [
   body('username')
     .not().isEmpty()
@@ -18,7 +50,7 @@ router.post('/login', [
   body('password')
     .not().isEmpty()
 ], UserController.login.post);
-
+router.post('/bulk-register', fileUpload.single("file"), UserController.bulk_register.post);
 router.post('/register', [
   check('email', 'Invalid Email').isEmail().normalizeEmail(),
   check('username', 'Username must be at least 5 characters').isLength({ min: 5 }),

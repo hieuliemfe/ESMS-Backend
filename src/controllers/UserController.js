@@ -6,10 +6,11 @@ const status = require('http-status');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Op } = require("sequelize");
-const sequelize = require('sequelize');
 const { validationResult } = require('express-validator');
 const url = require('url');
-const emailService = require('../services/email-service/service.js')
+const readXlsxFile = require("read-excel-file/node");
+const emailService = require('../services/email-service/service.js');
+const fs = require('fs');
 import { DefaultError } from '../utils/errorHandler';
 import { JWT_SECRET } from '../configurations';
 
@@ -40,6 +41,59 @@ module.exports = {
         next(error);
       }
     }
+  },
+  bulk_register: {
+    async post(req, res, next) {
+      try {
+        if (req.file == undefined) {
+          return res.status(400).send("Please upload an excel file!");
+        }
+        let path =
+          __basedir + "/" + req.file.filename;
+        await readXlsxFile(path).then((rows) => {
+          // skip header
+          rows.shift();
+
+          let employees = [];
+
+          rows.forEach((row) => {
+            let employee = {
+              username: row[1],
+              password: "password",
+              email: row[2],
+              fullname: row[3],
+              phoneNumber: row[4],
+              roleId: 2,
+            };
+            console.log("==================== USERNAME: " + employee.id);
+            employees.push(employee);
+          });
+
+          models.User.bulkCreate(employees)
+            .then(() => {
+              fs.unlink(path, (err) => {
+                if (err) {
+                  console.error(err)
+                  return
+                }
+              });
+              res.status(200).send({
+                status: true,
+                message: "Uploaded the file successfully: " + req.file.originalname,
+              });
+            })
+            .catch((error) => {
+              res.status(500).send({
+                status: false,
+                message: "Fail to import data into database!",
+                error: error.message,
+              });
+            });
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
   },
 
   register: {
