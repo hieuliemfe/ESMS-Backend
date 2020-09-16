@@ -53,11 +53,9 @@ module.exports = {
         await readXlsxFile(path).then((rows) => {
           // skip header
           rows.shift();
-
-          let employees = [];
-
+          let users = [];
           rows.forEach((row) => {
-            let employee = {
+            let user = {
               username: row[1],
               password: "password",
               email: row[2],
@@ -65,11 +63,10 @@ module.exports = {
               phoneNumber: row[4],
               roleId: 2,
             };
-            console.log("==================== USERNAME: " + employee.id);
-            employees.push(employee);
+            users.push(user);
           });
 
-          models.User.bulkCreate(employees)
+          models.User.bulkCreate(users)
             .then(() => {
               fs.unlink(path, (err) => {
                 if (err) {
