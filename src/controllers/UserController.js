@@ -129,7 +129,6 @@ module.exports = {
   profile: {
     async get(req, res, next) {
       try {
-        console.log("================= YEET: " + req.params.username);
         const user = await models.User.findOne({
           where: {
             username: req.params.username,
