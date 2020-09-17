@@ -77,6 +77,22 @@ router.post('/email', Controller.send_email.post);
 *         description: User not found.
 */
 router.put('/subscription/:username', Controller.set_subscription_status.put);
+/**
+* @swagger
+* /users/{username}:
+*   get:
+*     tags:
+*       - Users
+*     name: Get user details.
+*     summary: get a user's details based on username.
+*     consumes:
+*       - application/json
+*     responses:
+*       200:
+*         description: User's details is displayed
+*       404:
+*         description: User not found.
+*/
 router.get('/:username', Controller.view_one.get);
 /**
 * @swagger
