@@ -11,6 +11,7 @@ let router = express.Router();
 let passport = require('passport');
 let { isAdmin } = require('../middlewares/authorization');
 //router.get('/', passport.authenticate('jwt', {session: false}), isAdmin, Controller.view.get);
+
 /**
 * @swagger
 * /users/:
@@ -28,63 +29,16 @@ let { isAdmin } = require('../middlewares/authorization');
 *         description: User not found.
 */
 router.get('/', Controller.view.get);
+
+
 /**
 * @swagger
-* /users/email:
-*   post:
-*     tags:
-*       - Users
-*     name: Send
-*     summary: Send an email to a user based on a template
-*     consumes:
-*       - application/json
-*     parameters:
-*       - name: body
-*         in: body
-*         schema:
-*           type: object
-*           properties:
-*             username:
-*               type: string
-*         required:
-*           - username
-*     responses:
-*       200:
-*         description: Email sent to user.
-*/
-router.post('/email', Controller.send_email.post);
-/**
-* @swagger
-* /users/subscription/{username}:
-*   put:
-*     tags:
-*       - Users
-*     name: Update subscription status
-*     summary: Update a user's subscription based on username.
-*     consumes:
-*       - application/json
-*     parameters:
-*       - in: path
-*         name: username
-*         schema:
-*           type: string
-*         required: true
-*         description: Username to update subscription status.
-*     responses:
-*       200:
-*         description: Updated user's subscription status.
-*       401:
-*         description: User not found.
-*/
-router.put('/subscription/:username', Controller.set_subscription_status.put);
-/**
-* @swagger
-* /users/{username}:
+* /users/{id}:
 *   get:
 *     tags:
 *       - Users
 *     name: Get user details.
-*     summary: get a user's details based on username.
+*     summary: get a user's details based on id.
 *     consumes:
 *       - application/json
 *     responses:
@@ -93,24 +47,67 @@ router.put('/subscription/:username', Controller.set_subscription_status.put);
 *       404:
 *         description: User not found.
 */
-router.get('/:username', Controller.view_one.get);
+router.get('/:id', Controller.view_one.get);
+
 /**
 * @swagger
-* /users/avatar/{username}:
+* /users/{id}:
 *   put:
 *     tags:
 *       - Users
-*     name: Update a user's avatar
-*     summary: Update a user's avatar based on username.
+*     name: Update a user's info
+*     summary: Update a user's info based on id.
 *     consumes:
 *       - application/json
 *     parameters:
 *       - in: path
-*         name: username
+*         name: id
 *         schema:
 *           type: string
 *         required: true
-*         description: Username to update avatar.
+*         description: id to update avatar.
+*       - in: body
+*         name: body
+*         schema:
+*           type: object
+*           properties:
+*             email:
+*               type: string
+*             avatarUrl:
+*               type: string
+*             phoneNumber:
+*               type: string
+*             roleId:
+*               type: int
+*             isSubscribed:
+*               type: boolean
+*             isDeleted:
+*               type: boolean
+*     responses:
+*       200:
+*         description: User's avatar is updated.
+*       404:
+*         description: User not found.
+*/
+router.put('/:id', Controller.update.put);
+
+/**
+* @swagger
+* /users/{id}/avatar:
+*   put:
+*     tags:
+*       - Users
+*     name: Update a user's avatar
+*     summary: Update a user's avatar based on id.
+*     consumes:
+*       - application/json
+*     parameters:
+*       - in: path
+*         name: id
+*         schema:
+*           type: string
+*         required: true
+*         description: id to update avatar.
 *       - in: body
 *         name: body
 *         schema:
@@ -126,55 +123,48 @@ router.get('/:username', Controller.view_one.get);
 *       404:
 *         description: User not found.
 */
-router.put('/:username/avatar', Controller.update_avatar_url.put);
+router.put('/:id/avatar', Controller.update_avatar_url.put);
+
 /**
 * @swagger
-* /users/fullname/{username}:
+* /users/{id}/subscription:
 *   put:
 *     tags:
 *       - Users
-*     name: Update a user's fullname
-*     summary: Update a user's fullname based on username.
+*     name: Update subscription status
+*     summary: Update a user's subscription based on UserID.
 *     consumes:
 *       - application/json
 *     parameters:
 *       - in: path
-*         name: username
+*         name: id
 *         schema:
 *           type: string
 *         required: true
-*         description: Username to update fullname.
-*       - in: body
-*         name: body
-*         schema:
-*           type: object
-*           properties:
-*             fullname:
-*               type: string
-*           required: 
-*               - fullname
+*         description: id to update subscription status.
 *     responses:
 *       200:
-*         description: User's fullname is updated.
-*       404:
+*         description: Updated user's subscription status.
+*       401:
 *         description: User not found.
 */
-router.put('/:username/fullname', Controller.update_fullname.put);
+router.put('/subscription/:id', Controller.set_subscription_status.put);
+
 /**
 * @swagger
-* /users/{username}:
-*   put:
+* /users/{id}:
+*   delete:
 *     tags:
 *       - Users
-*     name: Update a user's status
-*     summary: Update a user's status based on username.
+*     name: Delete a user.
+*     summary: Delete a user based on UserID.
 *     consumes:
 *       - application/json
 *     responses:
 *       200:
-*         description: User's status is updated
+*         description: User's details is deleted
 *       404:
 *         description: User not found.
 */
-router.put('/:username', Controller.set_avail_status.put);
+router.delete('/:id', Controller.set_avail_status.delete);
 module.exports = router;

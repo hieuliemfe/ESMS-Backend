@@ -9,7 +9,7 @@ const { Op } = require("sequelize");
 const { validationResult } = require('express-validator');
 const url = require('url');
 const readXlsxFile = require("read-excel-file/node");
-const emailService = require('../services/email-service/service.js');
+
 const fs = require('fs');
 import { DefaultError } from '../utils/errorHandler';
 import { JWT_SECRET } from '../configurations';
@@ -145,37 +145,6 @@ module.exports = {
     }
   },
 
-  send_email: {
-    async post(req, res, next) {
-      try {
-        const user = await models.User.findOne({
-          where: {
-            username: req.body.username,
-          },
-        });
-        if (!user) throw new DefaultError(status.BAD_REQUEST, 'Invalid user');
-        else {
-          const isSent = Promise.resolve(emailService.send(user.email));
-          if (isSent) {
-            res.status(status.OK)
-              .send({
-                status: true,
-                message: "OK",
-              });
-          } else {
-            res.status(status.OK)
-              .send({
-                status: false,
-                message: "Send failed",
-              });
-          }
-        };
-
-      } catch (error) {
-        next(error);
-      }
-    }
-  },
   view: {
     async get(req, res, next) {
       try {
@@ -307,38 +276,6 @@ module.exports = {
     }
   },
 
-  set_avail_status: {
-    async put(req, res, next) {
-      try {
-        const user = await models.User.findOne({
-          attributes: [
-            'is_deleted',
-          ],
-          where: {
-            username: req.params.username
-          }
-        },
-        );
-        const newStatus = !user.dataValues.is_deleted;
-        const result = await models.User.update(
-          { isDeleted: newStatus },
-          {
-            where: {
-              username: req.params.username
-            }
-          }
-        );
-        res.status(status.OK)
-          .send({
-            success: true,
-            message: result
-          });
-      } catch (error) {
-        next(error)
-      }
-    }
-  },
-
   set_subscription_status: {
     async put(req, res, next) {
       try {
@@ -347,7 +284,7 @@ module.exports = {
             'is_subscribed',
           ],
           where: {
-            username: req.params.username
+            id: req.params.id
           }
         },
         );
@@ -356,7 +293,7 @@ module.exports = {
           { isSubscribed: newStatus },
           {
             where: {
-              username: req.params.username
+              id: req.params.id
             }
           }
         );
@@ -371,6 +308,57 @@ module.exports = {
     }
   },
 
+  set_avail_status: {
+    async delete(req, res, next) {
+      try {
+        const result = await models.User.update(
+          { isDeleted: true },
+          {
+            where: {
+              id: req.params.id
+            }
+          }
+        );
+        res.status(status.OK)
+          .send({
+            success: true,
+            message: result
+          });
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+  update: {
+    async put(req, res, next) {
+      try {
+        const newAvatarURL = req.body.avatarUrl;
+        if (!newAvatarURL.includes('https://') && !newAvatarURL.includes('http://')) {
+          res.status(status.OK)
+            .send({
+              success: false,
+              message: "Please input valid URL!"
+            });
+        } else {
+          const result = await models.User.update(
+            { avatarUrl: newAvatarURL },
+            {
+              where: {
+                username: req.params.id
+              }
+            }
+          );
+          res.status(status.OK)
+            .send({
+              success: true,
+              message: result
+            });
+        }
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
   update_avatar_url: {
     async put(req, res, next) {
       try {
@@ -386,7 +374,7 @@ module.exports = {
             { avatarUrl: newAvatarURL },
             {
               where: {
-                username: req.params.username
+                username: req.params.id
               }
             }
           );
@@ -398,40 +386,6 @@ module.exports = {
         }
       } catch (error) {
         next(error)
-      }
-    }
-  },
-  update_fullname: {
-    async put(req, res, next) {
-      try {
-        const newFullname = req.body.fullname;
-        if (newFullname == undefined || newFullname.trim() == '') {
-          res.status(status.OK)
-            .send({
-              success: false,
-              message: "Please input fullname!"
-            });
-        } else {
-          const result = await models.User.update(
-            { fullname: newFullname },
-            {
-              where: {
-                username: req.params.username
-              }
-            }
-          );
-          res.status(status.OK)
-            .send({
-              success: true,
-              message: result
-            });
-        }
-      } catch (error) {
-        res.status(status.OK)
-          .send({
-            success: false,
-            message: error
-          });
       }
     }
   },

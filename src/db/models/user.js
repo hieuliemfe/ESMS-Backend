@@ -1,6 +1,5 @@
 /* jshint indent: 1 */
 const bcrypt = require('bcryptjs')
-const uuid = require('uuid/v4');
 import { v4 as uuidv4 } from 'uuid';
 /**
  * @swagger

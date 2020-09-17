@@ -125,28 +125,4 @@ router.post('/register', [
     }
   }),
 ], UserController.register.post);
-/**
-* @swagger
-* /profile/{username}:
-*   get:
-*     tags:
-*       - Root
-*     name: Profile
-*     summary: Get a user details based on username.
-*     consumes:
-*       - application/json
-*     parameters:
-*       - in: path
-*         name: username
-*         schema:
-*           type: string
-*         required: true
-*         description: Username to display info
-*     responses:
-*       200:
-*         description: Displays user details
-*       401:
-*         description: User not found.
-*/
-router.get('/profile/:username', UserController.profile.get);
 module.exports = router;

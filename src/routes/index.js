@@ -11,6 +11,10 @@ const Router = [
     path: '/faces',
     handler: require('./FaceRoutes'),
   },
+  {
+    path: '/emails',
+    handler: require('./EmailRoutes'),
+  },
 ];
 
 export default Router;
