@@ -65,7 +65,6 @@ module.exports = {
             };
             users.push(user);
           });
-
           models.User.bulkCreate(users)
             .then(() => {
               fs.unlink(path, (err) => {
@@ -130,9 +129,10 @@ module.exports = {
   profile: {
     async get(req, res, next) {
       try {
+        console.log("================= YEET: " + req.params.username);
         const user = await models.User.findOne({
           where: {
-            username: req.body.username,
+            username: req.params.username,
           },
         });
         if (!user) throw new DefaultError(status.BAD_REQUEST, 'Invalid user');
@@ -375,9 +375,8 @@ module.exports = {
   update_avatar_url: {
     async put(req, res, next) {
       try {
-        const queryData = url.parse(req.url, false).query;
-        const newAvatarURL = queryData;
-        if (!newAvatarURL.includes('https://')) {
+        const newAvatarURL = req.body.avatarUrl;
+        if (!newAvatarURL.includes('https://') && !newAvatarURL.includes('http://')) {
           res.status(status.OK)
             .send({
               success: false,
@@ -406,8 +405,7 @@ module.exports = {
   update_fullname: {
     async put(req, res, next) {
       try {
-        const queryData = url.parse(req.url, true).query;
-        const newFullname = queryData.value;
+        const newFullname = req.body.fullname;
         if (newFullname == undefined || newFullname.trim() == '') {
           res.status(status.OK)
             .send({
