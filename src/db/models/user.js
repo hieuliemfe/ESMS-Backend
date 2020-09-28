@@ -1,5 +1,5 @@
 /* jshint indent: 1 */
-const bcrypt = require('bcryptjs')
+import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 /**
  * @swagger
@@ -25,7 +25,7 @@ import { v4 as uuidv4 } from 'uuid';
  *      type: boolean
  * 
  */
-module.exports = function (sequelize, DataTypes) {
+export default function (sequelize, DataTypes) {
   var User = sequelize.define('User', {
     id: {
       type: DataTypes.UUID,

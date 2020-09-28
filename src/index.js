@@ -6,11 +6,15 @@ import cors from 'cors';
 import { handleError } from './utils/errorHandler';
 import db from './db/models';
 import passport from 'passport';
-import { FRONTEND_URL } from './configurations';
+import publicRuntimeConfig from './configurations';
+const FRONTEND_URL = publicRuntimeConfig.FRONTEND_URL;
+import passport_service from './services/passport';
 global.__basedir = __dirname + "/..";
+
+
 //Swagger Config
-const swaggerJSDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 var swaggerDefinition = {
   info: {
     title: 'ESMS Swagger API',
@@ -54,7 +58,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(passport.initialize());
-require('./services/passport')(passport);
+passport_service(passport);
 
 app.get('/', (req, res) => res.status(200).send({
   message: 'Welcome to this API.'

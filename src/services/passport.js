@@ -1,16 +1,17 @@
-const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
-const models = require('../db/models/index');
-const status = require('http-status');
+import { Strategy as JwtStrategy } from 'passport-jwt';
+import { ExtractJwt } from 'passport-jwt';
+import models from '../db/models/index';
+import status from 'http-status';
 
-import { JWT_SECRET } from '../configurations';
+import publicRuntimeConfig from '../configurations';
+const JWT_SECRET = publicRuntimeConfig.JWT_SECRET;
 import { DefaultError } from '../utils/errorHandler';
 
 var opts = {}
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = JWT_SECRET;
 
-module.exports = passport => {
+export default passport => {
   passport.use(new JwtStrategy(opts, function (jwt_payload, next) {
     models.User.findOne({
       attributes: [
@@ -24,14 +25,14 @@ module.exports = passport => {
         id: jwt_payload.userId
       }
     }).then(user => {
-      if(user) {
+      if (user) {
         next(null, user);
       } else {
         next('Unauthorized');
       }
     }).catch(err => {
       console.log(err);
-      next( 'Something went wrong when trying to authorize you');
+      next('Something went wrong when trying to authorize you');
     });
   }));
 }

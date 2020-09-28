@@ -1,4 +1,4 @@
-const multer = require("multer");
+import multer from "multer";
 
 const excelFilter = (req, file, cb) => {
   if (
@@ -22,4 +22,4 @@ var storage = multer.diskStorage({
 });
 
 var uploadFile = multer({ storage: storage, fileFilter: excelFilter });
-module.exports = uploadFile;
+export default uploadFile;

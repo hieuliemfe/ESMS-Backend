@@ -1,19 +1,24 @@
+import RootRoutes from './RootRoutes';
+import UserRoutes from './UserRoutes';
+import FaceRoutes from './FaceRoutes';
+import EmailRoutes from './EmailRoutes';
+
 const Router = [
   {
     path: '/',
-    handler: require('./RootRoutes'),
+    handler: RootRoutes,
   },        
   {
     path: '/users',
-    handler: require('./UserRoutes'),
+    handler: UserRoutes,
   },
   {
     path: '/faces',
-    handler: require('./FaceRoutes'),
+    handler: FaceRoutes,
   },
   {
     path: '/emails',
-    handler: require('./EmailRoutes'),
+    handler: EmailRoutes,
   },
 ];
 

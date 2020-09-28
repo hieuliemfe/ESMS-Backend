@@ -1,8 +1,8 @@
 'use strict';
-const models = require('../db/models/index');
-const status = require('http-status');
+import models from '../db/models/index';
+import status from 'http-status';
 
-module.exports = {
+export default {
   upload: {
     async post(req, res, next) {
       try {

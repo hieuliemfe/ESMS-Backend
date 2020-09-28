@@ -1,9 +1,9 @@
 'use strict';
 
-const models = require('../db/models/index');
-const status = require('http-status');
-const emailService = require('../services/email-service/service.js');
-module.exports = {
+import models from '../db/models/index';
+import status from 'http-status';
+import { send as emailService } from '../services/email-service/service.js';
+export default {
 
     send_email: {
         async post(req, res, next) {

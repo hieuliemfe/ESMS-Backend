@@ -1,8 +1,8 @@
 import { DefaultError } from '../utils/errorHandler';
 
-const models = require('../db/models/index');
-const status = require('http-status');
-const jwt = require('jsonwebtoken');
+import models from '../db/models/index';
+import status from 'http-status';
+import jwt from 'jsonwebtoken';
 
 export const isAdmin = (req, res, next) => {
   const token = req.headers.authorization.replace('Bearer ', '')
@@ -33,12 +33,12 @@ export function isUser(req, res, next) {
       roleId: 1
     }
   }).then(user => {
-    if(user) {
+    if (user) {
       next(null, user);
     } else {
       throw new DefaultError(status.UNAUTHORIZED, 'You are not authorized to perform this action!');
     }
   }).catch(err => {
     throw new DefaultError(status.INTERNAL_SERVER_ERROR, 'Something went wrong when trying to authorize you', err);
-  });  
+  });
 }

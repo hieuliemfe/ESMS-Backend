@@ -1,3 +1,4 @@
+import publicRuntimeConfig from '../../configurations';
 const {
   DATABASE_URL,
   POSTGRES_DB,
@@ -5,9 +6,9 @@ const {
   POSTGRES_PASSWORD,
   POSTGRES_HOST,
   POSTGRES_PORT
-} = require("../../configurations");
+} = publicRuntimeConfig;
 
-module.exports = {
+export default {
   development: {
     databaseUrl: DATABASE_URL,
     database: POSTGRES_DB,

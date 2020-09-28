@@ -1,6 +1,6 @@
 /* jshint indent: 1 */
 
-module.exports = function (sequelize, DataTypes) {
+export default function (sequelize, DataTypes) {
     const Role = sequelize.define('Role', {
       roleName: {
         type: DataTypes.STRING,

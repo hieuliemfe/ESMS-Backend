@@ -5,10 +5,10 @@
  * path: /emails
  */
 
-let express = require('express');
-let Controller = require('../controllers/EmailController');
+import express from 'express';
+import Controller from '../controllers/EmailController';
 let router = express.Router();
-let passport = require('passport');
+import passport from 'passport';
 /**
 * @swagger
 * /emails/{id}:
@@ -35,4 +35,4 @@ let passport = require('passport');
 */
 router.post('/email', Controller.send_email.post);
 
-module.exports = router;
+export default router;

@@ -5,11 +5,11 @@
  * path: /faces
  */
 
-let express = require('express');
-let Controller = require('../controllers/FaceController');
+import express from 'express';
+import Controller from '../controllers/FaceController';
 let router = express.Router();
-let passport = require('passport');;
+import passport from 'passport';
 //router.get('/', passport.authenticate('jwt', {session: false}), isAdmin, Controller.view.get);
 // router.get('/', Controller.view.get);
 router.get('/upload', Controller.upload.get);
-module.exports = router;
+export default router;

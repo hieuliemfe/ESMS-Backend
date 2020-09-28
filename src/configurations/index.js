@@ -1,4 +1,5 @@
-require('dotenv').config();
+import dotenv from 'dotenv'
+dotenv.config();
 
 const publicRuntimeConfig = {
   NODE_ENV: process.env.NODE_ENV || 'production',
@@ -17,8 +18,7 @@ const publicRuntimeConfig = {
 
   JWT_SECRET: process.env.JWT_SECRET,
 };
-
-module.exports = publicRuntimeConfig;
+export default publicRuntimeConfig;
 
 // export const {
 //   POSTGRES_USER,
@@ -34,4 +34,4 @@ module.exports = publicRuntimeConfig;
 //   JWT_SECRET,
 // } = publicRuntimeConfig;
 
-module.exports.default = publicRuntimeConfig.NODE_ENV === 'production';
+export const isProduction = publicRuntimeConfig.NODE_ENV === 'production';

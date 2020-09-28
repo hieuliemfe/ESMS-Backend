@@ -5,11 +5,11 @@
 * path: /
 */
 
-let express = require('express');
-let UserController = require('../controllers/UserController');
-const { check, body } = require('express-validator');
+import express from 'express';
+import UserController from '../controllers/UserController';
+import { check, body } from 'express-validator';
 let router = express.Router();
-const fileUpload = require("../middlewares/fileUpload.js");
+import fileUpload from "../middlewares/fileUpload.js";
 /**
 * @swagger
 * /login:
@@ -42,6 +42,7 @@ const fileUpload = require("../middlewares/fileUpload.js");
 *       403:
 *         description: Username and password don't match
 */
+
 router.post('/login', [
   body('username')
     .not().isEmpty()
@@ -125,4 +126,4 @@ router.post('/register', [
     }
   }),
 ], UserController.register.post);
-module.exports = router;
+export default router;

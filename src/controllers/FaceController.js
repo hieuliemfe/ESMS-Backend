@@ -1,9 +1,9 @@
 'use strict';
-const models = require('../db/models/index');
-const status = require('http-status');
-const axios = require('axios');
+import models from '../db/models/index';
+import status from 'http-status';
+import axios from 'axios';
 let imageUrl = 'https://scontent.fsgn1-1.fna.fbcdn.net/v/t1.0-0/p640x640/92460399_10216285896955748_1654391827274399744_o.jpg?_nc_cat=102&_nc_sid=0be424&_nc_ohc=pALWvb7S694AX-cafrc&_nc_ht=scontent.fsgn1-1.fna&tp=6&oh=269ba3fd8f630c8d720024fe1f1096bb&oe=5F824E46';
-module.exports = {
+export default {
   upload: {
     async get(req, res, next) {
       try {

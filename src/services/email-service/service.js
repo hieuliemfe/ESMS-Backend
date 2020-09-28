@@ -1,9 +1,9 @@
 'use strict'
-const fs = require('fs');
-const nodemailer = require('nodemailer');
+import fs from 'fs';
+import nodemailer from 'nodemailer';
 const emailServiceTemplate = __dirname + '/templates/template.html';
 
-module.exports.send = function (receiverEmail) {
+export const send = function (receiverEmail) {
     fs.readFile(emailServiceTemplate, { encoding: 'utf-8' }, function (err, html) {
         if (err) {
             return err;

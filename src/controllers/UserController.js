@@ -1,25 +1,24 @@
 'use strict';
 import { query } from "express-validator";
+import models from '../db/models/index';
+import status from 'http-status';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import Op from "sequelize";
+import validationResult from 'express-validator';
+import url from 'url';
+import readXlsxFile from "read-excel-file/node";
 
-const models = require('../db/models/index');
-const status = require('http-status');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { Op } = require("sequelize");
-const { validationResult } = require('express-validator');
-const url = require('url');
-const readXlsxFile = require("read-excel-file/node");
-
-const fs = require('fs');
+import fs from 'fs';
 import { DefaultError } from '../utils/errorHandler';
-import { JWT_SECRET } from '../configurations';
+import publicRuntimeConfig from '../configurations';
+const JWT_SECRET = publicRuntimeConfig.JWT_SECRET;
 
 
-module.exports = {
+export default {
   // Public Routes
   login: {
     async post(req, res, next) {
-
       try {
         const user = await models.User.findOne({
           where: {

@@ -5,11 +5,11 @@
  * path: /users
  */
 
-let express = require('express');
-let Controller = require('../controllers/UserController');
+import express from 'express';
+import Controller from '../controllers/UserController';
 let router = express.Router();
-let passport = require('passport');
-let { isAdmin } = require('../middlewares/authorization');
+import passport from 'passport';
+import { isAdmin } from '../middlewares/authorization';
 //router.get('/', passport.authenticate('jwt', {session: false}), isAdmin, Controller.view.get);
 
 /**
@@ -167,4 +167,4 @@ router.put('/subscription/:id', Controller.set_subscription_status.put);
 *         description: User not found.
 */
 router.delete('/:id', Controller.set_avail_status.delete);
-module.exports = router;
+export default router;
