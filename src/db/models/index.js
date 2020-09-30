@@ -14,8 +14,10 @@ console.log(config.databaseUrl);
 if (config.databaseUrl) {
   // the application is executed on Heroku ... use the postgres database
   sequelize = new Sequelize(config.databaseUrl, {
-    dialect: "postgres",
-    protocol: "postgres",
+    dialect: "mysql",
+    protocol: "mysql",
+    // dialect: "postgres",
+    // protocol: "postgres",
     ssl: true,
     dialectOptions: { ssl: true },
     logging: true //false
@@ -24,7 +26,8 @@ if (config.databaseUrl) {
   sequelize = new Sequelize(config.database, config.username, config.password, {
     host: config.host,
     port: config.port,
-    dialect: "postgres",
+    dialect: "mysql",
+    // dialect: "postgres",
     // ssl: true,
     // dialectOptions: { ssl: true },
     logging: console.log

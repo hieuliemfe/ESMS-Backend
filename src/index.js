@@ -21,7 +21,7 @@ var swaggerDefinition = {
     version: '1.0.0',
     description: 'Demonstrating how to describe a RESTful API with Swagger',
   },
-  host: 'localhost:4000',
+  host: '0.0.0.0:4000',
   basePath: '/',
 };
 // options for the swagger docs
