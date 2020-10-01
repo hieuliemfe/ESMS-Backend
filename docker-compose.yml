@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  db:
+  esms-db:
     image: mysql:5.7
     restart: always
     environment:
@@ -15,17 +15,25 @@ services:
     ports:
       # <Port exposed> : < MySQL Port running inside container>
       - '3306:3306'
-    expose:
-      # Opens port 3306 on the container
-      - '3306'
-      # Where our data will be persisted
     volumes:
+      # Where our data will be persisted
       - esms-db:/var/lib/mysql
   adminer:
     image: adminer
     restart: always
+    environment:
+      ADMINER_DEFAULT_DB_HOST: 'esms-db'
+      ADMINER_DEFAULT_DB_NAME: 'esms-db'
+      ADMINER_DESIGN: 'nette'
     ports:
       - 8080:8080
+  esms-be:
+    image: kudo.esms-image:v1
+    build: ./
+    ports:
+      - 4000:4000
+    depends_on:
+      - esms-db
 # Names our volume
 volumes:
   esms-db:
