@@ -1,5 +1,5 @@
 name: Deploy_To_Azure
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build-and-deploy:
@@ -20,7 +20,7 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
-        docker-compose up --build -d
+        docker-compose up -d
         docker ps -a
         docker push kudo.esms-image:v1
 
