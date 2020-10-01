@@ -36,3 +36,4 @@ jobs:
         registry-password: ${{ secrets.REGISTRY_PASSWORD }}
         name: esms-be
         location: 'east us'
+
