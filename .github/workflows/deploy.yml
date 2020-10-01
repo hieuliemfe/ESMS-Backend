@@ -22,14 +22,14 @@ jobs:
     - run: |
         docker-compose up -d
         docker ps -a
-        docker-compose push
+        docker tag kudo.esms-image:v1 ${{ secrets.REGISTRY_LOGIN_SERVER }}/esms-image:${{ github.sha }}
 
     - name: 'Deploy to Azure Container Instances'
       uses: 'azure/aci-deploy@v1'
       with:
         resource-group: ${{ secrets.RESOURCE_GROUP }}
         dns-name-label: ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }}
-        image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/kudo.esms-image:v1
+        image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/esms-image:${{ github.sha }}
         registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
         registry-username: ${{ secrets.REGISTRY_USERNAME }}
         registry-password: ${{ secrets.REGISTRY_PASSWORD }}
