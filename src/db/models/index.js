@@ -45,6 +45,12 @@ fs.readdirSync(__dirname)
     db[model.name] = model;
   });
 
+const context = require.context('.', true, /^\.\/(?!index\.js).*\.js$/, 'sync')
+context.keys().map(context).forEach(({ default: module }) => {
+  const sequelizeModel = module(sequelize, Sequelize);
+  db[sequelizeModel.name] = sequelizeModel;
+})
+
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
