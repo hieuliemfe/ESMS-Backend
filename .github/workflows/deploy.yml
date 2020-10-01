@@ -22,7 +22,7 @@ jobs:
     - run: |
         docker-compose up -d
         docker ps -a
-        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/kudo.esms-image:v1
+        docker-compose push
 
     - name: 'Deploy to Azure Container Instances'
       uses: 'azure/aci-deploy@v1'
