@@ -90,6 +90,104 @@ export default {
       }
     },
   },
+  seed: {
+    async post(req, res, next) {
+      try {
+        await models.Role.bulkCreate([
+          {
+            roleName: 'Admin',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            roleName: 'Manager',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            roleName: 'Employee',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+    
+        ])
+          .then((err) => {
+            if (err) {
+              console.error(err)
+              return
+            };
+          });
+        await models.User.bulkCreate(
+          [
+            {
+              id: '468ab892-7518-4520-8243-db1c1b9607dd',
+              username: 'AnhBui',
+              fullname: 'Bui Nguyen Phuong Anh',
+              password: '$2a$10$rc8ARtv74lGR.SUI/CgUxuox3qjSri307g8g2k2BSWrzd0nTB2QRK',
+              email: 'space@potato.com',
+              phoneNumber: '0123456789',
+              isSubscribed: true,
+              avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_mitsuki.jpg?alt=media&token=136252c1-b7fb-45ea-bf88-fc08923ede81',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              roleId: 1
+            },
+            {
+              id: 'bfad3537-875c-4bf2-bb97-41c00b912d76',
+              username: 'Potato',
+              fullname: 'Nguyen Van Anh',
+              password: '$2a$10$rc8ARtv74lGR.SUI/CgUxuox3qjSri307g8g2k2BSWrzd0nTB2QRK',
+              email: 'potato@potato.com',
+              phoneNumber: '0987654321',
+              isSubscribed: true,
+              avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_none.png?alt=media&token=99b44006-6136-4c11-8f8c-3f82d65483e6',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              roleId: 2
+            },
+            {
+              id: '9903c282-06ed-48fe-9607-76e7903f6b72',
+              username: 'BinhPham',
+              fullname: 'Pham Duc Binh',
+              password: '$2a$10$rc8ARtv74lGR.SUI/CgUxuox3qjSri307g8g2k2BSWrzd0nTB2QRK',
+              email: 'binh@pham.com',
+              phoneNumber: '0321456789',
+              isSubscribed: true,
+              avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_binh.jpg?alt=media&token=57fb0d7f-4692-4560-b29c-5275e33d6ad6',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              roleId: 1
+            },
+            {
+              id: 'ef71e125-37b5-4a5f-87e1-fdda43a4ccb2',
+              username: 'DucPhi',
+              fullname: 'Phi Do Hong Duc',
+              password: '$2a$10$rc8ARtv74lGR.SUI/CgUxuox3qjSri307g8g2k2BSWrzd0nTB2QRK',
+              email: 'duc@phi.com',
+              phoneNumber: '0456123789',
+              isSubscribed: true,
+              avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_duc.jpg?alt=media&token=389bf32e-1e1d-4662-9875-914b424d74cf',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              roleId: 1
+            },
+          ]
+        )
+          .then((err) => {
+            if (err) {
+              console.error(err)
+              return
+            };
+          });
+        res.status(200).send({
+          status: true,
+          message: "Seed failed successfully."
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  },
 
   register: {
     async post(req, res, next) {
