@@ -39,7 +39,7 @@ db.sequelize.authenticate()
   .catch(error => {
     console.error('Unable to connect to the database:', error.message);
   });
-db.sequelize.sync({ force: false, logging: false });
+db.sequelize.sync({ force: true, logging: false });
 
 const app = express();
 // serve swagger

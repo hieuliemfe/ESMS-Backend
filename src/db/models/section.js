@@ -1,11 +1,16 @@
 /* jshint indent: 1 */
 
 export default function (sequelize, DataTypes) {
-  const Role = sequelize.define('Role', {
-    roleName: {
-      type: DataTypes.STRING,
+  const Section = sequelize.define('Section', {
+    sectionStart: {
+      type: DataTypes.DATE,
       allowNull: false,
-      field: 'role_name'
+      field: 'section_start'
+    },
+    sectionEnd: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      field: 'section_end'
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -16,13 +21,7 @@ export default function (sequelize, DataTypes) {
       field: 'updated_at'
     }
   }, {
-    tableName: 'role',
+    tableName: 'section',
   });
-
-  Role.associate = function (models) {
-    models.Role.hasMany(models.User, {
-      foreignKey: "role_id"
-    });
-  }
-  return Role;
+  return Section;
 };
