@@ -1,27 +1,30 @@
 version: '3'
 
 services:
-  esms-postgres-compose:
-    image: postgres
-    environment: 
-      POSTGRES_USER: username
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: esms-database
-    ports:
-      - '15432:5432'
-    volumes:
-      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
-
-  esms-pgadmin-compose:
-    image: dpage/pgadmin4
+  esmsdb:
+    image: mysql:5.7
+    restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: 'admin@admin.com'
-      PGADMIN_DEFAULT_PASSWORD: 'admin'
+      MYSQL_DATABASE: esmsdb
+      MYSQL_USER: username
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
     ports:
-      - '16543:80'
+      - "3306:3306"
+    volumes:
+      - dbvol:/var/lib/mysql
+
+  esmsad:
     depends_on:
-      - esms-postgres-compose
-
+      - esmsdb
+    image: adminer
+    container_name: adminer
+    restart: always
+    environment:
+      ADMINER_DEFAULT_DB_HOST: esmsdb:3306
+      ADMINER_DEFAULT_DB_NAME: esmsdb
+      ADMINER_DESIGN: nette
+    ports:
+      - "8080:8080"
 volumes:
-  database-data: # named volumes can be managed easier using docker-compose
-
+  dbvol:
