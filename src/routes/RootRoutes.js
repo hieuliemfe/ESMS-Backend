@@ -87,14 +87,6 @@ router.post('/bulk-register', fileUpload.single("file"), UserController.bulk_reg
 *     summary: Seed data.
 *     consumes:
 *       - application/json
-*     parameters:
-*         -in: formData
-*         schema:
-*           type: object
-*           properties:
-*             file:
-*               type: file
-*         required:
 *     responses:
 *       200:
 *         description: List of users is added into the DB.

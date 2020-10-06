@@ -181,7 +181,7 @@ export default {
           });
         res.status(200).send({
           status: true,
-          message: "Seed failed successfully."
+          message: 1
         });
       } catch (error) {
         next(error);
