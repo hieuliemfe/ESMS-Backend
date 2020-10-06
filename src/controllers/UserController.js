@@ -286,7 +286,7 @@ export default {
           whereCondition = {
             [Op.or]: [
               { username: { [Op.like]: '%' + query + '%' } },
-              { fullname: { [Op.iLike]: '%' + query + '%' } }
+              { fullname: { [Op.like]: '%' + query + '%' } }
             ],
             is_deleted: isDeleted,
           }
