@@ -63,7 +63,7 @@ passport_service(passport);
 app.get('/', (req, res) => res.status(200).send({
   message: 'Welcome to this API.'
 }));
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 Router.forEach(route => {
   app.use(route.path, route.handler);

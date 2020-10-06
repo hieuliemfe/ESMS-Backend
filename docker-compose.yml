@@ -18,7 +18,6 @@ services:
     depends_on:
       - esmsdb
     image: adminer
-    container_name: adminer
     restart: always
     environment:
       ADMINER_DEFAULT_DB_HOST: esmsdb:3306
@@ -26,5 +25,14 @@ services:
       ADMINER_DESIGN: nette
     ports:
       - "8080:8080"
+
+  esmsbe:
+    depends_on:
+      - esmsdb
+    build: .
+    image: esmsbe:latest
+    restart: always
+    ports:
+      - "4000:8000"
 volumes:
   dbvol:

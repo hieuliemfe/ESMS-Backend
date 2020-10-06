@@ -41,7 +41,7 @@ fs.readdirSync(__dirname)
     const model = sequelize.import(path.join(__dirname, file));
     db[model.name] = model;
   });
-
+//import models before starting app
 const context = require.context('.', true, /^\.\/(?!index\.js).*\.js$/, 'sync')
 context.keys().map(context).forEach(({ default: module }) => {
   const sequelizeModel = module(sequelize, Sequelize);
