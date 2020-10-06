@@ -83,10 +83,10 @@ router.post('/bulk-register', fileUpload.single("file"), UserController.bulk_reg
 *   post:
 *     tags:
 *       - Root
-*     name: Bulk register
-*     summary: Register a list of users based on an Excel file.
+*     name: Seed data
+*     summary: Seed data.
 *     consumes:
-*       - multipart/form-data
+*       - application/json
 *     parameters:
 *         -in: formData
 *         schema:
@@ -99,7 +99,7 @@ router.post('/bulk-register', fileUpload.single("file"), UserController.bulk_reg
 *       200:
 *         description: List of users is added into the DB.
 *       401:
-*         description: Bad user(s) in the file
+*         description: Bad data
 */
 router.post('/seed', UserController.seed.post);
 /**
