@@ -25,8 +25,8 @@ export default function (sequelize, DataTypes) {
   });
   Session.associate = function (models) {
     models.Session.hasMany(models.Section, {
-      foreignKey: 'section_id'
+      foreignKey: 'session_id'
     });
-    return Session;
   }
+  return Session;
 };
