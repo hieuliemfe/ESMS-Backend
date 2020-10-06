@@ -9,7 +9,7 @@ const {
 } = publicRuntimeConfig;
 
 export default {
-  development: {
+  dev: {
     databaseUrl: DATABASE_URL,
     database: MYSQL_DB,
     username: MYSQL_USER,
@@ -22,7 +22,7 @@ export default {
     // dialectOptions: { ssl: true },
   },
 
-  production: {
+  prod: {
     databaseUrl: DATABASE_URL,
     database: MYSQL_DB,
     username: MYSQL_USER,

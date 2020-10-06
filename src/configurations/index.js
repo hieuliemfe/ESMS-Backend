@@ -1,8 +1,8 @@
 import dotenv from 'dotenv'
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+dotenv.config({ path: `.env${process.env.NODE_ENV ? '.' + process.env.NODE_ENV : ''}` });
 
 const publicRuntimeConfig = {
-  NODE_ENV: process.env.NODE_ENV || 'production',
+  NODE_ENV: process.env.NODE_ENV || 'dev',
 
   DATABASE_URL: process.env.DATABASE_URL,
 

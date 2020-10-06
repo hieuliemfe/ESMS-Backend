@@ -30,7 +30,7 @@ services:
     depends_on:
       - esmsdb
     build: .
-    image: esmsbe:latest
+    image: esmsbe:devlocal
     restart: always
     ports:
       - "4000:8000"
