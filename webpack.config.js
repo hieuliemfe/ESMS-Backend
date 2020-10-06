@@ -41,6 +41,9 @@ const config = {
   resolve: { modules: ["node_modules"] },
   // Development Tools (Map Errors To Source File)
   devtool: "source-map",
+  optimization: {
+    nodeEnv: false
+  },
 };
 // Exports
 module.exports = config;
