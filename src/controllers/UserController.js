@@ -4,7 +4,7 @@ import models from '../db/models/index';
 import status from 'http-status';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import Op from "sequelize";
+import {Op} from "sequelize";
 import validationResult from 'express-validator';
 import url from 'url';
 import readXlsxFile from "read-excel-file/node";
@@ -265,8 +265,8 @@ export default {
             //RoleID + isDeleted
             whereCondition = {
               [Op.or]: [
-                { username: { [Op.iLike]: '%' + query + '%' } },
-                { fullname: { [Op.iLike]: '%' + query + '%' } }
+                { username: { [Op.like]: '%' + query + '%' } },
+                { fullname: { [Op.like]: '%' + query + '%' } }
               ],
               role_id: roleID,
               is_deleted: isDeleted,
@@ -275,8 +275,8 @@ export default {
             //RoleID only
             whereCondition = {
               [Op.or]: [
-                { username: { [Op.iLike]: '%' + query + '%' } },
-                { fullname: { [Op.iLike]: '%' + query + '%' } }
+                { username: { [Op.like]: '%' + query + '%' } },
+                { fullname: { [Op.like]: '%' + query + '%' } }
               ],
               role_id: roleID,
             }
@@ -285,7 +285,7 @@ export default {
           //isDeleted only
           whereCondition = {
             [Op.or]: [
-              { username: { [Op.iLike]: '%' + query + '%' } },
+              { username: { [Op.like]: '%' + query + '%' } },
               { fullname: { [Op.iLike]: '%' + query + '%' } }
             ],
             is_deleted: isDeleted,
@@ -294,8 +294,8 @@ export default {
           //username & fullname only
           whereCondition = {
             [Op.or]: [
-              { username: { [Op.iLike]: '%' + query + '%' } },
-              { fullname: { [Op.iLike]: '%' + query + '%' } }
+              { username: { [Op.like]: '%' + query + '%' } },
+              { fullname: { [Op.like]: '%' + query + '%' } }
             ],
           }
         }
