@@ -7,15 +7,15 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV ? process.env.NODE_ENV : "development";
 
 const config = configJson[env];
+console.log('CONFIG:', config);
 const db = {};
 
 let sequelize;
-console.log(config.databaseUrl);
 if (config.databaseUrl) {
-  // the application is executed on Heroku ... use the postgres database
+  // the application is executed on Heroku ... use the mysql database
   sequelize = new Sequelize(config.databaseUrl, {
-    dialect: "postgres",
-    protocol: "postgres",
+    dialect: "mysql",
+    protocol: "mysql",
     ssl: true,
     dialectOptions: { ssl: true },
     logging: true //false
@@ -24,7 +24,7 @@ if (config.databaseUrl) {
   sequelize = new Sequelize(config.database, config.username, config.password, {
     host: config.host,
     port: config.port,
-    dialect: "postgres",
+    dialect: "mysql",
     // ssl: true,
     // dialectOptions: { ssl: true },
     logging: console.log
@@ -41,6 +41,12 @@ fs.readdirSync(__dirname)
     const model = sequelize.import(path.join(__dirname, file));
     db[model.name] = model;
   });
+
+const context = require.context('.', true, /^\.\/(?!index\.js).*\.js$/, 'sync')
+context.keys().map(context).forEach(({ default: module }) => {
+  const sequelizeModel = module(sequelize, Sequelize);
+  db[sequelizeModel.name] = sequelizeModel;
+})
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
