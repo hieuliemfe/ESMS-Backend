@@ -4,7 +4,7 @@ import models from '../db/models/index';
 import status from 'http-status';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import {Op} from "sequelize";
+import { Op } from "sequelize";
 import validationResult from 'express-validator';
 import url from 'url';
 import readXlsxFile from "read-excel-file/node";
@@ -24,16 +24,22 @@ export default {
           where: {
             username: req.body.username,
           },
-          attributes: ['username', 'password', 'id'],
+          include: [{
+            model: models.Role, as: "Role"
+          }],
+          attributes: ['username', 'password', 'roleId'],
         });
         if (!user) throw new DefaultError(status.BAD_REQUEST, 'Invalid Username or password');
         const isValidPassword = bcrypt.compareSync(req.body.password, user.password);
         if (!isValidPassword) throw new DefaultError(status.BAD_REQUEST, 'Invalid Username or password');
-        const { id: userId, username, roleName = 'admin' } = user;
-        const token = jwt.sign({ userId, username, roleName }, JWT_SECRET);
+        const { id: userId, username, roleName = user.Role.roleName} = user;
+        const token = jwt.sign({ userId, username,roleName }, JWT_SECRET);
         return res.status(status.OK).send({
           status: true,
-          message: "Login successfully.",
+          message: {
+            "username": user.username,
+            "roleName": user.Role.roleName,
+          },
           token
         });
       } catch (error) {
@@ -109,7 +115,7 @@ export default {
             createdAt: new Date(),
             updatedAt: new Date()
           }
-    
+
         ])
           .then((err) => {
             if (err) {
