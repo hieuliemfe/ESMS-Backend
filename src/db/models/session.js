@@ -5,12 +5,16 @@ export default function (sequelize, DataTypes) {
     sessionStart: {
       type: DataTypes.DATE,
       allowNull: false,
-      field: 'section_start'
+      field: 'session_start'
     },
     sessionEnd: {
       type: DataTypes.DATE,
       allowNull: false,
-      field: 'section_end'
+      field: 'session_end'
+    },
+    userId: {
+      type: DataTypes.UUID,
+      field: 'user_id',
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -24,9 +28,10 @@ export default function (sequelize, DataTypes) {
     tableName: 'session',
   });
   Session.associate = function (models) {
-    models.Session.hasMany(models.Section, {
+    models.Session.hasMany(models.Period, {
       foreignKey: 'session_id'
     });
+    Session.belongsTo(models.User, { foreignKey: 'user_id', as: 'User' });
   }
   return Session;
 };

@@ -2,7 +2,6 @@
 
 export default function (sequelize, DataTypes) {
   var Emotion = sequelize.define('Emotion', {
-
     emotionName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -21,8 +20,8 @@ export default function (sequelize, DataTypes) {
   });
 
   Emotion.associate = function (models) {
-    models.Emotion.hasMany(models.Section, {
-      foreignKey: 'section_id'
+    models.Emotion.hasMany(models.Period, {
+      foreignKey: 'emotion_id'
     });
   }
   return Emotion;

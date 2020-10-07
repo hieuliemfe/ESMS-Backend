@@ -2,7 +2,7 @@ import RootRoutes from './RootRoutes';
 import UserRoutes from './UserRoutes';
 import FaceRoutes from './FaceRoutes';
 import EmailRoutes from './EmailRoutes';
-
+import SessionRoutes from './SessionRoutes';
 const Router = [
   {
     path: '/',
@@ -19,6 +19,10 @@ const Router = [
   {
     path: '/emails',
     handler: EmailRoutes,
+  },
+  {
+    path: '/sessions',
+    handler: SessionRoutes,
   },
 ];
 
