@@ -48,12 +48,12 @@ app.get('/swagger.json', function(req, res) {
   res.send(swaggerSpec);
 });
 
-app.use(
-  cors({
-    origin: FRONTEND_URL,
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: FRONTEND_URL,
+//     credentials: true,
+//   })
+// );
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
