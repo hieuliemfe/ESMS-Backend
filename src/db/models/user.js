@@ -108,6 +108,7 @@ export default function (sequelize, DataTypes) {
   });
 
   User.associate = function (models) {
+    User.belongsTo(models.Role, {foreignKey: 'role_id', as: 'Role'});
     // models.User.hasMany(models.Post, {
     //   foreignKey: 'user_id'
     // });
