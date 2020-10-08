@@ -12,16 +12,16 @@ export default {
     async post(req, res, next) {
       try {
 
-        const { sessionStart, sessionEnd, username } = req.body;
-        const validUsername = await models.User.findOne({
-          where: { username: username },
-          attributes: ['id', 'username']
+        const { sessionStart, sessionEnd, employeeCode } = req.body;
+        const valideEmployeeCode = await models.User.findOne({
+          where: { employeeCode: employeeCode },
+          attributes: ['id', 'employeeCode']
         });
-        if (!validUsername) {
-          throw new DefaultError(status.BAD_REQUEST, 'Invalid username!');
+        if (!valideEmployeeCode) {
+          throw new DefaultError(status.BAD_REQUEST, 'Invalid employeeCode!');
         }
         else {
-          const userId = validUsername.id
+          const userId = valideEmployeeCode.id
           await models.Session.create({
             userId,
             sessionStart,
@@ -81,8 +81,8 @@ export default {
           whereCondition = null;
         } else {
           const user = await models.User.findOne({
-            where: { username: query },
-            attributes: ['id', 'username']
+            where: { employeeCode: query },
+            attributes: ['id', 'employeeCode']
           });
           if (user) {
             whereCondition = {
