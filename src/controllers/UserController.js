@@ -22,22 +22,22 @@ export default {
       try {
         const user = await models.User.findOne({
           where: {
-            username: req.body.username,
+            employeeCode: req.body.employeeCode,
           },
           include: [{
             model: models.Role, as: "Role"
           }],
-          attributes: ['username', 'password', 'roleId'],
+          attributes: ['employeeCode', 'password', 'roleId'],
         });
-        if (!user) throw new DefaultError(status.BAD_REQUEST, 'Invalid Username or password');
+        if (!user) throw new DefaultError(status.BAD_REQUEST, 'Invalid employeeCode or password');
         const isValidPassword = bcrypt.compareSync(req.body.password, user.password);
-        if (!isValidPassword) throw new DefaultError(status.BAD_REQUEST, 'Invalid Username or password');
-        const { id: userId, username, roleName = user.Role.roleName} = user;
-        const token = jwt.sign({ userId, username,roleName }, JWT_SECRET);
+        if (!isValidPassword) throw new DefaultError(status.BAD_REQUEST, 'Invalid employeeCode or password');
+        const { id: userId, employeeCode, roleName = user.Role.roleName } = user;
+        const token = jwt.sign({ userId, employeeCode, roleName }, JWT_SECRET);
         return res.status(status.OK).send({
           status: true,
           message: {
-            "username": user.username,
+            "employeeCode": user.employeeCode,
             "roleName": user.Role.roleName,
           },
           token
@@ -61,7 +61,7 @@ export default {
           let users = [];
           rows.forEach((row) => {
             let user = {
-              username: row[1],
+              employeeCode: row[1],
               password: "password",
               email: row[2],
               fullname: row[3],
@@ -123,54 +123,54 @@ export default {
               return
             };
           });
-          await models.Emotion.bulkCreate([
-            {
-              emotionName: 'Angry',
-              createdAt: new Date(),
-              updatedAt: new Date()
-            },
-            {
-              emotionName: 'Disgusted',
-              createdAt: new Date(),
-              updatedAt: new Date()
-            },
-            {
-              emotionName: 'Fearful',
-              createdAt: new Date(),
-              updatedAt: new Date()
-            },
-            {
-              emotionName: 'Happy',
-              createdAt: new Date(),
-              updatedAt: new Date()
-            },
-            {
-              emotionName: 'Neutral',
-              createdAt: new Date(),
-              updatedAt: new Date()
-            },
-            {
-              emotionName: 'Sad',
-              createdAt: new Date(),
-              updatedAt: new Date()
-            },
-            {
-              emotionName: 'Suprised',
-              createdAt: new Date(),
-              updatedAt: new Date()
-            },
-          ])
-            .then((err) => {
-              if (err) {
-                console.error(err)
-                return
-              };
-            });
+        await models.Emotion.bulkCreate([
+          {
+            emotionName: 'Angry',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            emotionName: 'Disgusted',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            emotionName: 'Fearful',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            emotionName: 'Happy',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            emotionName: 'Neutral',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            emotionName: 'Sad',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            emotionName: 'Suprised',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+        ])
+          .then((err) => {
+            if (err) {
+              console.error(err)
+              return
+            };
+          });
         await models.User.bulkCreate(
           [
             {
               id: '468ab892-7518-4520-8243-db1c1b9607dd',
-              username: 'AnhBui',
+              employeeCode: 'AnhBui',
               fullname: 'Bui Nguyen Phuong Anh',
               password: 'password',
               email: 'anhbui@gmail.com',
@@ -183,48 +183,49 @@ export default {
             },
             {
               id: '9903c282-06ed-48fe-9607-76e7903f6b72',
-              username: 'HieuLiem',
+              employeeCode: 'HieuLiem',
               fullname: 'Nguyen Hieu Liem',
               password: 'password',
               email: 'hieuliem@gmail.com',
               phoneNumber: '0321456789',
               isSubscribed: true,
-              avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_binh.jpg?alt=media&token=57fb0d7f-4692-4560-b29c-5275e33d6ad6',
+              avatarUrl: 'https://avatars1.githubusercontent.com/u/64410838?s=400&u=6634d5bf03b3a155b6be5e26c3db3fbdb316e597&v=4',
               createdAt: new Date(),
               updatedAt: new Date(),
               roleId: 1
             },
             {
               id: 'bfad3537-875c-4bf2-bb97-41c00b912d76',
-              username: 'ThuCao',
+              employeeCode: 'ThuCao',
               fullname: 'Cao Thanh Thu',
               password: 'password',
               email: 'thucao@gmail.com',
               phoneNumber: '0987654321',
               isSubscribed: true,
-              avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_none.png?alt=media&token=99b44006-6136-4c11-8f8c-3f82d65483e6',
+              avatarUrl: 'https://avatars0.githubusercontent.com/u/45757676?s=400&u=2c550d11c1df70be4bc2a9edde0bf1514acd759e&v=4',
               createdAt: new Date(),
               updatedAt: new Date(),
               roleId: 2
             },
             {
               id: 'ef71e125-37b5-4a5f-87e1-fdda43a4ccb2',
-              username: 'AnhNguyen',
+              employeeCode: 'AnhNguyen',
               fullname: 'Nguyen Tuan Anh',
               password: 'password',
               email: 'nguyentuananh@gmail.com',
               phoneNumber: '0456123789',
               isSubscribed: true,
-              avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_none.png?alt=media&token=99b44006-6136-4c11-8f8c-3f82d65483e6',
+              avatarUrl: 'https://avatars1.githubusercontent.com/u/7835384?s=460&u=78fb0bd55818493d330277e648eb57bdc67c66df&v=4',
               createdAt: new Date(),
               updatedAt: new Date(),
               roleId: 3
             },
             {
               id: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
-              username: 'KhangLe',
+              employeeCode: 'KhangLe',
               password: '$2a$10$rc8ARtv74lGR.SUI/CgUxuox3qjSri307g8g2k2BSWrzd0nTB2QRK',
               fullname: 'Le Nguyen An Khang',
+              phoneNumber: '0456123789',
               email: 'khangle@email.com',
               is_subscribed: true,
               avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_none.png?alt=media&token=99b44006-6136-4c11-8f8c-3f82d65483e6',
@@ -257,19 +258,19 @@ export default {
         if (!errors.isEmpty()) {
           throw new DefaultError(status.BAD_REQUEST, 'Please enter valid values!', errors.array());
         }
-        const { email, username, password, confirmPassword } = req.body;
+        const { email, employeeCode, password, confirmPassword } = req.body;
         const duplicateUser = await models.User.findOne({
-          where: { username },
-          attributes: ['username']
+          where: { employeeCode },
+          attributes: ['employeeCode']
         });
         if (duplicateUser) {
-          throw new DefaultError(status.BAD_REQUEST, 'This username is taken!');
+          throw new DefaultError(status.BAD_REQUEST, 'This employeeCode is taken!');
         }
 
         if (!duplicateUser) {
           await models.User.create({
             email,
-            username,
+            employeeCode,
             password,
             roleId: 2,
           });
@@ -289,7 +290,7 @@ export default {
       try {
         const user = await models.User.findOne({
           where: {
-            username: req.params.username,
+            employeeCode: req.params.employeeCode,
           },
         });
         if (!user) throw new DefaultError(status.BAD_REQUEST, 'Invalid user');
@@ -326,7 +327,7 @@ export default {
             //RoleID + isDeleted
             whereCondition = {
               [Op.or]: [
-                { username: { [Op.like]: '%' + query + '%' } },
+                { employeeCode: { [Op.like]: '%' + query + '%' } },
                 { fullname: { [Op.like]: '%' + query + '%' } }
               ],
               role_id: roleID,
@@ -336,7 +337,7 @@ export default {
             //RoleID only
             whereCondition = {
               [Op.or]: [
-                { username: { [Op.like]: '%' + query + '%' } },
+                { employeeCode: { [Op.like]: '%' + query + '%' } },
                 { fullname: { [Op.like]: '%' + query + '%' } }
               ],
               role_id: roleID,
@@ -346,16 +347,16 @@ export default {
           //isDeleted only
           whereCondition = {
             [Op.or]: [
-              { username: { [Op.like]: '%' + query + '%' } },
+              { employeeCode: { [Op.like]: '%' + query + '%' } },
               { fullname: { [Op.like]: '%' + query + '%' } }
             ],
             is_deleted: isDeleted,
           }
         } else {
-          //username & fullname only
+          //employeeCode & fullname only
           whereCondition = {
             [Op.or]: [
-              { username: { [Op.like]: '%' + query + '%' } },
+              { employeeCode: { [Op.like]: '%' + query + '%' } },
               { fullname: { [Op.like]: '%' + query + '%' } }
             ],
           }
@@ -364,7 +365,7 @@ export default {
         const users = await models.User.findAll({
           attributes: [
             'id',
-            'username',
+            'employeeCode',
             'email',
             'fullname',
             'phoneNumber',
@@ -400,7 +401,7 @@ export default {
         const user = await models.User.findOne({
           attributes: [
             'id',
-            'username',
+            'employeeCode',
             'email',
             'fullname',
             'phoneNumber',
@@ -411,7 +412,7 @@ export default {
             'avatarUrl'
           ],
           where: {
-            username: req.params.username
+            employeeCode: req.params.employeeCode
           }
         },
         );
@@ -502,7 +503,7 @@ export default {
             { avatarUrl: newAvatarURL },
             {
               where: {
-                username: req.params.id
+                employeeCode: req.params.id
               }
             }
           );
@@ -532,7 +533,7 @@ export default {
             { avatarUrl: newAvatarURL },
             {
               where: {
-                username: req.params.id
+                employeeCode: req.params.id
               }
             }
           );

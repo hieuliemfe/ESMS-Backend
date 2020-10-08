@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
  *  properties:
  *    id:
  *      type: integer
- *    username:
+ *    employeeCode:
  *      type: string
  *    password:
  *      type: string
@@ -33,10 +33,10 @@ export default function (sequelize, DataTypes) {
       primaryKey: true,
       field: 'id',
     },
-    username: {
+    employeeCode: {
       type: DataTypes.STRING,
       allowNull: false,
-      field: 'username'
+      field: 'employee_code'
     },
     password: {
       type: DataTypes.STRING,
