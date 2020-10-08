@@ -254,10 +254,6 @@ export default {
   register: {
     async post(req, res, next) {
       try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-          throw new DefaultError(status.BAD_REQUEST, 'Please enter valid values!', errors.array());
-        }
         const { email, employeeCode, password, confirmPassword } = req.body;
         const duplicateUser = await models.User.findOne({
           where: { employeeCode },
