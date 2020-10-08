@@ -134,7 +134,7 @@ router.post('/seed', UserController.seed.post);
 */
 router.post('/register', [
   check('email', 'Invalid Email').isEmail().normalizeEmail(),
-  check('username', 'Username must be at least 5 characters').isLength({ min: 5 }),
+  check('employeeCode', 'employeeCode must be at least 5 characters').isLength({ min: 5 }),
   check('password', 'Password must be at least 5 characters').isLength({ min: 5 }),
   check('confirmPassword', 'Password have to match Confirm Password').custom((value, { req, loc, path }) => {
     if (value !== req.body.confirmPassword) {
