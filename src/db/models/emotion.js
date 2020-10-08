@@ -1,11 +1,11 @@
 /* jshint indent: 1 */
 
 export default function (sequelize, DataTypes) {
-  const Role = sequelize.define('Role', {
-    roleName: {
+  var Emotion = sequelize.define('Emotion', {
+    emotionName: {
       type: DataTypes.STRING,
       allowNull: false,
-      field: 'role_name'
+      field: 'emotion_name'
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -14,15 +14,15 @@ export default function (sequelize, DataTypes) {
     updatedAt: {
       type: DataTypes.DATE,
       field: 'updated_at'
-    }
+    },
   }, {
-    tableName: 'role',
+    tableName: 'emotion',
   });
 
-  Role.associate = function (models) {
-    models.Role.hasMany(models.User, {
-      foreignKey: "role_id"
+  Emotion.associate = function (models) {
+    models.Emotion.hasMany(models.Period, {
+      foreignKey: 'emotion_id'
     });
   }
-  return Role;
+  return Emotion;
 };
