@@ -218,7 +218,7 @@ export default {
               avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_none.png?alt=media&token=99b44006-6136-4c11-8f8c-3f82d65483e6',
               createdAt: new Date(),
               updatedAt: new Date(),
-              roleId: 2
+              roleId: 3
             },
             {
               id: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
