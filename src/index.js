@@ -16,6 +16,7 @@ global.__basedir = __dirname + "/..";
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 var swaggerDefinition = {
+  openapi: '3.0.1',
   info: {
     title: 'ESMS Swagger API',
     version: '1.0.0',
@@ -23,6 +24,18 @@ var swaggerDefinition = {
   },
   host: 'localhost:4000',
   basePath: '/',
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      }
+    }
+  },
+  security: [{
+    bearerAuth: []
+  }]
 };
 // options for the swagger docs
 var options = {
@@ -38,17 +51,19 @@ db.sequelize.authenticate()
   })
   .catch(error => {
     console.error('Unable to connect to the database:', error.message);
+    console.warn('Killing this PROCESS in progress...');
+    process.exit(1);
   });
-db.sequelize.sync({ force: false, logging: false });
+db.sequelize.sync({ force: false, logging: false })
 
 const app = express();
 // serve swagger
-app.get('/swagger.json', function(req, res) {
+app.get('/swagger.json', function (req, res) {
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerSpec);
 });
 
-app.use(cors({credentials: true, origin: true}));
+app.use(cors({ credentials: true, origin: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
