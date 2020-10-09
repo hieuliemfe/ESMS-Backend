@@ -8,12 +8,13 @@
 
 #### 2. Run the docker-compose file:
 - On the terminal, type `sudo docker-compose up --build`.
+- Wait until all 3 services are up and running.
 
 #### 3. Seed the data:
 - Access `localhost:4000/swagger` by a browser.
 - Run the `/seed` API.
 
 #### 4. Verify the seeded data:
-- Access `localhost:8080/swagger` by a browser.
+- Access `localhost:8080` by a browser.
 - Input necesarry info and login.
 - Check the `user` || `role` || `emotion` table to verify.
