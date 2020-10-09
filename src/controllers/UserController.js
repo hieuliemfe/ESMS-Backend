@@ -27,7 +27,7 @@ export default {
           include: [{
             model: models.Role, as: "Role"
           }],
-          attributes: ['employeeCode', 'password', 'roleId'],
+          attributes: ['id','employeeCode', 'password', 'roleId'],
         });
         if (!user) throw new DefaultError(status.BAD_REQUEST, 'Invalid employeeCode or password');
         const isValidPassword = bcrypt.compareSync(req.body.password, user.password);
@@ -223,7 +223,7 @@ export default {
             {
               id: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
               employeeCode: 'KhangLe',
-              password: '$2a$10$rc8ARtv74lGR.SUI/CgUxuox3qjSri307g8g2k2BSWrzd0nTB2QRK',
+              password: 'password',
               fullname: 'Le Nguyen An Khang',
               phoneNumber: '0456123789',
               email: 'khangle@email.com',
@@ -439,7 +439,7 @@ export default {
             'is_subscribed',
           ],
           where: {
-            id: req.params.id
+            employeeCode: req.params.employeeCode
           }
         },
         );
@@ -448,7 +448,7 @@ export default {
           { isSubscribed: newStatus },
           {
             where: {
-              id: req.params.id
+              employeeCode: req.params.employeeCode
             }
           }
         );
@@ -470,7 +470,7 @@ export default {
           { isDeleted: true },
           {
             where: {
-              id: req.params.id
+              employeeCode: req.params.employeeCode
             }
           }
         );
@@ -479,36 +479,6 @@ export default {
             success: true,
             message: result
           });
-      } catch (error) {
-        next(error)
-      }
-    }
-  },
-  update: {
-    async put(req, res, next) {
-      try {
-        const newAvatarURL = req.body.avatarUrl;
-        if (!newAvatarURL.includes('https://') && !newAvatarURL.includes('http://')) {
-          res.status(status.OK)
-            .send({
-              success: false,
-              message: "Please input valid URL!"
-            });
-        } else {
-          const result = await models.User.update(
-            { avatarUrl: newAvatarURL },
-            {
-              where: {
-                employeeCode: req.params.id
-              }
-            }
-          );
-          res.status(status.OK)
-            .send({
-              success: true,
-              message: result
-            });
-        }
       } catch (error) {
         next(error)
       }

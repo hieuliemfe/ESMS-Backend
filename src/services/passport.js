@@ -16,10 +16,10 @@ export default passport => {
     models.User.findOne({
       attributes: [
         'id',
-        'username',
+        'employeeCode',
         'email',
         'fullname',
-        'role_id',
+        'roleId',
       ],
       where: {
         id: jwt_payload.userId
