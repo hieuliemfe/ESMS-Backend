@@ -9,7 +9,7 @@ import express from 'express';
 import UserController from '../controllers/UserController';
 import { check, body } from 'express-validator';
 let router = express.Router();
-import fileUpload from "../middlewares/fileUpload.js";
+
 /**
 * @swagger
 * /login:
@@ -17,66 +17,38 @@ import fileUpload from "../middlewares/fileUpload.js";
 *     tags:
 *       - Root
 *     name: Login
-*     summary: Login a user
+*     summary: Log an user into the system.
 *     consumes:
 *       - application/json
-*     parameters:
-*       - name: body
-*         in: body
-*         schema:
-*           type: object
-*           properties:
-*             username:
-*               type: string
-*             password:
-*               type: string
-*               format: password
-*         required:
-*           - username
-*           - password
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               employeeCode:
+*                 type: string
+*               password:
+*                 type: string
 *     responses:
 *       200:
 *         description: Login Successful and return a JWT.
 *       401:
-*         description: Bad username, not found in db
+*         description: Bad employeeCode, not found in db
 *       403:
-*         description: Username and password don't match
+*         description: employeeCode and password don't match
 */
 
 router.post('/login', [
-  body('username')
+  body('employeeCode')
     .not().isEmpty()
     .trim()
     .escape(),
   body('password')
     .not().isEmpty()
 ], UserController.login.post);
-/**
-* @swagger
-* /bulk-register:
-*   post:
-*     tags:
-*       - Root
-*     name: Bulk register
-*     summary: Register a list of users based on an Excel file.
-*     consumes:
-*       - multipart/form-data
-*     parameters:
-*         -in: formData
-*         schema:
-*           type: object
-*           properties:
-*             file:
-*               type: file
-*         required:
-*     responses:
-*       200:
-*         description: List of users is added into the DB.
-*       401:
-*         description: Bad user(s) in the file
-*/
 
-router.post('/bulk-register', fileUpload.single("file"), UserController.bulk_register.post);
 /**
 * @swagger
 * /seed:
@@ -97,33 +69,26 @@ router.post('/seed', UserController.seed.post);
 /**
 * @swagger
 * /register:
-*   post:
+*    post:
 *     tags:
 *       - Root
-*     name: Register
-*     summary: Register a user
-*     consumes:
-*       - application/json
-*     parameters:
-*       - name: body
-*         in: body
-*         schema:
-*           type: object
-*           properties:
-*             username:
-*               type: string
-*             email:
-*               type: string
-*               format: email
-*             password:
-*               type: string
-*               format: password
-*             confirmPassword:
-*               type: string
-*               format: password
-*         required:
-*           - username
-*           - password
+*     name: Regiser user
+*     summary: Creates a user.
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               employeeCode:
+*                 type: string
+*               email:
+*                 type: string
+*               password:
+*                 type: string
+*               confirmPassword:
+*                 type: string
 *     responses:
 *       201:
 *         description: Register successful.
