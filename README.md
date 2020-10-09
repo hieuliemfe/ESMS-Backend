@@ -3,7 +3,7 @@
 ### Cleaning & seeding the data when new codes are merged:
 
 #### 1. In`src/index.js` file:
-- Set the `force` value of db.sequelize.sync({**force: false**, logging: false }) to `true`.
+- Set the `force` value of db.sequelize.sync({**force: false**, logging: false }) to **true**.
 - Save changes.
 
 #### 2. Run the docker-compose file:
