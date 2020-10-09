@@ -16,4 +16,4 @@
 #### 4. Verify the seeded data:
 - Access `localhost:8080/swagger` by a browser.
 - Input necesarry info and login.
-- Check the `user` || `role` || `emotion` to verify.
+- Check the `user` || `role` || `emotion` table to verify.
