@@ -151,29 +151,27 @@ router.delete('/:employeeCode', passport.authenticate('jwt', {session: false}), 
 
 /**
 * @swagger
-* /bulk-register:
+* /users/bulk-register:
 *   post:
 *     tags:
 *       - Users
 *     name: Bulk register
 *     summary: Register a list of users based on an Excel file.
-*     consumes:
-*       - multipart/form-data
-*     parameters:
-*         -in: formData
-*         schema:
-*           type: object
-*           properties:
-*             file:
-*               type: file
-*         required:
+*     requestBody:
+*           content:
+*             multipart/form-data:
+*               schema:
+*                 type: object
+*                 properties:
+*                   file:
+*                     type: string
+*                     format: binary
 *     responses:
 *       200:
 *         description: List of users is added into the DB.
 *       401:
 *         description: Bad user(s) in the file
 */
-
-router.post('/bulk-register', fileUpload.single("file"), Controller.bulk_register.post);
+router.post('/bulk-register', passport.authenticate('jwt', {session: false}), isManager,fileUpload.single("file"), Controller.bulk_register.post);
 
 export default router;
