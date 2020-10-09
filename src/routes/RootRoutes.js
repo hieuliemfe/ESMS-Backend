@@ -51,23 +51,6 @@ router.post('/login', [
 
 /**
 * @swagger
-* /seed:
-*   post:
-*     tags:
-*       - Root
-*     name: Seed data
-*     summary: Seed data.
-*     consumes:
-*       - application/json
-*     responses:
-*       200:
-*         description: List of users is added into the DB.
-*       401:
-*         description: Bad data
-*/
-router.post('/seed', UserController.seed.post);
-/**
-* @swagger
 * /register:
 *    post:
 *     tags:
