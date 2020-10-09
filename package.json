@@ -25,6 +25,7 @@
     "mysql2": "^2.2.5",
     "nodemailer": "^6.4.11",
     "nodemon-webpack-plugin": "^4.3.2",
+    "openapi-types": "^7.0.1",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "path": "^0.12.7",
