@@ -5,6 +5,7 @@ import status from 'http-status';
 import cors from 'cors';
 import { handleError } from './utils/errorHandler';
 import db from './db/models';
+import seed from './db/seeders/index.js';
 import passport from 'passport';
 import publicRuntimeConfig from './configurations';
 const FRONTEND_URL = publicRuntimeConfig.FRONTEND_URL;
@@ -54,8 +55,12 @@ db.sequelize.authenticate()
     console.warn('Killing this PROCESS in progress...');
     process.exit(1);
   });
-db.sequelize.sync({ force: false, logging: false })
-
+async function syncDb() {
+  //{force: true} when db structure is changed.
+  await db.sequelize.sync({ force: false, logging: false });
+  await seed();
+}
+syncDb();
 const app = express();
 // serve swagger
 app.get('/swagger.json', function (req, res) {
