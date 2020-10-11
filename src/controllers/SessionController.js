@@ -89,7 +89,7 @@ export default {
               employeeId: employee.id
             }
           }
-          else{
+          else {
             whereCondition = {
               employeeId: query
             }
