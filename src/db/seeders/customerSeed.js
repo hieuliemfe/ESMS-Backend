@@ -29,7 +29,6 @@ export default [
         avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_none.png?alt=media&token=99b44006-6136-4c11-8f8c-3f82d65483e6',
         createdAt: new Date(),
         updatedAt: new Date(),
-        roleId: 1
     },
     {
         id: '46e1b984-c3b6-4746-bc97-8d152b116719',
@@ -40,6 +39,5 @@ export default [
         avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_none.png?alt=media&token=99b44006-6136-4c11-8f8c-3f82d65483e6',
         createdAt: new Date(),
         updatedAt: new Date(),
-        roleId: 1
     },
 ]
