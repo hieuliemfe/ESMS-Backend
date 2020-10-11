@@ -20,7 +20,7 @@ export default {
   login: {
     async post(req, res, next) {
       try {
-        const user = await models.User.findOne({
+        const employee = await models.Employee.findOne({
           where: {
             employeeCode: req.body.employeeCode,
           },
@@ -29,16 +29,16 @@ export default {
           }],
           attributes: ['id','employeeCode', 'password', 'roleId'],
         });
-        if (!user) throw new DefaultError(status.BAD_REQUEST, 'Invalid employeeCode or password');
-        const isValidPassword = bcrypt.compareSync(req.body.password, user.password);
+        if (!employee) throw new DefaultError(status.BAD_REQUEST, 'Invalid employeeCode or password');
+        const isValidPassword = bcrypt.compareSync(req.body.password, employee.password);
         if (!isValidPassword) throw new DefaultError(status.BAD_REQUEST, 'Invalid employeeCode or password');
-        const { id: userId, employeeCode, roleName = user.Role.roleName } = user;
-        const token = jwt.sign({ userId, employeeCode, roleName }, JWT_SECRET);
+        const { id: employeeId, employeeCode, roleName = employee.Role.roleName } = employee;
+        const token = jwt.sign({ employeeId, employeeCode, roleName }, JWT_SECRET);
         return res.status(status.OK).send({
           status: true,
           message: {
-            "employeeCode": user.employeeCode,
-            "roleName": user.Role.roleName,
+            "employeeCode": employee.employeeCode,
+            "roleName": employee.Role.roleName,
           },
           token
         });
@@ -58,9 +58,9 @@ export default {
         await readXlsxFile(path).then((rows) => {
           // skip header
           rows.shift();
-          let users = [];
+          let employees = [];
           rows.forEach((row) => {
-            let user = {
+            let employee = {
               employeeCode: row[1],
               password: "password",
               email: row[2],
@@ -68,9 +68,9 @@ export default {
               phoneNumber: row[4],
               roleId: 2,
             };
-            users.push(user);
+            employees.push(employee);
           });
-          models.User.bulkCreate(users)
+          models.Employee.bulkCreate(employees)
             .then(() => {
               fs.unlink(path, (err) => {
                 if (err) {
@@ -101,16 +101,16 @@ export default {
     async post(req, res, next) {
       try {
         const { email, employeeCode, password, confirmPassword } = req.body;
-        const duplicateUser = await models.User.findOne({
+        const duplicateEmployee = await models.Employee.findOne({
           where: { employeeCode },
           attributes: ['employeeCode']
         });
-        if (duplicateUser) {
+        if (duplicateEmployee) {
           throw new DefaultError(status.BAD_REQUEST, 'This employeeCode is taken!');
         }
 
-        if (!duplicateUser) {
-          await models.User.create({
+        if (!duplicateEmployee) {
+          await models.Employee.create({
             email,
             employeeCode,
             password,
@@ -130,15 +130,15 @@ export default {
   profile: {
     async get(req, res, next) {
       try {
-        const user = await models.User.findOne({
+        const employee = await models.Employee.findOne({
           where: {
             employeeCode: req.params.employeeCode,
           },
         });
-        if (!user) throw new DefaultError(status.BAD_REQUEST, 'Invalid user');
+        if (!employee) throw new DefaultError(status.BAD_REQUEST, 'Invalid employee');
         return res.status(status.OK).send({
           status: true,
-          user
+          employee
         });
       } catch (error) {
         next(error);
@@ -204,7 +204,7 @@ export default {
           }
         }
 
-        const users = await models.User.findAll({
+        const employees = await models.Employee.findAll({
           attributes: [
             'id',
             'employeeCode',
@@ -228,7 +228,7 @@ export default {
         res.status(status.OK)
           .send({
             status: true,
-            message: users,
+            message: employees,
           });
       } catch
       (error) {
@@ -240,7 +240,7 @@ export default {
   view_one: {
     async get(req, res, next) {
       try {
-        const user = await models.User.findOne({
+        const employee = await models.Employee.findOne({
           attributes: [
             'id',
             'employeeCode',
@@ -258,17 +258,17 @@ export default {
           }
         },
         );
-        if (user == null) {
+        if (employee == null) {
           res.status(status.BAD_REQUEST)
             .send({
               status: false,
-              message: "User not found!",
+              message: "Employee not found!",
             });
         }
         res.status(status.OK)
           .send({
             status: true,
-            message: user,
+            message: employee,
           });
       } catch
       (error) {
@@ -280,7 +280,7 @@ export default {
   set_subscription_status: {
     async put(req, res, next) {
       try {
-        const user = await models.User.findOne({
+        const employee = await models.Employee.findOne({
           attributes: [
             'is_subscribed',
           ],
@@ -289,8 +289,8 @@ export default {
           }
         },
         );
-        const newStatus = !user.dataValues.is_subscribed;
-        const result = await models.User.update(
+        const newStatus = !employee.dataValues.is_subscribed;
+        const result = await models.Employee.update(
           { isSubscribed: newStatus },
           {
             where: {
@@ -312,7 +312,7 @@ export default {
   set_avail_status: {
     async delete(req, res, next) {
       try {
-        const result = await models.User.update(
+        const result = await models.Employee.update(
           { isDeleted: true },
           {
             where: {
@@ -341,7 +341,7 @@ export default {
               message: "Please input valid URL!"
             });
         } else {
-          const result = await models.User.update(
+          const result = await models.Employee.update(
             { avatarUrl: newAvatarURL },
             {
               where: {

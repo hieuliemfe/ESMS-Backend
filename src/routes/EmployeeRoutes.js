@@ -1,12 +1,12 @@
 'use strict';
 
 /**
- * User Route
- * path: /users
+ * Employee Route
+ * path: /employees
  */
 
 import express from 'express';
-import Controller from '../controllers/UserController';
+import Controller from '../controllers/EmployeeController';
 let router = express.Router();
 import fileUpload from "../middlewares/fileUpload.js";
 //auth imports
@@ -16,30 +16,30 @@ import { isManager } from '../middlewares/authorization';
 
 /**
 * @swagger
-* /users:
+* /employees:
 *   get:
 *     tags:
-*       - Users
-*     name: Get all users
-*     summary: Get all users details.
+*       - Employees
+*     name: Get all employees
+*     summary: Get all employees details.
 *     consumes:
 *       - application/json
 *     responses:
 *       200:
-*         description: Displays user details
+*         description: Displays employee details
 *       401:
-*         description: User not found.
+*         description: Employee not found.
 */
 router.get('/', passport.authenticate('jwt', {session: false}), isManager, Controller.view.get);
 
 /**
 * @swagger
-* /users/{employeeCode}:
+* /employees/{employeeCode}:
 *   get:
 *     tags:
-*       - Users
-*     name: Get user details.
-*     summary: Returns a user by an [employee code].
+*       - Employees
+*     name: Get employee details.
+*     summary: Returns a employee by an [employee code].
 *     parameters:
 *       - name: employeeCode
 *         in: path
@@ -53,20 +53,20 @@ router.get('/', passport.authenticate('jwt', {session: false}), isManager, Contr
 *       - application/json
 *     responses:
 *       200:
-*         description: User's details is displayed
+*         description: Employee's details is displayed
 *       404:
-*         description: User not found.
+*         description: Employee not found.
 */
 router.get('/:employeeCode', passport.authenticate('jwt', {session: false}), isManager, Controller.view_one.get);
 
 /**
 * @swagger
-* /users/{employeeCode}/avatar:
+* /employees/{employeeCode}/avatar:
 *   put:
 *     tags:
-*       - Users
-*     name: Update a user's avatar
-*     summary: Update a user's avatar based on an [employee code].
+*       - Employees
+*     name: Update a employee's avatar
+*     summary: Update a employee's avatar based on an [employee code].
 *     consumes:
 *       - application/json
 *     parameters:
@@ -89,20 +89,20 @@ router.get('/:employeeCode', passport.authenticate('jwt', {session: false}), isM
 *                 type: string
 *     responses:
 *       200:
-*         description: User's avatar is updated.
+*         description: Employee's avatar is updated.
 *       404:
-*         description: User not found.
+*         description: Employee not found.
 */
 router.put('/:id/avatar', passport.authenticate('jwt', {session: false}), isManager, Controller.update_avatar_url.put);
 
 /**
 * @swagger
-* /users/{employeeCode}/subscription:
+* /employees/{employeeCode}/subscription:
 *   put:
 *     tags:
-*       - Users
+*       - Employees
 *     name: Update subscription status
-*     summary: Update a user's subscription based on an [employee code].
+*     summary: Update a employee's subscription based on an [employee code].
 *     consumes:
 *       - application/json
 *     parameters:
@@ -116,20 +116,20 @@ router.put('/:id/avatar', passport.authenticate('jwt', {session: false}), isMana
 *           minimum: 1
 *     responses:
 *       200:
-*         description: Updated user's subscription status.
+*         description: Updated employee's subscription status.
 *       401:
-*         description: User not found.
+*         description: Employee not found.
 */
 router.put('/:employeeCode/subscription', passport.authenticate('jwt', {session: false}), isManager, Controller.set_subscription_status.put);
 
 /**
 * @swagger
-* /users/{employeeCode}:
+* /employees/{employeeCode}:
 *   delete:
 *     tags:
-*       - Users
-*     name: Delete a user.
-*     summary: Delete a user based on an [employee code].
+*       - Employees
+*     name: Delete a employee.
+*     summary: Delete a employee based on an [employee code].
 *     parameters:
 *       - name: employeeCode
 *         in: path
@@ -143,20 +143,20 @@ router.put('/:employeeCode/subscription', passport.authenticate('jwt', {session:
 *       - application/json
 *     responses:
 *       200:
-*         description: User's details is deleted
+*         description: Employee's details is deleted
 *       404:
-*         description: User not found.
+*         description: Employee not found.
 */
 router.delete('/:employeeCode', passport.authenticate('jwt', {session: false}), isManager, Controller.set_avail_status.delete);
 
 /**
 * @swagger
-* /users/bulk-register:
+* /employees/bulk-register:
 *   post:
 *     tags:
-*       - Users
+*       - Employees
 *     name: Bulk register
-*     summary: Register a list of users based on an Excel file.
+*     summary: Register a list of employees based on an Excel file.
 *     requestBody:
 *           content:
 *             multipart/form-data:
@@ -168,9 +168,9 @@ router.delete('/:employeeCode', passport.authenticate('jwt', {session: false}), 
 *                     format: binary
 *     responses:
 *       200:
-*         description: List of users is added into the DB.
+*         description: List of employees is added into the DB.
 *       401:
-*         description: Bad user(s) in the file
+*         description: Bad employee(s) in the file
 */
 router.post('/bulk-register', passport.authenticate('jwt', {session: false}), isManager,fileUpload.single("file"), Controller.bulk_register.post);
 

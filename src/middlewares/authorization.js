@@ -8,14 +8,14 @@ export const isAdmin = (req, res, next) => {
   const token = req.headers.authorization.replace('Bearer ', '')
   const tokenDecoded = jwt.decode(token)
 
-  models.User.findOne({
+  models.Employee.findOne({
     attributes: ['roleId', 'isDeleted'],
-    where: { id: tokenDecoded.userId }
-  }).then(user => {
-    if (user) {
-      if (user.isDeleted) throw new DefaultError(status.FORBIDDEN, 'Account is blocked');
+    where: { id: tokenDecoded.employeeId }
+  }).then(employee => {
+    if (employee) {
+      if (employee.isDeleted) throw new DefaultError(status.FORBIDDEN, 'Account is blocked');
       if (tokenDecoded.roleName !== 'Admin') throw new DefaultError(status.FORBIDDEN, 'Error Forbidden');
-      next(null, user);
+      next(null, employee);
     } else {
       throw new DefaultError(status.UNAUTHORIZED, 'You are not authorized to perform this action!');
     }
@@ -27,14 +27,14 @@ export const isManager = (req, res, next) => {
   const token = req.headers.authorization.replace('Bearer ', '')
   const tokenDecoded = jwt.decode(token)
 
-  models.User.findOne({
+  models.Employee.findOne({
     attributes: ['roleId', 'isDeleted'],
-    where: { id: tokenDecoded.userId }
-  }).then(user => {
-    if (user) {
-      if (user.isDeleted) throw new DefaultError(status.FORBIDDEN, 'Account is blocked');
+    where: { id: tokenDecoded.employeeId }
+  }).then(employee => {
+    if (employee) {
+      if (employee.isDeleted) throw new DefaultError(status.FORBIDDEN, 'Account is blocked');
       if (tokenDecoded.roleName !== 'Manager') throw new DefaultError(status.FORBIDDEN, 'Error Forbidden');
-      next(null, user);
+      next(null, employee);
     } else {
       throw new DefaultError(status.UNAUTHORIZED, 'You are not authorized to perform this action!');
     }
@@ -47,14 +47,14 @@ export const isEmployee = (req, res, next) => {
   const token = req.headers.authorization.replace('Bearer ', '')
   const tokenDecoded = jwt.decode(token)
 
-  models.User.findOne({
+  models.Employee.findOne({
     attributes: ['roleId', 'isDeleted'],
-    where: { id: tokenDecoded.userId }
-  }).then(user => {
-    if (user) {
-      if (user.isDeleted) throw new DefaultError(status.FORBIDDEN, 'Account is blocked');
+    where: { id: tokenDecoded.employeeId }
+  }).then(employee => {
+    if (employee) {
+      if (employee.isDeleted) throw new DefaultError(status.FORBIDDEN, 'Account is blocked');
       if (tokenDecoded.roleName !== 'Employee') throw new DefaultError(status.FORBIDDEN, 'Error Forbidden');
-      next(null, user);
+      next(null, employee);
     } else {
       throw new DefaultError(status.UNAUTHORIZED, 'You are not authorized to perform this action!');
     }
@@ -63,17 +63,14 @@ export const isEmployee = (req, res, next) => {
   });
 }
 
-export function isUser(req, res, next) {
-  models.User.findOne({
+export function isAuthorized(req, res, next) {
+  models.Employee.findOne({
     attributes: [
       'role_id',
     ],
-    where: {
-      roleId: 1
-    }
-  }).then(user => {
-    if (user) {
-      next(null, user);
+  }).then(employee => {
+    if (employee) {
+      next(null, employee);
     } else {
       throw new DefaultError(status.UNAUTHORIZED, 'You are not authorized to perform this action!');
     }

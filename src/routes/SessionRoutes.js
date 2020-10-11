@@ -1,4 +1,4 @@
-'user strict'
+'use strict'
 
 /**
  * Sessions Route
@@ -54,7 +54,7 @@ router.post('/', passport.authenticate('jwt', {session: false}), isEmployee, Con
 *     tags:
 *       - Sessions
 *     name: Get session(s)'s details.
-*     summary: get a user's details based on an [employee code] or a [fullname].
+*     summary: get a employee's details based on an [employee code] or a [fullname].
 *     consumes:
 *       - application/json
 *     parameters:
@@ -62,7 +62,7 @@ router.post('/', passport.authenticate('jwt', {session: false}), isEmployee, Con
 *         name: query
 *         schema:
 *           type: string
-*         description: employeeCode || fullname to filter sessions by user.
+*         description: employeeCode || fullname to filter sessions by employee.
 *     responses:
 *       200:
 *         description: A list of sessions is displayed.

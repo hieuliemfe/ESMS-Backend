@@ -6,7 +6,7 @@
 */
 
 import express from 'express';
-import UserController from '../controllers/UserController';
+import EmployeeController from '../controllers/EmployeeController';
 import { check, body } from 'express-validator';
 let router = express.Router();
 
@@ -17,7 +17,7 @@ let router = express.Router();
 *     tags:
 *       - Root
 *     name: Login
-*     summary: Log an user into the system.
+*     summary: Log an employee into the system.
 *     consumes:
 *       - application/json
 *     requestBody:
@@ -47,7 +47,7 @@ router.post('/login', [
     .escape(),
   body('password')
     .not().isEmpty()
-], UserController.login.post);
+], EmployeeController.login.post);
 
 /**
 * @swagger
@@ -55,8 +55,8 @@ router.post('/login', [
 *    post:
 *     tags:
 *       - Root
-*     name: Regiser user
-*     summary: Creates a user.
+*     name: Regiser employee
+*     summary: Creates a employee.
 *     requestBody:
 *       required: true
 *       content:
@@ -76,7 +76,7 @@ router.post('/login', [
 *       201:
 *         description: Register successful.
 *       400:
-*         description: Bad username, or found in db
+*         description: Bad employee name, or found in db
 *       403:
 *         description: Password and confirm password doesn't match
 */
@@ -91,5 +91,5 @@ router.post('/register', [
       return value;
     }
   }),
-], UserController.register.post);
+], EmployeeController.register.post);
 export default router;

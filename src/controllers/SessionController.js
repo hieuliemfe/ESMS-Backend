@@ -13,7 +13,7 @@ export default {
       try {
 
         const { sessionStart, sessionEnd, employeeCode } = req.body;
-        const valideEmployeeCode = await models.User.findOne({
+        const valideEmployeeCode = await models.Employee.findOne({
           where: { employeeCode: employeeCode },
           attributes: ['id', 'employeeCode']
         });
@@ -21,9 +21,9 @@ export default {
           throw new DefaultError(status.BAD_REQUEST, 'Invalid employeeCode!');
         }
         else {
-          const userId = valideEmployeeCode.id
+          const employeeId = valideEmployeeCode.id
           await models.Session.create({
-            userId,
+            employeeId,
             sessionStart,
             sessionEnd,
           })
@@ -80,18 +80,18 @@ export default {
           query = '';
           whereCondition = null;
         } else {
-          const user = await models.User.findOne({
+          const employee = await models.Employee.findOne({
             where: { employeeCode: query },
             attributes: ['id', 'employeeCode']
           });
-          if (user) {
+          if (employee) {
             whereCondition = {
-              userId: user.id
+              employeeId: employee.id
             }
           }
           else{
             whereCondition = {
-              userId: query
+              employeeId: query
             }
           }
         }
@@ -106,7 +106,7 @@ export default {
           }],
           attributes: [
             'id',
-            'userId',
+            'employeeId',
             'sessionStart',
             'sessionEnd',
             'createdAt',

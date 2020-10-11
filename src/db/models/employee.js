@@ -1,32 +1,9 @@
 /* jshint indent: 1 */
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-/**
- * @swagger
- * definitions:
- * User:
- *  type: object
- *  properties:
- *    id:
- *      type: integer
- *    employeeCode:
- *      type: string
- *    password:
- *      type: string
- *    email:
- *      type: string
- *    fullName:
- *      type: string
- *    phoneNumber:
- *      type: string
- *    avatarUrl:
- *      type: string
- *    isSubscribed:
- *      type: boolean
- * 
- */
+
 export default function (sequelize, DataTypes) {
-  var User = sequelize.define('User', {
+  var Employee = sequelize.define('Employee', {
     id: {
       type: DataTypes.UUID,
       defaultValue: () => uuidv4(),
@@ -85,45 +62,39 @@ export default function (sequelize, DataTypes) {
       field: 'updated_at'
     },
   }, {
-    tableName: 'user',
+    tableName: 'employee',
     hooks: {
       // This hook is called when an entry is being added to the back end.
       // This method is used to hash the password before storing it
       // in our database.
-      beforeCreate: (user, options) => {
+      beforeCreate: (employee, options) => {
         const SALT_WORK_FACTOR = 10;
         const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
-        const hash = bcrypt.hashSync(user.password, salt);
-        user.password = hash;
+        const hash = bcrypt.hashSync(employee.password, salt);
+        employee.password = hash;
       },
-      beforeBulkCreate: (users, options) => {
-        for (const user of users) {
+      beforeBulkCreate: (employees, options) => {
+        for (const employee of employees) {
           const SALT_WORK_FACTOR = 10;
           const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
-          const hash = bcrypt.hashSync(user.password, salt);
-          user.password = hash;
+          const hash = bcrypt.hashSync(employee.password, salt);
+          employee.password = hash;
         }
       }
     }
   });
 
-  User.associate = function (models) {
-    User.belongsTo(models.Role, { foreignKey: 'role_id', as: 'Role' });
-    // models.User.hasMany(models.Post, {
-    //   foreignKey: 'user_id'
-    // });
-    User.hasMany(models.Session, {
-      foreignKey: 'user_id'
+  Employee.associate = function (models) {
+    Employee.belongsTo(models.Role, {
+      foreignKey: 'role_id',
+      as: 'Role'
     });
-    // models.User.hasMany(models.Follow, {
-    //   foreignKey: 'user_id'
-    // });
-    // models.User.hasMany(models.Like, {
-    //   foreignKey: 'user_id'
-    // })
-    // models.User.hasMany(models.Comment, {
-    //   foreignKey: 'user_id'
-    // })
+    Employee.hasMany(models.Session, {
+      foreignKey: 'employee_id'
+    });
+    Employee.hasMany(models.Task, {
+      foreignKey: 'employee_id'
+    });
   }
-  return User;
+  return Employee;
 };
