@@ -12,7 +12,6 @@
 
 #### 3. Seed the data:
 - Access `localhost:4000/swagger` by a browser.
-- Run the `/seed` API.
 
 #### 4. Verify the seeded data:
 - Access `localhost:8080` by a browser.
