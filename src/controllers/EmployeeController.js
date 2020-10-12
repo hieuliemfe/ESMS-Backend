@@ -27,7 +27,7 @@ export default {
           include: [{
             model: models.Role, as: "Role"
           }],
-          attributes: ['id','employeeCode', 'password', 'roleId'],
+          attributes: ['id', 'employeeCode', 'password', 'roleId'],
         });
         if (!employee) throw new DefaultError(status.BAD_REQUEST, 'Invalid employeeCode or password');
         const isValidPassword = bcrypt.compareSync(req.body.password, employee.password);
@@ -96,31 +96,44 @@ export default {
       }
     },
   },
-  
+
   register: {
     async post(req, res, next) {
       try {
-        const { email, employeeCode, password, confirmPassword } = req.body;
-        const duplicateEmployee = await models.Employee.findOne({
-          where: { employeeCode },
-          attributes: ['employeeCode']
+        const currentDate = Date.now();
+        let day = new Date(currentDate);
+        const { fullname, roleId, phoneNumber, avatarUrl } = req.body;
+        //Generate data:
+        const fullnameArray = fullname.split(" ");
+        //employeeCode
+        const employeeCode =
+          fullnameArray[fullnameArray.length - 1]
+          + fullnameArray[0]
+          + day.getMinutes() + day.getSeconds()
+        //email
+        const email =
+          fullnameArray[fullnameArray.length - 1].toLowerCase() + '.'
+          + fullnameArray[0].toLowerCase()
+          + day.getMinutes() + day.getSeconds()
+          + "@mail.com";
+        //password
+        const password = Math.random().toString(36).slice(-8);
+        await models.Employee.create({
+          email,
+          fullname,
+          phoneNumber,
+          avatarUrl,
+          employeeCode,
+          password,
+          roleId,
         });
-        if (duplicateEmployee) {
-          throw new DefaultError(status.BAD_REQUEST, 'This employeeCode is taken!');
-        }
-
-        if (!duplicateEmployee) {
-          await models.Employee.create({
-            email,
-            employeeCode,
-            password,
-            roleId: 2,
-          });
-          res.status(status.CREATED).send({
-            status: true,
-            message: 'Register successful.',
-          });
-        }
+        res.status(status.CREATED).send({
+          status: true,
+          message: {
+            "employeeCode": employeeCode,
+            "password": password
+          },
+        });
       } catch (error) {
         next(error);
       }
