@@ -5,6 +5,8 @@ import EmailRoutes from './EmailRoutes';
 import SessionRoutes from './SessionRoutes';
 import CustomerRoutes from './CustomerRoutes';
 import TaskRoutes from './TaskRoutes';
+import RoleRoutes from './RoleRoutes';
+
 const Router = [
   {
     path: '/',
@@ -33,6 +35,10 @@ const Router = [
   {
     path: '/tasks',
     handler: TaskRoutes,
+  },
+  {
+    path: '/roles',
+    handler: RoleRoutes,
   }
 ];
 
