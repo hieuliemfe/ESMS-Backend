@@ -3,7 +3,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 export default function (sequelize, DataTypes) {
-    const Task = sequelize.define('Task', {
+    var Task = sequelize.define('Task', {
         taskName: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -31,7 +31,11 @@ export default function (sequelize, DataTypes) {
         tableName: 'task',
     });
     Task.associate = function (models) {
-        Task.belongsTo(models.Employee, { foreignKey: 'employee_id', as: 'Employee' });
-    }
+        Task.belongsToMany(models.Employee, {
+            as: 'Employee',
+            through: "employee_task",
+            foreignKey: 'task_id',
+        });
+    };
     return Task;
 };
