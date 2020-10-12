@@ -11,7 +11,7 @@ export default [
       updatedAt: new Date()
   },
   {
-      roleName: 'Employee',
+      roleName: 'BankTeller',
       createdAt: new Date(),
       updatedAt: new Date()
   }

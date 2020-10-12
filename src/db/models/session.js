@@ -12,9 +12,9 @@ export default function (sequelize, DataTypes) {
       allowNull: false,
       field: 'session_end'
     },
-    userId: {
+    employeeId: {
       type: DataTypes.UUID,
-      field: 'user_id',
+      field: 'employee_id',
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -31,7 +31,14 @@ export default function (sequelize, DataTypes) {
     models.Session.hasMany(models.Period, {
       foreignKey: 'session_id'
     });
-    Session.belongsTo(models.User, { foreignKey: 'user_id', as: 'User' });
+    Session.belongsTo(models.Customer, {
+      foreignKey: 'customer_id',
+      as: 'Customer'
+    });
+    Session.belongsTo(models.Employee, {
+      foreignKey: 'employee_id',
+      as: 'Employee'
+    });
   }
   return Session;
 };

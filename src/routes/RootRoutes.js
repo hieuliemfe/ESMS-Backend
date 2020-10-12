@@ -6,8 +6,11 @@
 */
 
 import express from 'express';
-import UserController from '../controllers/UserController';
+import Controller from '../controllers/EmployeeController';
 import { check, body } from 'express-validator';
+//auth imports
+import passport from 'passport';
+import { isBankTeller, isManager, isAuthorized } from '../middlewares/authorization';
 let router = express.Router();
 
 /**
@@ -17,7 +20,7 @@ let router = express.Router();
 *     tags:
 *       - Root
 *     name: Login
-*     summary: Log an user into the system.
+*     summary: Log an employee into the system.
 *     consumes:
 *       - application/json
 *     requestBody:
@@ -47,7 +50,7 @@ router.post('/login', [
     .escape(),
   body('password')
     .not().isEmpty()
-], UserController.login.post);
+], Controller.login.post);
 
 /**
 * @swagger
@@ -55,8 +58,8 @@ router.post('/login', [
 *    post:
 *     tags:
 *       - Root
-*     name: Regiser user
-*     summary: Creates a user.
+*     name: Register an employee
+*     summary: Creates an employee.
 *     requestBody:
 *       required: true
 *       content:
@@ -64,32 +67,21 @@ router.post('/login', [
 *           schema:
 *             type: object
 *             properties:
-*               employeeCode:
+*               fullname:
 *                 type: string
-*               email:
+*               phoneNumber:
 *                 type: string
-*               password:
+*               avatarUrl:
 *                 type: string
-*               confirmPassword:
-*                 type: string
+*               roleId:
+*                 type: integer
 *     responses:
 *       201:
 *         description: Register successful.
 *       400:
-*         description: Bad username, or found in db
+*         description: Bad employee name, or found in db
 *       403:
 *         description: Password and confirm password doesn't match
 */
-router.post('/register', [
-  check('email', 'Invalid Email').isEmail().normalizeEmail(),
-  check('employeeCode', 'employeeCode must be at least 5 characters').isLength({ min: 5 }),
-  check('password', 'Password must be at least 5 characters').isLength({ min: 5 }),
-  check('confirmPassword', 'Password have to match Confirm Password').custom((value, { req, loc, path }) => {
-    if (value !== req.body.confirmPassword) {
-      throw new Error("Passwords don't match");
-    } else {
-      return value;
-    }
-  }),
-], UserController.register.post);
+router.post('/register', passport.authenticate('jwt', {session: false}), isAuthorized, Controller.register.post);
 export default router;

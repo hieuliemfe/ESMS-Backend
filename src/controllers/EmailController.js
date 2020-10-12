@@ -8,14 +8,14 @@ export default {
     send_email: {
         async post(req, res, next) {
             try {
-                const user = await models.User.findOne({
+                const employee = await models.Employee.findOne({
                     where: {
                         email: req.body.email,
                     },
                 });
-                if (!user) throw new DefaultError(status.BAD_REQUEST, 'Invalid user');
+                if (!employee) throw new DefaultError(status.BAD_REQUEST, 'Invalid employee');
                 else {
-                    const isSent = Promise.resolve(emailService.send(user.email));
+                    const isSent = Promise.resolve(emailService.send(employee.email));
                     if (isSent) {
                         res.status(status.OK)
                             .send({

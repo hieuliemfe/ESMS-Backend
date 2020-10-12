@@ -1,8 +1,9 @@
-import models from '../models/index.js';
-import roleSeed from './roleSeed.js';
-import userSeed from './userSeed.js';
-import emotionSeed from './emotionSeed.js';
-
+import models from '../models/index';
+import roleSeed from './roleSeed';
+import employeeSeed from './employeeSeed';
+import emotionSeed from './emotionSeed';
+import customerSeed from './customerSeed';
+import taskSeed from './taskSeed';
 const seed = async () => {
     //check if data already exists.
     await models.Role.count()
@@ -10,8 +11,10 @@ const seed = async () => {
             //if there's no data, seed
             if (count == 0) {
                 models.Role.bulkCreate(roleSeed)
-                    .then(() => models.User.bulkCreate(userSeed))
+                    .then(() => models.Employee.bulkCreate(employeeSeed))
                     .then(() => models.Emotion.bulkCreate(emotionSeed))
+                    .then(() => models.Customer.bulkCreate(customerSeed))
+                    .then(() => models.Task.bulkCreate(taskSeed))
                     .then((res, err) => {
                         if (err) {
                             console.log(`ERROR at seeding data: ${err}`);

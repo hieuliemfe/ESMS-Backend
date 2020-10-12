@@ -1,4 +1,4 @@
-'user strict'
+'use strict'
 
 /**
  * Face Route
@@ -16,7 +16,7 @@ import passport from 'passport';
 *     tags:
 *       - Email Service
 *     name: Send an email
-*     summary: Send an email template to a user
+*     summary: Send an email template to an employee
 *     consumes:
 *       - application/json
 *     parameters:
@@ -31,7 +31,7 @@ import passport from 'passport';
 *           - email
 *     responses:
 *       200:
-*         description: Email sent to user.
+*         description: Email sent to employee.
 */
 router.post('/email', Controller.send_email.post);
 

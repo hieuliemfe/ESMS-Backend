@@ -1,4 +1,4 @@
-'user strict'
+'use strict'
 
 /**
  * Sessions Route
@@ -10,7 +10,8 @@ import Controller from '../controllers/SessionController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
-import { isEmployee, isManager } from '../middlewares/authorization';
+import { isBankTeller, isManager } from '../middlewares/authorization';
+
 /**
 * @swagger
 * /sessions:
@@ -45,7 +46,8 @@ import { isEmployee, isManager } from '../middlewares/authorization';
 *       201:
 *         description: Session's added.
 */
-router.post('/', passport.authenticate('jwt', {session: false}), isEmployee, Controller.create.post);
+router.post('/', passport.authenticate('jwt', {session: false}), isBankTeller, Controller.create.post);
+
 //router.post('/', Controller.create.post);
 /**
 * @swagger
@@ -54,7 +56,7 @@ router.post('/', passport.authenticate('jwt', {session: false}), isEmployee, Con
 *     tags:
 *       - Sessions
 *     name: Get session(s)'s details.
-*     summary: get a user's details based on an [employee code] or a [fullname].
+*     summary: get a employee's details based on an [employee code] or a [fullname].
 *     consumes:
 *       - application/json
 *     parameters:
@@ -62,7 +64,7 @@ router.post('/', passport.authenticate('jwt', {session: false}), isEmployee, Con
 *         name: query
 *         schema:
 *           type: string
-*         description: employeeCode || fullname to filter sessions by user.
+*         description: employeeCode || fullname to filter sessions by employee.
 *     responses:
 *       200:
 *         description: A list of sessions is displayed.
@@ -70,5 +72,4 @@ router.post('/', passport.authenticate('jwt', {session: false}), isEmployee, Con
 *         description: Error.
 */
 router.get('/', passport.authenticate('jwt', {session: false}), isManager, Controller.view.get);
-//router.get('/', passport.authenticate('jwt', {session: false}), isManager, Controller.view.get);
 export default router;

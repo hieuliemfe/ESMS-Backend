@@ -13,7 +13,7 @@ opts.secretOrKey = JWT_SECRET;
 
 export default passport => {
   passport.use(new JwtStrategy(opts, function (jwt_payload, next) {
-    models.User.findOne({
+    models.Employee.findOne({
       attributes: [
         'id',
         'employeeCode',
@@ -22,11 +22,11 @@ export default passport => {
         'roleId',
       ],
       where: {
-        id: jwt_payload.userId
+        id: jwt_payload.employeeId
       }
-    }).then(user => {
-      if (user) {
-        next(null, user);
+    }).then(employee => {
+      if (employee) {
+        next(null, employee);
       } else {
         next('Unauthorized');
       }
