@@ -53,7 +53,7 @@ export const isBankTeller = (req, res, next) => {
   }).then(employee => {
     if (employee) {
       if (employee.isDeleted) throw new DefaultError(status.FORBIDDEN, 'Account is blocked');
-      if (tokenDecoded.roleName !== 'Bank teller') throw new DefaultError(status.FORBIDDEN, 'Error Forbidden');
+      if (tokenDecoded.roleName !== 'BankTeller') throw new DefaultError(status.FORBIDDEN, 'Error Forbidden');
       next(null, employee);
     } else {
       throw new DefaultError(status.UNAUTHORIZED, 'You are not authorized to perform this action!');
