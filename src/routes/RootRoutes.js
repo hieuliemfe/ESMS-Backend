@@ -97,7 +97,7 @@ router.post('/register', passport.authenticate('jwt', {session: false}), isAutho
 *       - application/json
 *     responses:
 *       200:
-*         description: A list of sessions is displayed.
+*         description: Employee in session is displayed.
 *       400:
 *         description: Error.
 *       401:
