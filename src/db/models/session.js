@@ -35,6 +35,10 @@ export default function (sequelize, DataTypes) {
       foreignKey: 'customer_id',
       as: 'Customer'
     });
+    Session.belongsTo(models.Employee, {
+      foreignKey: 'employee_id',
+      as: 'Employee'
+    });
   }
   return Session;
 };

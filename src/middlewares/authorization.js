@@ -43,7 +43,7 @@ export const isManager = (req, res, next) => {
   });
 }
 
-export const isEmployee = (req, res, next) => {
+export const isBankTeller = (req, res, next) => {
   const token = req.headers.authorization.replace('Bearer ', '')
   const tokenDecoded = jwt.decode(token)
 
@@ -53,7 +53,7 @@ export const isEmployee = (req, res, next) => {
   }).then(employee => {
     if (employee) {
       if (employee.isDeleted) throw new DefaultError(status.FORBIDDEN, 'Account is blocked');
-      if (tokenDecoded.roleName !== 'Employee') throw new DefaultError(status.FORBIDDEN, 'Error Forbidden');
+      if (tokenDecoded.roleName !== 'Bank teller') throw new DefaultError(status.FORBIDDEN, 'Error Forbidden');
       next(null, employee);
     } else {
       throw new DefaultError(status.UNAUTHORIZED, 'You are not authorized to perform this action!');
@@ -64,17 +64,21 @@ export const isEmployee = (req, res, next) => {
 }
 
 export function isAuthorized(req, res, next) {
+  const token = req.headers.authorization.replace('Bearer ', '')
+  const tokenDecoded = jwt.decode(token)
+
   models.Employee.findOne({
-    attributes: [
-      'role_id',
-    ],
+    attributes: ['roleId', 'isDeleted'],
+    where: { id: tokenDecoded.employeeId }
   }).then(employee => {
     if (employee) {
+      if (employee.isDeleted) throw new DefaultError(status.FORBIDDEN, 'Account is blocked');
+      if (tokenDecoded.roleName !== 'Admin' && tokenDecoded.roleName !== 'Manager') throw new DefaultError(status.FORBIDDEN, 'Error Forbidden');
       next(null, employee);
     } else {
       throw new DefaultError(status.UNAUTHORIZED, 'You are not authorized to perform this action!');
     }
   }).catch(err => {
-    throw new DefaultError(status.INTERNAL_SERVER_ERROR, 'Something went wrong when trying to authorize you', err);
+    next(err)
   });
 }

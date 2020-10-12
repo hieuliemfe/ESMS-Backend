@@ -14,7 +14,7 @@ export default function (sequelize, DataTypes) {
         accountNumber: {
             type: DataTypes.STRING,
             allowNull: false,
-            field: 'employee_code'
+            field: 'account_number'
         },
         email: {
             type: DataTypes.STRING,

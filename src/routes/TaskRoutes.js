@@ -10,7 +10,7 @@ import Controller from '../controllers/TaskController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
-import { isEmployee, isManager, isAuthorized } from '../middlewares/authorization';
+import { isAuthorized } from '../middlewares/authorization';
 
 /**
 * @swagger
@@ -37,5 +37,4 @@ import { isEmployee, isManager, isAuthorized } from '../middlewares/authorizatio
 *         description: Forbidden.
 */
 router.get('/', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.view.get);
-//router.get('/', passport.authenticate('jwt', {session: false}), isManager, Controller.view.get);
 export default router;

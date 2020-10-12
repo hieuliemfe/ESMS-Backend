@@ -10,7 +10,8 @@ import Controller from '../controllers/SessionController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
-import { isEmployee, isManager } from '../middlewares/authorization';
+import { isBankTeller, isManager } from '../middlewares/authorization';
+
 /**
 * @swagger
 * /sessions:
@@ -45,7 +46,8 @@ import { isEmployee, isManager } from '../middlewares/authorization';
 *       201:
 *         description: Session's added.
 */
-router.post('/', passport.authenticate('jwt', {session: false}), isEmployee, Controller.create.post);
+router.post('/', passport.authenticate('jwt', {session: false}), isBankTeller, Controller.create.post);
+
 //router.post('/', Controller.create.post);
 /**
 * @swagger
@@ -70,5 +72,4 @@ router.post('/', passport.authenticate('jwt', {session: false}), isEmployee, Con
 *         description: Error.
 */
 router.get('/', passport.authenticate('jwt', {session: false}), isManager, Controller.view.get);
-//router.get('/', passport.authenticate('jwt', {session: false}), isManager, Controller.view.get);
 export default router;
