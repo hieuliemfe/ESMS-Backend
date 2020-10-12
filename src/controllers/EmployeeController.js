@@ -373,4 +373,32 @@ export default {
       }
     }
   },
+  view_profile: {
+    async get(req, res, next) {
+      try {
+        const token = req.headers.authorization.replace('Bearer ', '')
+        const tokenDecoded = jwt.decode(token)
+        models.Employee.findOne({
+          attributes: { exclude: ['password', 'role_id','roleId'] },
+          include: {
+            model: models.Role,
+            as: 'Role'
+          },
+          where: { id: tokenDecoded.employeeId }
+        }).then(employee => {
+          if (employee) {
+            res.status(status.OK)
+              .send({
+                status: true,
+                message: employee,
+              });
+          } else {
+            throw new DefaultError(status.NOT_FOUND, 'Employee not found.');
+          }
+        })
+      } catch (error) {
+        next(error);
+      }
+    }
+  },
 };

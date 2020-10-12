@@ -84,4 +84,24 @@ router.post('/login', [
 *         description: Password and confirm password doesn't match
 */
 router.post('/register', passport.authenticate('jwt', {session: false}), isAuthorized, Controller.register.post);
+
+/**
+* @swagger
+* /profile:
+*   get:
+*     tags:
+*       - Root
+*     name: Get details of employee in session.
+*     summary: Get details of employee in session.
+*     consumes:
+*       - application/json
+*     responses:
+*       200:
+*         description: A list of sessions is displayed.
+*       400:
+*         description: Error.
+*       401:
+*         description: Forbidden.
+*/
+router.get('/profile', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.view_profile.get);
 export default router;
