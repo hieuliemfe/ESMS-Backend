@@ -58,8 +58,8 @@ router.post('/login', [
 *    post:
 *     tags:
 *       - Root
-*     name: Regiser employee
-*     summary: Creates a employee.
+*     name: Register an employee
+*     summary: Creates an employee.
 *     requestBody:
 *       required: true
 *       content:
