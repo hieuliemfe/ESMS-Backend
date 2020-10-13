@@ -6,7 +6,7 @@ import SessionRoutes from './SessionRoutes';
 import CustomerRoutes from './CustomerRoutes';
 import TaskRoutes from './TaskRoutes';
 import RoleRoutes from './RoleRoutes';
-
+import CounterRoutes from './CounterRoutes';
 const Router = [
   {
     path: '/',
@@ -39,6 +39,10 @@ const Router = [
   {
     path: '/roles',
     handler: RoleRoutes,
+  },
+  {
+    path: '/counters',
+    handler: CounterRoutes
   }
 ];
 

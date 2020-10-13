@@ -19,6 +19,10 @@ export default function (sequelize, DataTypes) {
             defaultValue: () => uuidv4(),
             field: 'employee_id',
         },
+        statusId: {
+            type: DataTypes.INTEGER,
+            field: 'status_id',
+        },
         createdAt: {
             type: DataTypes.DATE,
             field: 'created_at'
@@ -35,6 +39,14 @@ export default function (sequelize, DataTypes) {
             as: 'Employee',
             through: "employee_task",
             foreignKey: 'task_id',
+        });
+        Task.belongsTo(models.Status, {
+            foreignKey: 'status_id',
+            as: 'Status',
+        });
+        Task.belongsTo(models.TaskType, {
+            foreignKey: 'task_type_id',
+            as: 'TaskType',
         });
     };
     return Task;
