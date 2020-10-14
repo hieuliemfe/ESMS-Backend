@@ -1,3 +1,4 @@
+'use strict'
 
 export default [
     {
@@ -25,4 +26,3 @@ export default [
         updatedAt: new Date()
     },
   ]
-  
