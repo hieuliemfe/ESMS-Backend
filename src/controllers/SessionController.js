@@ -5,7 +5,6 @@ import status from 'http-status';
 import url from 'url';
 import jwt from 'jsonwebtoken';
 import { DefaultError } from '../utils/errorHandler';
-import publicRuntimeConfig from '../configurations';
 
 export default {
 
@@ -104,56 +103,54 @@ export default {
   update: {
     async put(req, res, next) {
       try {
-        const { sessionStart, sessionEnd } = req.body;
-        const valideEmployeeCode = await models.Employee.findOne({
-          where: { employeeCode: employeeCode },
-          attributes: ['id', 'employeeCode']
-        });
-        if (!valideEmployeeCode) {
-          throw new DefaultError(status.BAD_REQUEST, 'Invalid employeeCode!');
-        }
-        else {
-          await models.Session.update({
-            sessionStart,
-            sessionEnd,
-          })
-            .then((result) => {
-              if (!result) throw new DefaultError(status.BAD_REQUEST, "ERROR!");
-              else {
-                const emotions = req.body.emotions;
-                let addResults = [];
-                emotions.forEach((emotion) => {
-                  const periods = emotion.periods;
-                  periods.forEach((period) => {
-                    let addResult = {
-                      sessionId: result.id,
-                      emotionId: emotion.emotion,
-                      periodStart: period.periodStart,
-                      periodEnd: period.periodEnd,
-                      duration: period.duration
-                    };
-                    addResults.push(addResult);
+        const { sessionStart, sessionEnd, sessionId } = req.body;
+
+        await models.Session.update({
+          sessionStart,
+          sessionEnd,
+        },
+          {
+            where: {
+              id: sessionId
+            }
+          }
+        )
+          .then((result) => {
+            if (!result) throw new DefaultError(status.BAD_REQUEST, "ERROR!");
+            else {
+              const emotions = req.body.emotions;
+              let addResults = [];
+              emotions.forEach((emotion) => {
+                const periods = emotion.periods;
+                periods.forEach((period) => {
+                  let addResult = {
+                    sessionId: sessionId,
+                    emotionId: emotion.emotion,
+                    periodStart: period.periodStart,
+                    periodEnd: period.periodEnd,
+                    duration: period.duration
+                  };
+                  addResults.push(addResult);
+                });
+              });
+              models.Period.bulkCreate(addResults)
+                .then(() => {
+                  res.status(status.CREATED).send({
+                    status: true,
+                    message: 1,
+                  });
+                })
+                .catch((error) => {
+                  res.status(500).send({
+                    status: false,
+                    message: "Fail to import data!",
+                    error: error.message,
                   });
                 });
-                models.Period.bulkCreate(addResults)
-                  .then(() => {
-                    res.status(status.CREATED).send({
-                      status: true,
-                      message: 1,
-                    });
-                  })
-                  .catch((error) => {
-                    res.status(500).send({
-                      status: false,
-                      message: "Fail to import data!",
-                      error: error.message,
-                    });
-                  });
-              }
-            })
-        }
+            }
+          })
       } catch (error) {
-
+        next(error)
       }
     }
   }

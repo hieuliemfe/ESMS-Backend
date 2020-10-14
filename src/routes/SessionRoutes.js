@@ -45,6 +45,8 @@ router.post('/', passport.authenticate('jwt', { session: false }), isBankTeller,
 *           schema:
 *             type: object
 *             properties:
+*               sessionId:
+*                 type: string
 *               sessionBegin:
 *                 type: string
 *               sessionEnd:
