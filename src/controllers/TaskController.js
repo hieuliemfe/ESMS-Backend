@@ -70,27 +70,27 @@ export default {
                                 id: req.body.queueId
                             }
                         }).then(queue => {
-                            if (queue.statusId != 2) {
+                            if (queue.statusId == 1) {
                                 res.send({
                                     status: false,
-                                    message: 'Queue is not available',
+                                    message: 'Queue is not assigned to any employee.',
                                 });
                             } else {
                                 models.Task.create({
                                     statusId: 2,
                                     session_id: req.body.sessionId,
                                     task_type_id: req.body.taskTypeId
-                                }).then((_, err) => {
+                                }).then((task, err) => {
                                     if (!err) {
                                         models.Queue.update({
                                             statusId: 2
                                         },
                                             { where: { id: req.body.queueId } })
                                     }
-                                })
-                                res.send({
-                                    status: true,
-                                    message: 'Assigned',
+                                    res.send({
+                                        status: true,
+                                        message: task.id,
+                                    })
                                 });
                             }
                         })

@@ -26,13 +26,13 @@ export default {
             //create null session
             models.Session.create({
               employeeId: tokenDecoded.employeeId,
-            });
-            res.send({
-              status: true,
-              message: 1,
-            });
+            }).then(session => {
+              res.send({
+                status: true,
+                message: session.id,
+              });
+            })
           }
-
         })
       } catch (error) {
         next(error);

@@ -43,11 +43,11 @@ export default {
                         categoryId: req.body.categoryId,
                         number: count + 1,
                     },
-                    ).then(result => {
+                    ).then(queue => {
                         res.status(status.OK)
                             .send({
                                 status: true,
-                                message: result,
+                                message: queue.id,
                             });
                     })
                 })

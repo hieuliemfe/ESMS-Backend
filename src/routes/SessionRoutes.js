@@ -18,22 +18,13 @@ import { isBankTeller, isManager } from '../middlewares/authorization';
 *   post:
 *     tags:
 *       - Sessions
-*     name: Add a session
-*     summary: Add an employee's session with a customer.
+*     name: Create a session
+*     summary: Create an employee's session with a customer.
 *     consumes:
 *       - application/json
-*     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             type: object
-*             properties:
-*               employeeCode:
-*                 type: string
 *     responses:
 *       201:
-*         description: Session's added.
+*         description: Session's created.
 */
 router.post('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.create.post);
 
