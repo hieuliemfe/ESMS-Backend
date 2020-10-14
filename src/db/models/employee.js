@@ -92,12 +92,6 @@ export default function (sequelize, DataTypes) {
     Employee.hasMany(models.Session, {
       foreignKey: 'employee_id'
     });
-
-    Employee.belongsToMany(models.Task, {
-      as: 'Task',
-      through: "employee_task",
-      foreignKey: 'employee_id',
-  });
   }
   return Employee;
 };

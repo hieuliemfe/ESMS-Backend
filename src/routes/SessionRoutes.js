@@ -31,6 +31,29 @@ import { isBankTeller, isManager } from '../middlewares/authorization';
 *             properties:
 *               employeeCode:
 *                 type: string
+*     responses:
+*       201:
+*         description: Session's added.
+*/
+router.post('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.create.post);
+
+/**
+* @swagger
+* /sessions:
+*   put:
+*     tags:
+*       - Sessions
+*     name: Update a session
+*     summary: Update a session with periods & emotions.
+*     consumes:
+*       - application/json
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
 *               sessionBegin:
 *                 type: string
 *               sessionEnd:
@@ -46,9 +69,8 @@ import { isBankTeller, isManager } from '../middlewares/authorization';
 *       201:
 *         description: Session's added.
 */
-router.post('/', passport.authenticate('jwt', {session: false}), isBankTeller, Controller.create.post);
+router.put('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.update.put);
 
-//router.post('/', Controller.create.post);
 /**
 * @swagger
 * /sessions:
@@ -71,5 +93,5 @@ router.post('/', passport.authenticate('jwt', {session: false}), isBankTeller, C
 *       400:
 *         description: Error.
 */
-router.get('/', passport.authenticate('jwt', {session: false}), isManager, Controller.view.get);
+router.get('/', passport.authenticate('jwt', { session: false }), isManager, Controller.view.get);
 export default router;

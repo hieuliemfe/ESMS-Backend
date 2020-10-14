@@ -3,7 +3,6 @@ import roleSeed from './roleSeed';
 import employeeSeed from './employeeSeed';
 import emotionSeed from './emotionSeed';
 import customerSeed from './customerSeed';
-import taskSeed from './taskSeed';
 import statusSeed from './statusSeed';
 import categorySeed from './categorySeed';
 import queueSeed from './queueSeed';
@@ -20,12 +19,12 @@ const seed = async () => {
                     .then(() => models.Employee.bulkCreate(employeeSeed))
                     .then(() => models.Emotion.bulkCreate(emotionSeed))
                     .then(() => models.Customer.bulkCreate(customerSeed))
-                    .then(() => models.Task.bulkCreate(taskSeed))
                     .then(() => models.Status.bulkCreate(statusSeed))
                     .then(() => models.Category.bulkCreate(categorySeed))
-                    .then(() => models.Queue.bulkCreate(queueSeed))
                     .then(() => models.TaskType.bulkCreate(taskTypeSeed))
+                    .then(() => models.Queue.bulkCreate(queueSeed))
                     .then(() => models.Counter.bulkCreate(counterSeed))
+                    //seed junction tables
                     .then(() => models.CounterCategory.bulkCreate(counterCategorySeed))
                     .then((res, err) => {
                         if (err) {

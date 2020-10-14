@@ -10,7 +10,7 @@ import Controller from '../controllers/TaskController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
-import { isAuthorized } from '../middlewares/authorization';
+import { isBankTeller,isAuthorized } from '../middlewares/authorization';
 
 /**
 * @swagger
@@ -27,14 +27,70 @@ import { isAuthorized } from '../middlewares/authorization';
 *         name: query
 *         schema:
 *           type: string
-*         description: employeeCode || fullname to filter sessions by employee.
+*         description: sessionID to filter tasks
 *     responses:
 *       200:
-*         description: A list of sessions is displayed.
+*         description: A list of tasks is displayed.
 *       400:
 *         description: Error.
 *       401:
 *         description: Forbidden.
 */
-router.get('/', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.view.get);
+router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view.get);
+
+/**
+* @swagger
+* /tasks/assign:
+*   post:
+*     tags:
+*       - Tasks
+*     name: Assign a task to an employee
+*     summary: Assign a task to an employee
+*     consumes:
+*       - application/json
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               queueId:
+*                 type: integer
+*               sessionId:
+*                 type: integer
+*               taskTypeId:
+*                 type: integer
+*     responses:
+*       200:
+*         description: Email sent to employee.
+*/
+router.post('/assign', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.assign_task.post);
+
+/**
+* @swagger
+* /tasks/status:
+*   put:
+*     tags:
+*       - Tasks
+*     name: Update task status
+*     summary: Update task status
+*     consumes:
+*       - application/json
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               taskId:
+*                 type: integer
+*               statusId:
+*                 type: integer
+*     responses:
+*       200:
+*         description: Status is updated.
+*/
+router.put('/status', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.update_status.put);
 export default router;

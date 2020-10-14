@@ -29,7 +29,6 @@ export default function (sequelize, DataTypes) {
             as: 'Category',
             through: "counter_category",
             foreignKey: 'counter_id',
-            primaryKey: true
         });
     }
     return Counter;

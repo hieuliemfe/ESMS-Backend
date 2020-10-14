@@ -4,12 +4,10 @@ export default function (sequelize, DataTypes) {
   const Session = sequelize.define('Session', {
     sessionStart: {
       type: DataTypes.DATE,
-      allowNull: false,
       field: 'session_start'
     },
     sessionEnd: {
       type: DataTypes.DATE,
-      allowNull: false,
       field: 'session_end'
     },
     employeeId: {
@@ -29,6 +27,9 @@ export default function (sequelize, DataTypes) {
   });
   Session.associate = function (models) {
     models.Session.hasMany(models.Period, {
+      foreignKey: 'session_id'
+    });
+    models.Session.hasMany(models.Task, {
       foreignKey: 'session_id'
     });
     Session.belongsTo(models.Customer, {
