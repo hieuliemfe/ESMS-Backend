@@ -33,8 +33,7 @@ import { isAuthorized } from '../middlewares/authorization';
 *         description: A list of sessions is displayed.
 *       400:
 *         description: Error.
-*       401:
-*         description: Forbidden.
 */
+
 router.get('/:counterNumber', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.view.get);
 export default router;

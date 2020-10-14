@@ -9,6 +9,7 @@ import categorySeed from './categorySeed';
 import queueSeed from './queueSeed';
 import taskTypeSeed from './taskTypeSeed';
 import counterSeed from './counterSeed';
+import counterCategorySeed from './counterCategorySeed';
 const seed = async () => {
     //check if data already exists.
     await models.Role.count()
@@ -25,6 +26,7 @@ const seed = async () => {
                     .then(() => models.Queue.bulkCreate(queueSeed))
                     .then(() => models.TaskType.bulkCreate(taskTypeSeed))
                     .then(() => models.Counter.bulkCreate(counterSeed))
+                    .then(() => models.CounterCategory.bulkCreate(counterCategorySeed))
                     .then((res, err) => {
                         if (err) {
                             console.log(`ERROR at seeding data: ${err}`);

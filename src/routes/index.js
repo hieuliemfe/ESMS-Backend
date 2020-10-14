@@ -7,6 +7,7 @@ import CustomerRoutes from './CustomerRoutes';
 import TaskRoutes from './TaskRoutes';
 import RoleRoutes from './RoleRoutes';
 import CounterRoutes from './CounterRoutes';
+import QueueRoutes from './QueueRoutes'
 const Router = [
   {
     path: '/',
@@ -43,7 +44,11 @@ const Router = [
   {
     path: '/counters',
     handler: CounterRoutes
-  }
+  },
+  {
+    path: '/queues',
+    handler: QueueRoutes
+  },
 ];
 
 export default Router;

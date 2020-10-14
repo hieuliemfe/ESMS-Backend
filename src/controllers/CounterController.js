@@ -1,23 +1,33 @@
 'use strict';
-import { query } from "express-validator";
 import models from '../db/models/index';
 import status from 'http-status';
-import url from 'url';
 
 export default {
 
     view: {
         async get(req, res, next) {
-
             try {
-                const counters = await models.Counter.findAll({
+                //get all counters
+                const counters = await models.Counter.findOne({
                     include: [{
+                        //get all categories that counter is assigned.
                         model: models.Category,
-                        as: "Category"
-                      }],
-                      where: {
-                          counterNumber: req.params.counterNumber
-                      }
+                        attributes: {
+                            include: ["categoryName"],
+                            exclude: ["counter_category"]
+                        },
+                        as: "Category",
+                        include: {
+                            //get all queues that have the selected category.
+                            model: models.Queue,
+                            attributes: {
+                                include: ["id", "number", "statusId", "categoryId", "createdAt", "updatedAt"],
+                            },
+                        }
+                    }],
+                    where: {
+                        counterNumber: req.params.counterNumber
+                    }
                 });
                 res.status(status.OK)
                     .send({
