@@ -1,3 +1,5 @@
+'use strict'
+
 import models from '../models/index';
 import roleSeed from './roleSeed';
 import employeeSeed from './employeeSeed';
