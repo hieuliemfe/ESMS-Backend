@@ -13,7 +13,6 @@ export default {
                 const counter = await models.Counter.findAll({
                     include: [{
                         model: models.Employee,
-                        
                         as: 'Employee',
                         where: { id: tokenDecoded.employeeId }
                     },

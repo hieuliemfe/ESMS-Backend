@@ -9,12 +9,11 @@ export default function (sequelize, DataTypes) {
         },
         employeeId: {
             type: DataTypes.UUID,
-            allowNull: false,
+            unique: false,
             field: 'employee_id'
         },
         counterId: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             unique: false,
             field: 'counter_id'
         },
