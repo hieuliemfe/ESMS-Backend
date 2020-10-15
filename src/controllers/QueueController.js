@@ -79,7 +79,26 @@ export default {
             }
         }
     },
-
+    delete: {
+        async delete(req, res, next) {
+            try {
+                models.Queue.destroy({
+                    where: {
+                        id: req.params.queueId
+                    }
+                },
+                ).then(result => {
+                    res.status(status.OK)
+                        .send({
+                            status: true,
+                            message: result,
+                        });
+                })
+            } catch (error) {
+                next(error);
+            }
+        }
+    },
     delete_all: {
         async delete(req, res, next) {
             try {

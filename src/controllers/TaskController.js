@@ -55,6 +55,7 @@ export default {
             try {
                 models.Task.create({
                     statusId: 2,
+                    taskCode: req.body.taskCode,
                     session_id: req.body.sessionId,
                     task_type_id: req.body.taskTypeId
                 }).then((task, err) => {

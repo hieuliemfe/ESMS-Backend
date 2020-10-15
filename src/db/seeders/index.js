@@ -10,7 +10,12 @@ import categorySeed from './categorySeed';
 import queueSeed from './queueSeed';
 import taskTypeSeed from './taskTypeSeed';
 import counterSeed from './counterSeed';
+import sessionSeed from './sessionSeed';
+import taskSeed from './taskSeed';
+//junction seeds
 import counterCategorySeed from './counterCategorySeed';
+import shiftSeed from './shiftSeed';
+
 const seed = async () => {
     //check if data already exists.
     await models.Role.count()
@@ -26,8 +31,11 @@ const seed = async () => {
                     .then(() => models.TaskType.bulkCreate(taskTypeSeed))
                     .then(() => models.Queue.bulkCreate(queueSeed))
                     .then(() => models.Counter.bulkCreate(counterSeed))
+                    .then(() => models.Session.bulkCreate(sessionSeed))
+                    .then(() => models.Task.bulkCreate(taskSeed))
                     //seed junction tables
                     .then(() => models.CounterCategory.bulkCreate(counterCategorySeed))
+                    .then(() => models.Shift.bulkCreate(shiftSeed))
                     .then((res, err) => {
                         if (err) {
                             console.log(`ERROR at seeding data: ${err}`);

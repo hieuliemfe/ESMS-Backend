@@ -87,6 +87,29 @@ router.post('/assign', passport.authenticate('jwt', { session: false }), isBankT
 
 /**
 * @swagger
+* /queues/{queueId}:
+*   delete:
+*     tags:
+*       - Queues
+*     name: Delete a queue
+*     summary: Delete a queue based on queueId
+*     consumes:
+*       - application/json
+*     parameters:
+*       - in: path
+*         name: queueId
+*         schema:
+*          type: integer
+*         description: Queue ID to delete
+*     responses:
+*       200:
+*         description: All queues deleted.
+*/
+router.delete('/:queueId', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.delete.delete);
+
+
+/**
+* @swagger
 * /queues/delete-all:
 *   delete:
 *     tags:

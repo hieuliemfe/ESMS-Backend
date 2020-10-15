@@ -89,6 +89,11 @@ export default function (sequelize, DataTypes) {
       foreignKey: 'role_id',
       as: 'Role'
     });
+    Employee.belongsToMany(models.Counter, {
+      as: "Counter",
+      through: models.Shift,
+      foreignKey: 'employee_id',
+  });
     Employee.hasMany(models.Session, {
       foreignKey: 'employee_id'
     });

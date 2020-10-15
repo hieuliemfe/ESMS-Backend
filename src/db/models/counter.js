@@ -26,8 +26,12 @@ export default function (sequelize, DataTypes) {
 
     Counter.associate = function (models) {
         Counter.belongsToMany(models.Category, {
-            as: 'Category',
             through: "counter_category",
+            foreignKey: 'counter_id',
+        });
+        Counter.belongsToMany(models.Employee, {
+            as: 'Employee',
+            through: models.Shift,
             foreignKey: 'counter_id',
         });
         Counter.hasMany(models.Queue, {
