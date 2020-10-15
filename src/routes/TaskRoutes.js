@@ -59,8 +59,6 @@ router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 *                 type: integer
 *               taskTypeId:
 *                 type: integer
-*               taskCode:
-*                 type: string
 *     responses:
 *       200:
 *         description: Email sent to employee.

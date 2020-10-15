@@ -7,6 +7,10 @@ export default function (sequelize, DataTypes) {
             allowNull: false,
             field: 'type_name'
         },
+        taskCode: {
+            type: DataTypes.STRING,
+            field: 'task_code'
+        },
         categoryId: {
             type: DataTypes.INTEGER,
             allowNull: false,

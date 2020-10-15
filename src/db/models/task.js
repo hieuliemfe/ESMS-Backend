@@ -8,10 +8,6 @@ export default function (sequelize, DataTypes) {
             type: DataTypes.INTEGER,
             field: 'status_id',
         },
-        taskCode: {
-            type: DataTypes.STRING,
-            field: 'task_code'
-        },
         taskTypeId: {
             type: DataTypes.INTEGER,
             field: 'task_type_id',
