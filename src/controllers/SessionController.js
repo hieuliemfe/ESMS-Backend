@@ -28,7 +28,7 @@ export default {
             }).then(session => {
               res.send({
                 status: true,
-                message: session.id,
+                message: { id: session.id },
               });
             })
           }

@@ -3,7 +3,6 @@
 import models from '../db/models/index';
 import status from 'http-status';
 import url from 'url';
-import jwt from 'jsonwebtoken';
 import { DefaultError } from '../utils/errorHandler';
 export default {
 
@@ -54,55 +53,22 @@ export default {
     assign_task: {
         async post(req, res, next) {
             try {
-                const token = req.headers.authorization.replace('Bearer ', '')
-                const tokenDecoded = jwt.decode(token);
-                models.Employee.findOne({
-                    attributes: { exclude: ['password', 'role_id', 'roleId'] },
-                    include: {
-                        model: models.Role,
-                        as: 'Role'
-                    },
-                    where: { id: tokenDecoded.employeeId }
-                }).then(employee => {
-                    if (employee) {
-                        models.Queue.findOne({
-                            where: {
-                                id: req.body.queueId
-                            }
-                        }).then(queue => {
-                            if (queue.statusId == 1) {
-                                res.send({
-                                    status: false,
-                                    message: 'Queue is not assigned to any employee.',
-                                });
-                            } else {
-                                models.Task.create({
-                                    statusId: 2,
-                                    session_id: req.body.sessionId,
-                                    task_type_id: req.body.taskTypeId
-                                }).then((task, err) => {
-                                    if (!err) {
-                                        models.Queue.update({
-                                            statusId: 2
-                                        },
-                                            { where: { id: req.body.queueId } })
-                                    }
-                                    res.send({
-                                        status: true,
-                                        message: task.id,
-                                    })
-                                });
-                            }
-                        })
-                    } else {
-                        throw new DefaultError(status.NOT_FOUND, 'Employee not found.');
-                    };
-                })
+                models.Task.create({
+                    statusId: 2,
+                    session_id: req.body.sessionId,
+                    task_type_id: req.body.taskTypeId
+                }).then((task, err) => {
+                    res.send({
+                        status: true,
+                        message: { id: task.id }
+                    })
+                });
             } catch (error) {
                 next(error);
             }
         }
     },
+
     update_status: {
         async put(req, res, next) {
             try {
@@ -118,10 +84,31 @@ export default {
                         if (!err) {
                             res.send({
                                 status: true,
-                                message: 1,
+                                message: result,
                             });
                         }
                     })
+            } catch (error) {
+                next(error);
+            }
+        }
+    },
+
+    delete: {
+        async delete(req, res, next) {
+            try {
+                models.Task.destroy({
+                    where: {
+                        id: req.params.taskId,
+                    }
+                }).then((result, err) => {
+                    if (!err) {
+                        res.send({
+                            status: true,
+                            message: result,
+                        });
+                    }
+                })
             } catch (error) {
                 next(error);
             }

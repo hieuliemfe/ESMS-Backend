@@ -8,6 +8,8 @@ import TaskRoutes from './TaskRoutes';
 import RoleRoutes from './RoleRoutes';
 import CounterRoutes from './CounterRoutes';
 import QueueRoutes from './QueueRoutes'
+import TaskTypeRoutes from './TaskTypeRoutes';
+import CategoryRoutes from './CategoryRoutes';
 const Router = [
   {
     path: '/',
@@ -48,6 +50,14 @@ const Router = [
   {
     path: '/queues',
     handler: QueueRoutes
+  },
+  {
+    path: '/task-type',
+    handler: TaskTypeRoutes
+  },
+  {
+    path: '/categories',
+    handler: CategoryRoutes
   },
 ];
 

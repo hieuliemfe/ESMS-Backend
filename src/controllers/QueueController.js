@@ -1,10 +1,9 @@
 'use strict';
+
 import { query } from "express-validator";
 import models from '../db/models/index';
 import status from 'http-status';
-import url from 'url';
-import jwt from 'jsonwebtoken';
-import sequelize from "sequelize";
+
 export default {
 
     view: {
@@ -12,14 +11,15 @@ export default {
 
             try {
                 const queues = await models.Queue.findAll({
-                    include: [{
-                        model: models.Status,
-                        as: "Status"
-                    },
-                    {
-                        model: models.Category,
-                        as: "Category"
-                    }
+                    include: [
+                        {
+                            model: models.Category,
+                            as: "Category"
+                        },
+                        {
+                            model: models.Counter,
+                            as: "Counter"
+                        }
                     ],
                     attributes: ["id", "number", "createdAt", "updatedAt"]
                 });
@@ -39,7 +39,6 @@ export default {
             try {
                 models.Queue.count().then(count => {
                     models.Queue.create({
-                        statusId: 1,
                         categoryId: req.body.categoryId,
                         number: count + 1,
                     },
@@ -47,7 +46,7 @@ export default {
                         res.status(status.OK)
                             .send({
                                 status: true,
-                                message: queue.id,
+                                message: { id: queue.id },
                             });
                     })
                 })
@@ -60,35 +59,39 @@ export default {
     assign_queue: {
         async post(req, res, next) {
             try {
-                const token = req.headers.authorization.replace('Bearer ', '')
-                const tokenDecoded = jwt.decode(token)
-                models.Employee.findOne({
-                    attributes: { exclude: ['password', 'role_id', 'roleId'] },
-                    include: {
-                        model: models.Role,
-                        as: 'Role'
-                    },
-                    where: { id: tokenDecoded.employeeId }
-                }).then(employee => {
-                    if (employee) {
-                        models.Queue.update({
-                            employee_id: employee.id,
-                            statusId: 2,
-                            updatedAt: new Date(),
-                        },
-                            {
-                                where: { id: req.body.queueId }
-                            }
-                        ).then(result => {
-                            res.status(status.OK)
-                                .send({
-                                    status: true,
-                                    message: result,
-                                });
-                        })
-                    } else {
-                        throw new DefaultError(status.NOT_FOUND, 'Employee not found.');
+                const { counterId, queueId } = req.body;
+                models.Queue.update({
+                    counter_id: counterId,
+                    updatedAt: new Date(),
+                },
+                    {
+                        where: { id: queueId }
                     }
+                ).then(result => {
+                    res.status(status.OK)
+                        .send({
+                            status: true,
+                            message: result,
+                        });
+                })
+            } catch (error) {
+                next(error);
+            }
+        }
+    },
+
+    delete_all: {
+        async delete(req, res, next) {
+            try {
+                models.Queue.destroy({
+                    truncate: true
+                },
+                ).then(result => {
+                    res.status(status.OK)
+                        .send({
+                            status: true,
+                            message: result,
+                        });
                 })
             } catch (error) {
                 next(error);

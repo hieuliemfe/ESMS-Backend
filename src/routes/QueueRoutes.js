@@ -64,8 +64,8 @@ router.post('/', passport.authenticate('jwt', { session: false }), isBankTeller,
 *   post:
 *     tags:
 *       - Queues
-*     name: Assign a queue to an employee
-*     summary: Assign a queue to an employee
+*     name: Assign a queue to a counter
+*     summary: Assign a queue to an counter
 *     consumes:
 *       - application/json
 *     requestBody:
@@ -75,6 +75,8 @@ router.post('/', passport.authenticate('jwt', { session: false }), isBankTeller,
 *           schema:
 *             type: object
 *             properties:
+*               counterId:
+*                 type: integer
 *               queueId:
 *                 type: integer
 *     responses:
@@ -82,4 +84,21 @@ router.post('/', passport.authenticate('jwt', { session: false }), isBankTeller,
 *         description: Email sent to employee.
 */
 router.post('/assign', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.assign_queue.post);
+
+/**
+* @swagger
+* /queues/delete-all:
+*   delete:
+*     tags:
+*       - Queues
+*     name: Delete all queues
+*     summary: Delete all queues
+*     consumes:
+*       - application/json
+*     responses:
+*       200:
+*         description: All queues deleted.
+*/
+router.delete('/delete-all', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.delete_all.delete);
+
 export default router;

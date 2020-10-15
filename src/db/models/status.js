@@ -23,9 +23,6 @@ export default function (sequelize, DataTypes) {
         models.Status.hasMany(models.Task, {
             foreignKey: "status_id"
         });
-        models.Status.hasMany(models.Queue, {
-            foreignKey: "status_id"
-        });
     }
     return Status;
 };

@@ -10,7 +10,7 @@ import Controller from '../controllers/TaskController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
-import { isBankTeller,isAuthorized } from '../middlewares/authorization';
+import { isBankTeller, isAuthorized } from '../middlewares/authorization';
 
 /**
 * @swagger
@@ -55,8 +55,6 @@ router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 *           schema:
 *             type: object
 *             properties:
-*               queueId:
-*                 type: integer
 *               sessionId:
 *                 type: integer
 *               taskTypeId:
@@ -93,4 +91,32 @@ router.post('/assign', passport.authenticate('jwt', { session: false }), isBankT
 *         description: Status is updated.
 */
 router.put('/status', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.update_status.put);
+
+/**
+* @swagger
+* /tasks/{taskId}:
+*   delete:
+*     tags:
+*       - Tasks
+*     name: Delete a task.
+*     summary: Delete a employee based on a [taskId].
+*     consumes:
+*       - application/json
+*     parameters:
+*       - name: taskId
+*         in: path
+*         required: true
+*         description: Select a task with matching taskId.
+*         schema:
+*           type : integer
+*           format: string
+*           minimum: 1
+*     responses:
+*       200:
+*         description: Employee's details is deleted
+*       404:
+*         description: Employee not found.
+*/
+router.delete('/:taskId', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.delete.delete);
+
 export default router;

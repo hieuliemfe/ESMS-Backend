@@ -30,6 +30,10 @@ export default function (sequelize, DataTypes) {
             through: "counter_category",
             foreignKey: 'counter_id',
         });
+        Counter.hasMany(models.Queue, {
+            as: 'Queue',
+            foreignKey: 'counter_id',
+        });
     }
     return Counter;
 };

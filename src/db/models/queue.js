@@ -28,13 +28,13 @@ export default function (sequelize, DataTypes) {
         tableName: 'queue',
     });
     Queue.associate = function (models) {
-        Queue.belongsTo(models.Status, {
-            foreignKey: 'status_id',
-            as: 'Status'
-        });
         Queue.belongsTo(models.Category, {
             foreignKey: 'category_id',
             as: 'Category'
+        });
+        Queue.belongsTo(models.Counter, {
+            foreignKey: 'counter_id',
+            as: 'Counter'
         });
     }
 
