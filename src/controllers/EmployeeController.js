@@ -50,23 +50,42 @@ export default {
   bulk_register: {
     async post(req, res, next) {
       try {
+        const currentDate = Date.now();
+        let day = new Date(currentDate);
+
         if (req.file == undefined) {
           return res.status(400).send("Please upload an excel file!");
         }
         let path =
           __basedir + "/" + req.file.filename;
         await readXlsxFile(path).then((rows) => {
+
           // skip header
           rows.shift();
           let employees = [];
           rows.forEach((row) => {
+            //Generate data:
+            const fullnameArray = row[1].toString().split(" ");
+            //employeeCode
+            const employeeCode =
+              fullnameArray[fullnameArray.length - 1]
+              + fullnameArray[0]
+              + day.getMinutes() + day.getSeconds()
+            //email
+            const email =
+              fullnameArray[fullnameArray.length - 1].toLowerCase() + '.'
+              + fullnameArray[0].toLowerCase()
+              + day.getMinutes() + day.getSeconds()
+              + "@mail.com";
+            //password
+            const password = Math.random().toString(36).slice(-8);
             let employee = {
-              employeeCode: row[1],
-              password: "password",
-              email: row[2],
-              fullname: row[3],
-              phoneNumber: row[4],
-              roleId: 2,
+              employeeCode: employeeCode,
+              password: password,
+              email: email,
+              fullname: row[1],
+              phoneNumber: row[2],
+              roleId: row[3],
             };
             employees.push(employee);
           });
@@ -379,7 +398,7 @@ export default {
         const token = req.headers.authorization.replace('Bearer ', '')
         const tokenDecoded = jwt.decode(token)
         models.Employee.findOne({
-          attributes: { exclude: ['password', 'role_id','roleId'] },
+          attributes: { exclude: ['password', 'role_id', 'roleId'] },
           include: {
             model: models.Role,
             as: 'Role'
