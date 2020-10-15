@@ -4,7 +4,7 @@ export default [
     {
         number: 1 ,
         categoryId: 1,
-        statusId: 4,
+        statusId: 1,
         employee_id: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
         createdAt: new Date(),
         updatedAt: new Date()
@@ -12,7 +12,7 @@ export default [
     {
         number: 2 ,
         categoryId: 2,
-        statusId: 3,
+        statusId: 1,
         employee_id: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
         createdAt: new Date(),
         updatedAt: new Date()
