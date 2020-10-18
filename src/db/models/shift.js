@@ -25,6 +25,16 @@ export default function (sequelize, DataTypes) {
       type: DataTypes.DATE,
       field: 'shift_end'
     },
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: new Date(),
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: new Date(),
+      field: 'updated_at'
+    }
   }, {
     tableName: 'shift',
   });

@@ -1,25 +1,20 @@
 'use strict'
 
 export default [
-    {
-        categoryName: "Deposit",
-        createdAt: new Date(),
-        updatedAt: new Date()
-    },
-    {
-        categoryName: "Loan",
-        createdAt: new Date(),
-        updatedAt: new Date()
-    },
-    {
-        categoryName: "Create an account",
-        createdAt: new Date(),
-        updatedAt: new Date()
-    },
-    {
-        categoryName: "Create a transaction",
-        createdAt: new Date(),
-        updatedAt: new Date()
-    },
-  ]
-  
+  {
+    categoryName: "Deposit",
+
+  },
+  {
+    categoryName: "Loan",
+
+  },
+  {
+    categoryName: "Create an account",
+
+  },
+  {
+    categoryName: "Create a transaction",
+
+  },
+]

@@ -1,28 +1,24 @@
 'use strict'
 
 export default [
-    {
-        counterName: "Alpha",
-        counterNumber: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
-    },
-    {
-        counterName: "Beta",
-        counterNumber: 2,
-        createdAt: new Date(),
-        updatedAt: new Date()
-    },
-    {
-        counterName: "Charlie",
-        counterNumber: 3,
-        createdAt: new Date(),
-        updatedAt: new Date()
-    },
-    {
-        counterName: "Delta",
-        counterNumber: 4,
-        createdAt: new Date(),
-        updatedAt: new Date()
-    },
+  {
+    name: "Alpha",
+    number: 1,
+
+  },
+  {
+    name: "Beta",
+    number: 2,
+
+  },
+  {
+    name: "Charlie",
+    number: 3,
+
+  },
+  {
+    name: "Delta",
+    number: 4,
+
+  },
 ]

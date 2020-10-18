@@ -57,7 +57,7 @@ router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 *             properties:
 *               sessionId:
 *                 type: integer
-*               taskTypeId:
+*               taskId:
 *                 type: integer
 *     responses:
 *       200:

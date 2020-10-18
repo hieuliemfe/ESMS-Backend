@@ -2,22 +2,24 @@
 
 export default function (sequelize, DataTypes) {
   const Counter = sequelize.define('Counter', {
-    counterName: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
-      field: 'counter_name'
+      field: 'name'
     },
-    counterNumber: {
+    number: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      field: 'counter_number'
+      field: 'number'
     },
     createdAt: {
       type: DataTypes.DATE,
+      defaultValue: new Date(),
       field: 'created_at'
     },
     updatedAt: {
       type: DataTypes.DATE,
+      defaultValue: new Date(),
       field: 'updated_at'
     }
   }, {
@@ -25,11 +27,6 @@ export default function (sequelize, DataTypes) {
   });
 
   Counter.associate = function (models) {
-    //A counter will handle multiples queues with different categories.
-    Counter.belongsToMany(models.Category, {
-      through: "counter_category",
-      foreignKey: 'counter_id',
-    });
     //A counter will have many queues from customers.
     Counter.hasMany(models.Queue, {
       as: 'Queue',

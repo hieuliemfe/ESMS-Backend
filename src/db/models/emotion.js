@@ -9,12 +9,14 @@ export default function (sequelize, DataTypes) {
     },
     createdAt: {
       type: DataTypes.DATE,
+      defaultValue: new Date(),
       field: 'created_at'
     },
     updatedAt: {
       type: DataTypes.DATE,
+      defaultValue: new Date(),
       field: 'updated_at'
-    },
+    }
   }, {
     tableName: 'emotion',
   });

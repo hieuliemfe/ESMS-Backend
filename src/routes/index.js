@@ -8,7 +8,6 @@ import TaskRoutes from './TaskRoutes';
 import RoleRoutes from './RoleRoutes';
 import CounterRoutes from './CounterRoutes';
 import QueueRoutes from './QueueRoutes'
-import TaskTypeRoutes from './TaskTypeRoutes';
 import CategoryRoutes from './CategoryRoutes';
 import ShiftRoutes from './ShiftRoutes';
 
@@ -52,10 +51,6 @@ const Router = [
   {
     path: '/queues',
     handler: QueueRoutes
-  },
-  {
-    path: '/task-type',
-    handler: TaskTypeRoutes
   },
   {
     path: '/categories',
