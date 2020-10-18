@@ -10,6 +10,8 @@ import CounterRoutes from './CounterRoutes';
 import QueueRoutes from './QueueRoutes'
 import TaskTypeRoutes from './TaskTypeRoutes';
 import CategoryRoutes from './CategoryRoutes';
+import ShiftRoutes from './ShiftRoutes';
+
 const Router = [
   {
     path: '/',
@@ -58,6 +60,10 @@ const Router = [
   {
     path: '/categories',
     handler: CategoryRoutes
+  },
+  {
+    path: '/shifts',
+    handler: ShiftRoutes
   },
 ];
 

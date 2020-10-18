@@ -85,15 +85,12 @@ export default function (sequelize, DataTypes) {
   });
 
   Employee.associate = function (models) {
+    //Each employee will have a role.
     Employee.belongsTo(models.Role, {
       foreignKey: 'role_id',
       as: 'Role'
     });
-    Employee.belongsToMany(models.Counter, {
-      as: "Counter",
-      through: models.Shift,
-      foreignKey: 'employee_id',
-  });
+    //An employee will have many sessions with customers.
     Employee.hasMany(models.Session, {
       foreignKey: 'employee_id'
     });
