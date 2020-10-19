@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import { Op } from "sequelize";
 
 export default {
+
   view_by_employee: {
     async get(req, res, next) {
       try {

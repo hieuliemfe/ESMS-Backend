@@ -43,10 +43,6 @@ export default function (sequelize, DataTypes) {
       foreignKey: 'counter_id',
       as: 'Counter'
     });
-    Queue.belongsTo(models.Status, {
-      foreignKey: 'status_id',
-      as: 'Status'
-    });
   }
   return Queue;
 };

@@ -4,6 +4,7 @@ import models from '../db/models/index';
 import status from 'http-status';
 import url from 'url';
 import { DefaultError } from '../utils/errorHandler';
+import { sessionTaskStatus } from '../db/config/statusConfig'
 export default {
 
   view: {
@@ -54,7 +55,7 @@ export default {
     async post(req, res, next) {
       try {
         models.SessionTask.create({
-          statusId: 2,
+          statusId: sessionTaskStatus.ASSIGNED,
           sessionId: req.body.sessionId,
           taskId: req.body.taskId
         }).then((sessionTask, err) => {

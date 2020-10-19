@@ -5,7 +5,6 @@ import roleSeed from './roleSeed';
 import employeeSeed from './employeeSeed';
 import emotionSeed from './emotionSeed';
 import customerSeed from './customerSeed';
-import statusSeed from './statusSeed';
 import categorySeed from './categorySeed';
 import queueSeed from './queueSeed';
 import counterSeed from './counterSeed';
@@ -24,7 +23,6 @@ const seed = async () => {
       if (count == 0) {
         models.Role.bulkCreate(roleSeed)
           //library seeds
-          .then(() => models.Status.bulkCreate(statusSeed))
           .then(() => models.Emotion.bulkCreate(emotionSeed))
           .then(() => models.Category.bulkCreate(categorySeed))
           //sample data seeds

@@ -12,6 +12,10 @@ export default function (sequelize, DataTypes) {
       allowNull: false,
       field: 'session_id',
     },
+    statusId: {
+      type: DataTypes.INTEGER,
+      field: 'status_id',
+    },
     taskId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -41,11 +45,6 @@ export default function (sequelize, DataTypes) {
       targetKey: 'id',
       foreignKey: 'task_id',
       as: 'Task'
-    });
-    SessionTask.belongsTo(models.Status, {
-      targetKey: 'id',
-      foreignKey: 'status_id',
-      as: 'Status'
     });
   };
   return SessionTask;
