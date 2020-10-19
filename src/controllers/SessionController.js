@@ -1,5 +1,5 @@
 'use strict';
-import { query } from "express-validator";
+import { Op } from 'sequelize'
 import models from '../db/models/index';
 import status from 'http-status';
 import url from 'url';
@@ -100,55 +100,68 @@ export default {
       }
     }
   },
-  update: {
+  end_session: {
     async put(req, res, next) {
       try {
         const { sessionStart, sessionEnd, sessionId } = req.body;
-
-        await models.Session.update({
-          sessionStart,
-          sessionEnd,
-        },
-          {
-            where: {
-              id: sessionId
-            }
+        //check whether all tasks has been completed.
+        await models.SessionTask.findAll({
+          attributes: [],
+          where: { session_id: sessionId, }
+        }).then(result => {
+          //if there's a task that is found not completed
+          if (!result) {
+            res.status(500).send({
+              status: false,
+              message: "Incomplete task(s) found!"
+            });
+          } else {
+            models.Session.update({
+              sessionStart,
+              sessionEnd,
+            },
+              {
+                where: {
+                  id: sessionId
+                }
+              }
+            )
+              .then((result) => {
+                if (!result) throw new DefaultError(status.BAD_REQUEST, "ERROR!");
+                else {
+                  const emotions = req.body.emotions;
+                  let addResults = [];
+                  emotions.forEach((emotion) => {
+                    const periods = emotion.periods;
+                    periods.forEach((period) => {
+                      let addResult = {
+                        sessionId: sessionId,
+                        emotionId: emotion.emotion,
+                        periodStart: period.periodStart,
+                        periodEnd: period.periodEnd,
+                        duration: period.duration
+                      };
+                      addResults.push(addResult);
+                    });
+                  });
+                  models.Period.bulkCreate(addResults)
+                    .then(() => {
+                      res.status(status.CREATED).send({
+                        status: true,
+                        message: 1,
+                      });
+                    })
+                    .catch((error) => {
+                      res.status(500).send({
+                        status: false,
+                        message: "Fail to import data!",
+                        error: error.message,
+                      });
+                    });
+                }
+              })
           }
-        )
-          .then((result) => {
-            if (!result) throw new DefaultError(status.BAD_REQUEST, "ERROR!");
-            else {
-              const emotions = req.body.emotions;
-              let addResults = [];
-              emotions.forEach((emotion) => {
-                const periods = emotion.periods;
-                periods.forEach((period) => {
-                  let addResult = {
-                    sessionId: sessionId,
-                    emotionId: emotion.emotion,
-                    periodStart: period.periodStart,
-                    periodEnd: period.periodEnd,
-                    duration: period.duration
-                  };
-                  addResults.push(addResult);
-                });
-              });
-              models.Period.bulkCreate(addResults)
-                .then(() => {
-                  res.status(status.CREATED).send({
-                    status: true,
-                    message: 1,
-                  });
-                })
-                .catch((error) => {
-                  res.status(500).send({
-                    status: false,
-                    message: "Fail to import data!",
-                    error: error.message,
-                  });
-                });
-            }
-          })
+        })
       } catch (error) {
         next(error)
       }

@@ -30,7 +30,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), isBankTeller,
 
 /**
 * @swagger
-* /sessions:
+* /sessions/:
 *   put:
 *     tags:
 *       - Sessions
@@ -62,7 +62,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), isBankTeller,
 *       201:
 *         description: Session's added.
 */
-router.put('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.update.put);
+router.put('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.end_session.put);
 
 /**
 * @swagger

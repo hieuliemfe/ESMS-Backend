@@ -28,10 +28,10 @@ export default function (sequelize, DataTypes) {
     tableName: 'session',
   });
   Session.associate = function (models) {
-    models.Session.hasMany(models.Period, {
+    Session.hasMany(models.Period, {
       foreignKey: 'session_id'
     });
-    models.Session.hasMany(models.Task, {
+    Session.hasMany(models.Task, {
       foreignKey: 'session_id'
     });
     Session.belongsTo(models.Customer, {
@@ -41,6 +41,11 @@ export default function (sequelize, DataTypes) {
     Session.belongsTo(models.Employee, {
       foreignKey: 'employee_id',
       as: 'Employee'
+    });
+    //A session can be only in a shift
+    Session.belongsTo(models.Shift, {
+      foreignKey: 'shift_id',
+      as: 'Shift'
     });
   }
   return Session;

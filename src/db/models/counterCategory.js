@@ -28,12 +28,12 @@ export default function (sequelize, DataTypes) {
     //A counter will handle multiple queue's categories.
     CounterCategory.belongsTo(models.Counter, {
       targetKey: 'id',
-      foreignKey: "counter_id",
+      foreignKey: 'counter_id',
       as: 'Counter'
     });
     CounterCategory.belongsTo(models.Category, {
       targetKey: 'id',
-      foreignKey: "category_id",
+      foreignKey: 'category_id',
       as: 'Category'
     });
   };

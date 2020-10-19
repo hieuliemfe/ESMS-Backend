@@ -30,21 +30,21 @@ export default function (sequelize, DataTypes) {
   }, {
     tableName: 'session_task',
   });
-  
+
   SessionTask.associate = function (models) {
     SessionTask.belongsTo(models.Session, {
       targetKey: 'id',
-      foreignKey: "session_id",
+      foreignKey: 'session_id',
       as: 'Session'
     });
     SessionTask.belongsTo(models.Task, {
       targetKey: 'id',
-      foreignKey: "task_id",
+      foreignKey: 'task_id',
       as: 'Task'
     });
     SessionTask.belongsTo(models.Status, {
       targetKey: 'id',
-      foreignKey: "status_id",
+      foreignKey: 'status_id',
       as: 'Status'
     });
   };

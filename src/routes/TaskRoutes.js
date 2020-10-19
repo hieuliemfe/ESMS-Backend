@@ -82,7 +82,7 @@ router.post('/assign', passport.authenticate('jwt', { session: false }), isBankT
 *           schema:
 *             type: object
 *             properties:
-*               taskId:
+*               sessionTaskId:
 *                 type: integer
 *               statusId:
 *                 type: integer

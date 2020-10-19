@@ -22,9 +22,6 @@ export default function (sequelize, DataTypes) {
   });
 
   Status.associate = function (models) {
-    Status.hasMany(models.Task, {
-      foreignKey: "status_id"
-    });
     Status.hasMany(models.SessionTask, {
       foreignKey: "status_id"
     });

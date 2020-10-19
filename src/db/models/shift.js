@@ -39,6 +39,10 @@ export default function (sequelize, DataTypes) {
     tableName: 'shift',
   });
   Shift.associate = function (models) {
+    //A shift will have many sessions
+    Shift.hasMany(models.Session, {
+      foreignKey: 'shift_id'
+    });
     //A counter can have many shifts
     Shift.belongsTo(models.Counter, {
       //counter_id

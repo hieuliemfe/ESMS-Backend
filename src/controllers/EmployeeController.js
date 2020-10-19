@@ -1,11 +1,10 @@
 'use strict';
-import { query } from "express-validator";
+
 import models from '../db/models/index';
 import status from 'http-status';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Op } from "sequelize";
-import validationResult from 'express-validator';
 import url from 'url';
 import readXlsxFile from "read-excel-file/node";
 

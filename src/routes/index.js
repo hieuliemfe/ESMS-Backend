@@ -1,6 +1,5 @@
 import RootRoutes from './RootRoutes';
 import EmployeeRoutes from './EmployeeRoutes';
-import FaceRoutes from './FaceRoutes';
 import EmailRoutes from './EmailRoutes';
 import SessionRoutes from './SessionRoutes';
 import CustomerRoutes from './CustomerRoutes';
@@ -23,10 +22,6 @@ const Router = [
   {
     path: '/customers',
     handler: CustomerRoutes
-  },
-  {
-    path: '/faces',
-    handler: FaceRoutes,
   },
   {
     path: '/emails',
