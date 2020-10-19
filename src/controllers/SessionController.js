@@ -5,7 +5,8 @@ import status from 'http-status';
 import url from 'url';
 import jwt from 'jsonwebtoken';
 import { DefaultError } from '../utils/errorHandler';
-
+import { sessionTaskStatus } from '../db/config/statusConfig'
+import sessionTask from '../db/models/sessionTask';
 export default {
 
   create: {
@@ -105,12 +106,17 @@ export default {
       try {
         const { sessionStart, sessionEnd, sessionId } = req.body;
         //check whether all tasks has been completed.
-        await models.SessionTask.findAll({
-          attributes: [],
-          where: { session_id: sessionId, }
+        await models.SessionTask.findOne({
+          where:
+          {
+            [Op.and]: [
+              { sessionId: sessionId },
+              { statusId: { [Op.ne]: sessionTaskStatus.COMPLETED } },
+            ]
+          },
         }).then(result => {
           //if there's a task that is found not completed
-          if (!result) {
+          if (result) {
             res.status(500).send({
               status: false,
               message: "Incomplete task(s) found!"
