@@ -28,5 +28,9 @@ export default [
   {
     emotionName: 'Suprised',
 
+  },
+  {
+    emotionName: 'No face detected',
+
   }
 ]
