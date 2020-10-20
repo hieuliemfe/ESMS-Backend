@@ -18,11 +18,16 @@ export default {
           }
         }
         await models.CounterCategory.findAll({
+          attributes: ["id", "counterId", "createdAt", "updatedAt"],
           include: [{
             model: models.Counter,
+            attributes: [],
             as: 'Counter',
             where: whereCondition,
-          },
+          }, {
+            model: models.Category,
+            as: 'Category',
+          }
           ],
           raw: false,
         }).then(CounterCategories => {
