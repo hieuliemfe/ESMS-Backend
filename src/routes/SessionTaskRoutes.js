@@ -1,12 +1,12 @@
 'use strict'
 
 /**
- * Task Route
- * path: /tasks
+ * SessionTask Route
+ * path: /session-tasks
  */
 
 import express from 'express';
-import Controller from '../controllers/TaskController';
+import Controller from '../controllers/SessionTaskController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
@@ -14,10 +14,10 @@ import { isBankTeller, isAuthorized } from '../middlewares/authorization';
 
 /**
 * @swagger
-* /tasks:
+* /session-tasks:
 *   get:
 *     tags:
-*       - Tasks
+*       - Session Tasks
 *     name: Get task(s)'s details.
 *     summary: get a employee's task details based on an [employee code] or a [fullname].
 *     consumes:
@@ -40,10 +40,10 @@ router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 
 /**
 * @swagger
-* /tasks/assign:
+* /session-tasks/assign:
 *   post:
 *     tags:
-*       - Tasks
+*       - Session Tasks
 *     name: Assign a task to an employee
 *     summary: Assign a task to an employee
 *     consumes:
@@ -67,14 +67,23 @@ router.post('/assign', passport.authenticate('jwt', { session: false }), isBankT
 
 /**
 * @swagger
-* /tasks/status:
+* /session-tasks/{sessionTaskId}/status:
 *   put:
 *     tags:
-*       - Tasks
+*       - Session Tasks
 *     name: Update task status
 *     summary: Update task status
 *     consumes:
 *       - application/json
+*     parameters:
+*       - name: sessionTaskId
+*         in: path
+*         required: true
+*         description: Select a task with matching taskId.
+*         schema:
+*           type : integer
+*           format: string
+*           minimum: 1
 *     requestBody:
 *       required: true
 *       content:
@@ -82,28 +91,26 @@ router.post('/assign', passport.authenticate('jwt', { session: false }), isBankT
 *           schema:
 *             type: object
 *             properties:
-*               sessionTaskId:
-*                 type: integer
 *               statusId:
 *                 type: integer
 *     responses:
 *       200:
 *         description: Status is updated.
 */
-router.put('/status', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.update_status.put);
+router.put('/:sessionTaskId/status', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.update_status.put);
 
 /**
 * @swagger
-* /tasks/{taskId}:
+* /session-tasks/{sessionTaskId}:
 *   delete:
 *     tags:
-*       - Tasks
+*       - Session Tasks
 *     name: Delete a task.
 *     summary: Delete a employee based on a [taskId].
 *     consumes:
 *       - application/json
 *     parameters:
-*       - name: taskId
+*       - name: sessionTaskId
 *         in: path
 *         required: true
 *         description: Select a task with matching taskId.
@@ -117,6 +124,6 @@ router.put('/status', passport.authenticate('jwt', { session: false }), isBankTe
 *       404:
 *         description: Employee not found.
 */
-router.delete('/:taskId', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.delete.delete);
+router.delete('/:sessionTaskId', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.delete.delete);
 
 export default router;

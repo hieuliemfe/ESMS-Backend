@@ -3,7 +3,7 @@ import EmployeeRoutes from './EmployeeRoutes';
 import EmailRoutes from './EmailRoutes';
 import SessionRoutes from './SessionRoutes';
 import CustomerRoutes from './CustomerRoutes';
-import TaskRoutes from './TaskRoutes';
+import SessionTaskRoutes from './SessionTaskRoutes';
 import RoleRoutes from './RoleRoutes';
 import CounterRoutes from './CounterRoutes';
 import QueueRoutes from './QueueRoutes'
@@ -32,8 +32,8 @@ const Router = [
     handler: SessionRoutes,
   },
   {
-    path: '/tasks',
-    handler: TaskRoutes,
+    path: '/session-tasks',
+    handler: SessionTaskRoutes,
   },
   {
     path: '/roles',

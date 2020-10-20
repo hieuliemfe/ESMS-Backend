@@ -38,4 +38,31 @@ import { isBankTeller } from '../middlewares/authorization';
 */
 router.get('/counters/:counterId', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_by_counter_id.get);
 
+
+/**
+* @swagger
+* /categories/{categoryId}/tasks:
+*   get:
+*     tags:
+*       - Categories
+*     name: Get tasks with the corresponding category.
+*     summary: Get tasks with the corresponding category.
+*     consumes:
+*       - application/json
+*     parameters:
+*       - in: path
+*         name: categoryId
+*         schema:
+*          type: integer
+*         description: categoryId to filter
+*     responses:
+*       200:
+*         description: A list of tasks is displayed.
+*       400:
+*         description: Error.
+*       401:
+*         description: Forbidden.
+*/
+router.get('/:categoryId/tasks', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_tasks_by_category_id.get);
+
 export default router;

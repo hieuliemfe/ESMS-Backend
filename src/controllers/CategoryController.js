@@ -44,4 +44,24 @@ export default {
     }
   },
 
+  view_tasks_by_category_id: {
+    async get(req, res, next) {
+      try {
+        const { categoryId } = req.params
+        const result = await models.Task.findAll({
+          where: {
+            categoryId: categoryId
+          }
+        })
+        res.status(status.OK)
+          .send({
+            status: true,
+            message: result,
+          });
+      } catch
+      (error) {
+        next(error);
+      }
+    }
+  },
 };

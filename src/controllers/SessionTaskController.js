@@ -27,17 +27,20 @@ export default {
           queryData.order = 'created_at,asc'
         }
         const orderOptions = queryData.order.split(",");
-        const tasks = await models.Task.findOne({
+        const tasks = await models.SessionTask.findOne({
           include: [{
             model: models.Session,
             as: 'Session',
-          }],
+          },
+          {
+            model: models.Task,
+            as: 'Task',
+          }
+          ],
           where: whereCondition,
           order: [
             [orderOptions[0], orderOptions[1]],
           ],
-          raw: false,
-          distinct: true,
         });
         res.status(status.OK)
           .send({
@@ -78,7 +81,7 @@ export default {
         },
           {
             where: {
-              id: req.body.sessionTaskId
+              id: req.params.sessionTaskId
             }
           }).then((result, err) => {
             if (!err) {
@@ -97,9 +100,9 @@ export default {
   delete: {
     async delete(req, res, next) {
       try {
-        models.Task.destroy({
+        models.SessionTask.destroy({
           where: {
-            id: req.params.taskId,
+            id: req.params.sessionTaskId,
           }
         }).then((result, err) => {
           if (!err) {
