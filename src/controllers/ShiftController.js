@@ -127,4 +127,78 @@ export default {
     }
   },
 
+  checkout: {
+    async put(req, res, next) {
+      try {
+        const token = req.headers.authorization.replace('Bearer ', '')
+        const tokenDecoded = jwt.decode(token)
+        const { shiftId } = req.params
+        if (!shiftId) {
+          res.status(status.INTERNAL_SERVER_ERROR)
+            .send({
+              success: false,
+              message: "Please input shiftId"
+            });
+        } else {
+          const result = await models.Shift.update(
+            { statusId: shiftStatus.INACTIVE },
+            {
+              where: {
+                [Op.and]: [
+                  { id: shiftId },
+                  { employeeId: tokenDecoded.employeeId },
+                  { statusId: shiftStatus.ACTIVE },
+                ]
+              }
+            }
+          );
+          res.status(status.OK)
+            .send({
+              success: true,
+              message: result
+            });
+        }
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
+  checkin: {
+    async put(req, res, next) {
+      try {
+        const token = req.headers.authorization.replace('Bearer ', '')
+        const tokenDecoded = jwt.decode(token)
+        const { shiftId } = req.params
+        if (!shiftId) {
+          res.status(status.INTERNAL_SERVER_ERROR)
+            .send({
+              success: false,
+              message: "Please input shiftId"
+            });
+        } else {
+          const result = await models.Shift.update(
+            { statusId: shiftStatus.ACTIVE },
+            {
+              where: {
+                [Op.and]: [
+                  { id: shiftId },
+                  { employeeId: tokenDecoded.employeeId },
+                  { statusId: shiftStatus.INACTIVE },
+                ]
+              }
+            }
+          );
+          res.status(status.OK)
+            .send({
+              success: true,
+              message: result
+            });
+        }
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
 };

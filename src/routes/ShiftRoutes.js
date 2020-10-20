@@ -48,4 +48,60 @@ router.get('/active-shift', passport.authenticate('jwt', { session: false }), is
 
 router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_shift_list.get);
 
+/**
+* @swagger
+* /shifts/{shiftId}/checkout:
+*   put:
+*     tags:
+*       - Shifts
+*     name: Checkout for a shift.
+*     summary: Checkout for a shift with shiftId.
+*     consumes:
+*       - application/json
+*     parameters:
+*       - name: shiftId
+*         in: path
+*         required: true
+*         description: Select an shift with matching shiftId.
+*         schema:
+*           type : string
+*           format: string
+*           minimum: 1
+*     responses:
+*       200:
+*         description: Shift is checked out.
+*       400:
+*         description: Error.
+*/
+
+router.put('/:shiftId/checkout', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.checkout.put);
+
+/**
+* @swagger
+* /shifts/{shiftId}/checkin:
+*   put:
+*     tags:
+*       - Shifts
+*     name: Checkin for a shift.
+*     summary: Checkin for a shift with shiftId.
+*     consumes:
+*       - application/json
+*     parameters:
+*       - name: shiftId
+*         in: path
+*         required: true
+*         description: Select an shift with matching shiftId.
+*         schema:
+*           type : string
+*           format: string
+*           minimum: 1
+*     responses:
+*       200:
+*         description: Shift is checked out.
+*       400:
+*         description: Error.
+*/
+
+router.put('/:shiftId/checkin', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.checkin.put);
+
 export default router;
