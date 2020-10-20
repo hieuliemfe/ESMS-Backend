@@ -17,13 +17,14 @@ export default {
             id: counterId
           }
         }
-        await models.Category.findAll({
+        await models.CounterCategory.findAll({
           include: [{
             model: models.Counter,
             as: 'Counter',
             where: whereCondition,
           },
           ],
+          raw: false,
         }).then(CounterCategories => {
           res.status(status.OK)
             .send({
