@@ -147,7 +147,6 @@ export default {
                 [Op.and]: [
                   { id: shiftId },
                   { employeeId: tokenDecoded.employeeId },
-                  { statusId: shiftStatus.ACTIVE },
                 ]
               }
             }
@@ -184,7 +183,6 @@ export default {
                 [Op.and]: [
                   { id: shiftId },
                   { employeeId: tokenDecoded.employeeId },
-                  { statusId: shiftStatus.INACTIVE },
                 ]
               }
             }
