@@ -31,16 +31,9 @@ export default function (sequelize, DataTypes) {
     Session.hasMany(models.Period, {
       foreignKey: 'session_id'
     });
-    Session.hasMany(models.Task, {
-      foreignKey: 'session_id'
-    });
     Session.belongsTo(models.Customer, {
       foreignKey: 'customer_id',
       as: 'Customer'
-    });
-    Session.belongsTo(models.Employee, {
-      foreignKey: 'employee_id',
-      as: 'Employee'
     });
     //A session can be only in a shift
     Session.belongsTo(models.Shift, {

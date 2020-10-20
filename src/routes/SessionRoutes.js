@@ -15,58 +15,6 @@ import { isBankTeller, isManager } from '../middlewares/authorization';
 /**
 * @swagger
 * /sessions:
-*   post:
-*     tags:
-*       - Sessions
-*     name: Create a session
-*     summary: Create an employee's session with a customer.
-*     consumes:
-*       - application/json
-*     responses:
-*       201:
-*         description: Session's created.
-*/
-router.post('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.create.post);
-
-/**
-* @swagger
-* /sessions/:
-*   put:
-*     tags:
-*       - Sessions
-*     name: Update a session
-*     summary: Update a session with periods & emotions.
-*     consumes:
-*       - application/json
-*     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             type: object
-*             properties:
-*               sessionId:
-*                 type: string
-*               sessionBegin:
-*                 type: string
-*               sessionEnd:
-*                 type: string
-*               emotions:
-*                 type: array
-*                 items:
-*                   type: object
-*                   properties:
-*                     emotion:
-*                       type:integer
-*     responses:
-*       201:
-*         description: Session's added.
-*/
-router.put('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.end_session.put);
-
-/**
-* @swagger
-* /sessions:
 *   get:
 *     tags:
 *       - Sessions
@@ -87,4 +35,80 @@ router.put('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 *         description: Error.
 */
 router.get('/', passport.authenticate('jwt', { session: false }), isManager, Controller.view.get);
+
+
+/**
+* @swagger
+* /sessions:
+*   post:
+*     tags:
+*       - Sessions
+*     name: Create a session
+*     summary: Create an employee's session with a customer.
+*     consumes:
+*       - application/json
+*     responses:
+*       201:
+*         description: Session's created.
+*/
+router.post('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.create.post);
+
+/**
+* @swagger
+* /sessions/{sessionId}/start:
+*   put:
+*     tags:
+*       - Sessions
+*     name: Update a session
+*     summary: Update a session with periods & emotions.
+*     consumes:
+*       - application/json
+*     parameters:
+*       - in: path
+*         name: sessionId
+*         schema:
+*           type: string
+*         description: Get session based on sessionId.
+*     responses:
+*       201:
+*         description: Session's added.
+*/
+router.put('/:sessionId/start', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.start_session.put);
+
+/**
+* @swagger
+* /sessions/{sessionId}/end:
+*   put:
+*     tags:
+*       - Sessions
+*     name: Update a session
+*     summary: Update a session with periods & emotions.
+*     consumes:
+*       - application/json
+*     parameters:
+*       - in: path
+*         name: sessionId
+*         schema:
+*           type: string
+*         description: Get session based on sessionId.
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               emotions:
+*                 type: array
+*                 items:
+*                   type: object
+*                   properties:
+*                     emotion:
+*                       type:integer
+*     responses:
+*       201:
+*         description: Session's added.
+*/
+router.put('/:sessionId/end', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.end_session.put);
+
 export default router;

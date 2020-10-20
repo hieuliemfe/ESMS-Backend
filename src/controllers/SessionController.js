@@ -101,11 +101,35 @@ export default {
       }
     }
   },
+
+  start_session: {
+    async put(req, res, next) {
+      try {
+        const { sessionId } = req.params
+        const result = await models.Session.update({
+          sessionStart: new Date(),
+        },
+          {
+            where: {
+              id: sessionId
+            }
+          }
+        )
+        res.status(status.OK).send({
+          status: true,
+          message: result,
+        });
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
   end_session: {
     async put(req, res, next) {
       try {
-        const { sessionStart, sessionEnd, sessionId } = req.body;
-        //check whether all tasks has been completed.
+        const { sessionId } = req.params;
+        //check whether all tasks has been completed.r
         await models.SessionTask.findOne({
           where:
           {
@@ -122,55 +146,49 @@ export default {
               message: "Incomplete task(s) found!"
             });
           } else {
-            models.Session.update({
-              sessionStart,
-              sessionEnd,
-            },
-              {
-                where: {
-                  id: sessionId
-                }
+            const emotions = req.body.emotions;
+            //if there's no emotion in request body
+            if (!emotions) {
+              res.status(status.INTERNAL_SERVER_ERROR).send({
+                status: false,
+                message: "No emotion in session!",
+              });
+            } else {
+              let periodList = [];
+              emotions.forEach((emotion) => {
+                const periods = emotion.periods;
+                periods.forEach((period) => {
+                  let addResult = {
+                    sessionId: sessionId,
+                    emotionId: emotion.emotion,
+                    periodStart: period.periodStart,
+                    periodEnd: period.periodEnd,
+                    duration: period.duration
+                  };
+                  periodList.push(addResult);
+                });
+              });
+              const addPeriodResult = models.Period.bulkCreate(periodList)
+              if (addPeriodResult) {
+                const result = models.Session.update(
+                  { sessionEnd: new Date() },
+                  {
+                    where: {
+                      id: sessionId
+                    }
+                  })
+                res.status(status.CREATED).send({
+                  status: true,
+                  message: 1,
+                });
               }
-            )
-              .then((result) => {
-                if (!result) throw new DefaultError(status.BAD_REQUEST, "ERROR!");
-                else {
-                  const emotions = req.body.emotions;
-                  let addResults = [];
-                  emotions.forEach((emotion) => {
-                    const periods = emotion.periods;
-                    periods.forEach((period) => {
-                      let addResult = {
-                        sessionId: sessionId,
-                        emotionId: emotion.emotion,
-                        periodStart: period.periodStart,
-                        periodEnd: period.periodEnd,
-                        duration: period.duration
-                      };
-                      addResults.push(addResult);
-                    });
-                  });
-                  models.Period.bulkCreate(addResults)
-                    .then(() => {
-                      res.status(status.CREATED).send({
-                        status: true,
-                        message: 1,
-                      });
-                    })
-                    .catch((error) => {
-                      res.status(500).send({
-                        status: false,
-                        message: "Fail to import data!",
-                        error: error.message,
-                      });
-                    });
-                }
-              })
+            }
           }
         })
       } catch (error) {
         next(error)
       }
     }
-  }
+  },
+
 }

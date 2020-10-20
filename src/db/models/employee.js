@@ -92,8 +92,8 @@ export default function (sequelize, DataTypes) {
       foreignKey: 'role_id',
       as: 'Role'
     });
-    //An employee will have many sessions with customers.
-    Employee.hasMany(models.Session, {
+    //An employee will have many shifts with customers.
+    Employee.hasMany(models.Shift, {
       foreignKey: 'employee_id'
     });
   }
