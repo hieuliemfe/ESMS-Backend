@@ -198,5 +198,85 @@ export default {
       }
     }
   },
+  sum_up: {
+    async get(req, res, next) {
+      try {
+        const token = req.headers.authorization.replace('Bearer ', '')
+        const tokenDecoded = jwt.decode(token)
+        const currentShift = await models.Shift.findOne({
+          where: {
+            employeeId: tokenDecoded.employeeId,
+            statusId: shiftStatus.ACTIVE
+          }
+        })
+        if (!currentShift) {
+          return res.status(status.INTERNAL_SERVER_ERROR)
+            .send({
+              success: false,
+              message: "There's no active shift for this bank teller."
+            });
+        }
+        const shiftSessions = await models.Session.findAll({
+          attributes: [
+            'id',
+            'info'
+          ],
+          where: {
+            shift_id: currentShift.id
+          }
+        });
 
+        if (shiftSessions) {
+          //response data
+          const sessionCount = shiftSessions.length
+          let emotionlessSessionCount = 0;
+          let neutralSessionCount = 0;
+          let positiveSessionCount = 0;
+          let negativeSessionCount = 0;
+          let angryWarningCount = 0;
+          let noFaceWarningCount = 0;
+          //start analyze data
+          shiftSessions.forEach(shiftSession => {
+            const parsedInfo = JSON.parse(shiftSession.info);
+            console.log("shiftINFO: " + parsedInfo.emotion_level);
+            //if it's a neutral session
+            if (parsedInfo.emotion_level == 0) {
+              //if there's a emotionless warning found
+              if (parsedInfo.emotionless_warning) {
+                emotionlessSessionCount++;
+              } else {
+                neutralSessionCount++;
+              }
+            } else {
+              //if it's a positive session
+              if (parsedInfo.emotion_level > 0) {
+                positiveSessionCount++;
+                //if it's a negative session
+              } else if (parsedInfo.emotion_level < 0) {
+                negativeSessionCount++;
+              }
+            }
+            angryWarningCount += parsedInfo.angry_warning;
+            noFaceWarningCount += parsedInfo.no_face_detected_warning;
+          })
+          res.status(status.OK)
+            .send({
+              success: true,
+              message: {
+                totalSessions: sessionCount,
+                neutralSessions: neutralSessionCount,
+                positiveSessions: positiveSessionCount,
+                negativeSessions: negativeSessionCount,
+                emotionlessSessions: emotionlessSessionCount,
+                angryWarnings: angryWarningCount,
+                noFaceWarnings: noFaceWarningCount
+              }
+            });
+        }
+
+      } catch (error) {
+        next(error)
+      }
+    }
+  }
 };

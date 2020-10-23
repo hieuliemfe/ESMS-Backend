@@ -3,7 +3,7 @@
 export default [
   {
     id: '468ab892-7518-4520-8243-db1c1b9607dd',
-    employeeCode: 'AnhBui',
+    employeeCode: 'AD0001',
     fullname: 'Bui Nguyen Phuong Anh',
     password: 'password',
     email: 'anhbui@gmail.com',
@@ -15,7 +15,7 @@ export default [
   },
   {
     id: '9903c282-06ed-48fe-9607-76e7903f6b72',
-    employeeCode: 'HieuLiem',
+    employeeCode: 'AD0002',
     fullname: 'Nguyen Hieu Liem',
     password: 'password',
     email: 'hieuliem@gmail.com',
@@ -27,7 +27,7 @@ export default [
   },
   {
     id: 'bfad3537-875c-4bf2-bb97-41c00b912d76',
-    employeeCode: 'ThuCao',
+    employeeCode: 'MG0001',
     fullname: 'Cao Thanh Thu',
     password: 'password',
     email: 'thucao@gmail.com',
@@ -39,7 +39,7 @@ export default [
   },
   {
     id: 'ef71e125-37b5-4a5f-87e1-fdda43a4ccb2',
-    employeeCode: 'AnhNguyen',
+    employeeCode: 'BT0001',
     fullname: 'Nguyen Tuan Anh',
     password: 'password',
     email: 'nguyentuananh@gmail.com',
@@ -51,7 +51,7 @@ export default [
   },
   {
     id: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
-    employeeCode: 'KhangLe',
+    employeeCode: 'BT0002',
     password: 'password',
     fullname: 'Le Nguyen An Khang',
     phoneNumber: '0456123789',

@@ -5,8 +5,7 @@ import status from 'http-status';
 import url from 'url';
 import jwt from 'jsonwebtoken';
 import { DefaultError } from '../utils/errorHandler';
-import { sessionTaskStatus } from '../db/config/statusConfig'
-import sessionTask from '../db/models/sessionTask';
+import { sessionTaskStatus, shiftStatus } from '../db/config/statusConfig'
 export default {
 
   create: {
@@ -14,25 +13,20 @@ export default {
       try {
         const token = req.headers.authorization.replace('Bearer ', '')
         const tokenDecoded = jwt.decode(token)
-        models.Employee.findOne({
-          attributes: { exclude: ['password', 'role_id', 'roleId'] },
-          include: {
-            model: models.Role,
-            as: 'Role'
-          },
-          where: { id: tokenDecoded.employeeId }
-        }).then(employee => {
-          if (employee) {
-            //create null session
-            models.Session.create({
-              employeeId: tokenDecoded.employeeId,
-            }).then(session => {
-              res.send({
-                status: true,
-                message: { id: session.id },
-              });
-            })
+        //create null session
+        const currentShift = await models.Shift.findOne({
+          where: {
+            employee_id: tokenDecoded.employeeId,
+            status_id: shiftStatus.ACTIVE
           }
+        })
+        const createdSession = await models.Session.create({
+          employeeId: tokenDecoded.employeeId,
+          shift_id: currentShift.id
+        })
+        res.status(status.CREATED).send({
+          status: true,
+          message: { id: createdSession.id },
         })
       } catch (error) {
         next(error);
@@ -174,7 +168,8 @@ export default {
             const result = models.Session.update(
               {
                 sessionEnd: new Date(),
-                info: info
+                // info: info
+                info: JSON.stringify(info)
               },
               {
                 where: {

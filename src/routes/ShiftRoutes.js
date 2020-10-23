@@ -31,6 +31,26 @@ router.get('/active-shift', passport.authenticate('jwt', { session: false }), is
 
 /**
 * @swagger
+* /shifts/summary:
+*   get:
+*     tags:
+*       - Shifts
+*     name: Get summary of current shift.
+*     summary: Get summary of current shift by employee using current session's jwt token.
+*     consumes:
+*       - application/json
+*     responses:
+*       200:
+*         description: A summary of current shift is displayed.
+*       400:
+*         description: Error.
+*/
+
+router.get('/summary', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.sum_up.get);
+
+
+/**
+* @swagger
 * /shifts:
 *   get:
 *     tags:

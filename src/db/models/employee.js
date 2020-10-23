@@ -99,3 +99,14 @@ export default function (sequelize, DataTypes) {
   }
   return Employee;
 };
+
+export const employeeRoleCode = {
+  ADMIN: 'AD',
+  MANAGER: 'MG',
+  BANK_TELLER: 'BT'
+}
+export const employeeRole = {
+  ADMIN: 1,
+  MANAGER: 2,
+  BANK_TELLER: 3
+}
