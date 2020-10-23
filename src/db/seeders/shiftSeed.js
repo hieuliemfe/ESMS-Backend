@@ -22,10 +22,10 @@ export default [
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
     counterId: 1,
     statusId: shiftStatus.UPCOMING,
-    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 1) + "T18:00:00.000+07:00"),
-    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 1) + "T23:00:00.000+07:00")
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate()) + "T18:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate()) + "T23:00:00.000+07:00")
   },
-
+  //tomorrow:
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
     counterId: 1,
@@ -39,5 +39,105 @@ export default [
     statusId: shiftStatus.UPCOMING,
     shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 1) + "T13:00:00.000+07:00"),
     shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 1) + "T17:00:00.000+07:00")
+  },
+
+  {
+    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
+    counterId: 1,
+    statusId: shiftStatus.UPCOMING,
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 1) + "T18:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 1) + "T23:00:00.000+07:00")
+  },
+  //next 2 days
+  {
+    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
+    counterId: 1,
+    statusId: shiftStatus.UPCOMING,
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 2) + "T08:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 2) + "T12:00:00.000+07:00")
+  },
+  {
+    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
+    counterId: 1,
+    statusId: shiftStatus.UPCOMING,
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 2) + "T13:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 2) + "T17:00:00.000+07:00")
+  },
+
+  {
+    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
+    counterId: 1,
+    statusId: shiftStatus.UPCOMING,
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 2) + "T18:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 2) + "T23:00:00.000+07:00")
+  },
+  //next 4 days
+  {
+    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
+    counterId: 1,
+    statusId: shiftStatus.UPCOMING,
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 3) + "T08:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 3) + "T12:00:00.000+07:00")
+  },
+  {
+    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
+    counterId: 1,
+    statusId: shiftStatus.UPCOMING,
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 3) + "T13:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 3) + "T17:00:00.000+07:00")
+  },
+
+  {
+    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
+    counterId: 1,
+    statusId: shiftStatus.UPCOMING,
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 3) + "T18:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 3) + "T23:00:00.000+07:00")
+  },
+  //next 4 days
+  {
+    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
+    counterId: 1,
+    statusId: shiftStatus.UPCOMING,
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 4) + "T08:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 4) + "T12:00:00.000+07:00")
+  },
+  {
+    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
+    counterId: 1,
+    statusId: shiftStatus.UPCOMING,
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 4) + "T13:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 4) + "T17:00:00.000+07:00")
+  },
+
+  {
+    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
+    counterId: 1,
+    statusId: shiftStatus.UPCOMING,
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 4) + "T18:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 4) + "T23:00:00.000+07:00")
+  },
+  //next 5 days
+  {
+    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
+    counterId: 1,
+    statusId: shiftStatus.UPCOMING,
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 5) + "T08:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 5) + "T12:00:00.000+07:00")
+  },
+  {
+    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
+    counterId: 1,
+    statusId: shiftStatus.UPCOMING,
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 5) + "T13:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 5) + "T17:00:00.000+07:00")
+  },
+
+  {
+    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
+    counterId: 1,
+    statusId: shiftStatus.UPCOMING,
+    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 5) + "T18:00:00.000+07:00"),
+    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 5) + "T23:00:00.000+07:00")
   },
 ]
