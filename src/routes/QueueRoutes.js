@@ -55,8 +55,8 @@ router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 *       200:
 *         description: Queue is created.
 */
-router.post('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.create.post);
-
+// router.post('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.create.post);
+router.post('/', Controller.create.post);
 
 /**
 * @swagger
