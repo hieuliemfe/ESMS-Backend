@@ -201,12 +201,12 @@ export default {
   sum_up: {
     async get(req, res, next) {
       try {
+        const { shiftId } = req.params
         const token = req.headers.authorization.replace('Bearer ', '')
         const tokenDecoded = jwt.decode(token)
         const currentShift = await models.Shift.findOne({
           where: {
-            employeeId: tokenDecoded.employeeId,
-            statusId: shiftStatus.ACTIVE
+            id: shiftId
           }
         })
         if (!currentShift) {

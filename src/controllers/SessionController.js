@@ -169,7 +169,7 @@ export default {
               {
                 sessionEnd: new Date(),
                 // info: info
-                info: JSON.stringify(info)
+                info: info
               },
               {
                 where: {

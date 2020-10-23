@@ -31,7 +31,7 @@ router.get('/active-shift', passport.authenticate('jwt', { session: false }), is
 
 /**
 * @swagger
-* /shifts/summary:
+* /shifts/{shiftId}/summary:
 *   get:
 *     tags:
 *       - Shifts
@@ -39,6 +39,15 @@ router.get('/active-shift', passport.authenticate('jwt', { session: false }), is
 *     summary: Get summary of current shift by employee using current session's jwt token.
 *     consumes:
 *       - application/json
+*     parameters:
+*       - name: shiftId
+*         in: path
+*         required: true
+*         description: Select an shift with matching shiftId.
+*         schema:
+*           type : integer
+*           format: integer
+*           minimum: 1
 *     responses:
 *       200:
 *         description: A summary of current shift is displayed.
@@ -46,7 +55,7 @@ router.get('/active-shift', passport.authenticate('jwt', { session: false }), is
 *         description: Error.
 */
 
-router.get('/summary', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.sum_up.get);
+router.get('/:shiftId/summary', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.sum_up.get);
 
 
 /**
@@ -112,8 +121,8 @@ router.put('/:shiftId/checkout', passport.authenticate('jwt', { session: false }
 *         required: true
 *         description: Select an shift with matching shiftId.
 *         schema:
-*           type : string
-*           format: string
+*           type : integer
+*           format: integer
 *           minimum: 1
 *     responses:
 *       200:
