@@ -46,6 +46,9 @@ export default {
                 { counter_id: null }
               ]
             },
+            order: [
+              ['number', 'desc'],
+            ],
             attributes: ["id", "number", "createdAt", "updatedAt"]
           }).then(queues => {
             res.status(status.OK)
