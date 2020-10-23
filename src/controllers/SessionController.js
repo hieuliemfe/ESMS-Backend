@@ -174,7 +174,7 @@ export default {
             const result = models.Session.update(
               {
                 sessionEnd: new Date(),
-                info: JSON.stringify(info)
+                info: info
               },
               {
                 where: {
