@@ -7,12 +7,14 @@ import jwt from 'jsonwebtoken';
 import { Op } from "sequelize";
 import url from 'url';
 import readXlsxFile from "read-excel-file/node";
-
+import { employeeRole, employeeRoleCode } from '../db/models/employee';
 import fs from 'fs';
 import { DefaultError } from '../utils/errorHandler';
 import publicRuntimeConfig from '../configurations';
 const JWT_SECRET = publicRuntimeConfig.JWT_SECRET;
-
+function minFourDigits(number) {
+  return (number < 1000 ? '000' : '') + number;
+}
 
 export default {
   // Public Routes
@@ -55,6 +57,16 @@ export default {
         if (req.file == undefined) {
           return res.status(400).send("Please upload an excel file!");
         }
+        const employeeList = await models.Employee.findAll();
+        let managerCount = employeeList.filter(function (employee) {
+          return employee.roleId == employeeRole.MANAGER;
+        }).length;
+        let adminCount = employeeList.filter(function (employee) {
+          return employee.roleId == employeeRole.ADMIN;
+        }).length;
+        let bankTellerCount = employeeList.filter(function (employee) {
+          return employee.roleId == employeeRole.BANK_TELLER;
+        }).length;
         let path =
           __basedir + "/" + req.file.filename;
         await readXlsxFile(path).then((rows) => {
@@ -64,12 +76,27 @@ export default {
           let employees = [];
           rows.forEach((row) => {
             //Generate data:
+            let employeeCode;
             const fullnameArray = row[1].toString().split(" ");
             //employeeCode
-            const employeeCode =
-              fullnameArray[fullnameArray.length - 1]
-              + fullnameArray[0]
-              + day.getMinutes() + day.getSeconds()
+            switch (row[3]) {
+              case 1: {
+                employeeCode = employeeRoleCode.ADMIN + minFourDigits((adminCount + 1));
+                adminCount++;
+                break;
+              }
+              case 2: {
+                employeeCode = employeeRoleCode.MANAGER + minFourDigits((managerCount + 1));
+                managerCount++;
+                break;
+              }
+              case 3: {
+                employeeCode = employeeRoleCode.BANK_TELLER + minFourDigits((bankTellerCount + 1));
+                bankTellerCount++;
+                break;
+              }
+            }
+
             //email
             const email =
               fullnameArray[fullnameArray.length - 1].toLowerCase() + '.'
