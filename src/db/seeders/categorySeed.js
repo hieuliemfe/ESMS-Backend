@@ -2,19 +2,20 @@
 
 export default [
   {
-    categoryName: "Deposit",
-
-  },
-  {
-    categoryName: "Loan",
-
-  },
-  {
     categoryName: "Create an account",
 
   },
   {
-    categoryName: "Create a transaction",
+    categoryName: "Deposit",
+
+  },
+  {
+    categoryName: "Make a loan",
+
+  },
+
+  {
+    categoryName: "Make a transfer",
 
   },
 ]
