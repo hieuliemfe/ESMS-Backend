@@ -14,6 +14,10 @@ export default function (sequelize, DataTypes) {
       type: DataTypes.UUID,
       field: 'employee_id',
     },
+    info: {
+      type: DataTypes.STRING(1000),
+      field: 'info',
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: new Date(),

@@ -129,62 +129,65 @@ export default {
     async put(req, res, next) {
       try {
         const { sessionId } = req.params;
-        //check whether all tasks has been completed.r
-        await models.SessionTask.findOne({
-          where:
-          {
-            [Op.and]: [
-              { sessionId: sessionId },
-              { statusId: { [Op.ne]: sessionTaskStatus.COMPLETED } },
-            ]
-          },
-        }).then(result => {
-          //if there's a task that is found not completed
-          if (result) {
-            res.status(500).send({
-              status: false,
-              message: "Incomplete task(s) found!"
+        const { info } = req.body;
+        // //check whether all tasks has been completed.r
+        // const isRemainingTask = await models.SessionTask.findOne({
+        //   where:
+        //   {
+        //     [Op.and]: [
+        //       { sessionId: sessionId },
+        //       { statusId: { [Op.ne]: sessionTaskStatus.COMPLETED } },
+        //     ]
+        //   },
+        // })
+        // //if there's a task that is found not completed
+        // if (isRemainingTask) {
+        //   res.status(500).send({
+        //     status: false,
+        //     message: "Incomplete task(s) found!"
+        //   });
+        // } else {
+        const emotions = req.body.emotions;
+        //if there's no emotion in request body
+        if (!emotions) {
+          res.status(status.INTERNAL_SERVER_ERROR).send({
+            status: false,
+            message: "No emotion in session!",
+          });
+        } else {
+          let periodList = [];
+          emotions.forEach((emotion) => {
+            const periods = emotion.periods;
+            periods.forEach((period) => {
+              let addResult = {
+                sessionId: sessionId,
+                emotionId: emotion.emotion,
+                periodStart: period.periodStart,
+                periodEnd: period.periodEnd,
+                duration: period.duration
+              };
+              periodList.push(addResult);
             });
-          } else {
-            const emotions = req.body.emotions;
-            //if there's no emotion in request body
-            if (!emotions) {
-              res.status(status.INTERNAL_SERVER_ERROR).send({
-                status: false,
-                message: "No emotion in session!",
-              });
-            } else {
-              let periodList = [];
-              emotions.forEach((emotion) => {
-                const periods = emotion.periods;
-                periods.forEach((period) => {
-                  let addResult = {
-                    sessionId: sessionId,
-                    emotionId: emotion.emotion,
-                    periodStart: period.periodStart,
-                    periodEnd: period.periodEnd,
-                    duration: period.duration
-                  };
-                  periodList.push(addResult);
-                });
-              });
-              const addPeriodResult = models.Period.bulkCreate(periodList)
-              if (addPeriodResult) {
-                const result = models.Session.update(
-                  { sessionEnd: new Date() },
-                  {
-                    where: {
-                      id: sessionId
-                    }
-                  })
-                res.status(status.CREATED).send({
-                  status: true,
-                  message: 1,
-                });
-              }
-            }
+          });
+          const addPeriodResult = models.Period.bulkCreate(periodList)
+          if (addPeriodResult) {
+            const result = models.Session.update(
+              {
+                sessionEnd: new Date(),
+                info: JSON.stringify(info)
+              },
+              {
+                where: {
+                  id: sessionId
+                }
+              })
+            res.status(status.CREATED).send({
+              status: true,
+              message: result,
+            });
           }
-        })
+        }
+        // }
       } catch (error) {
         next(error)
       }
