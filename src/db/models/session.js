@@ -1,5 +1,6 @@
 /* jshint indent: 1 */
 import { Sequelize } from 'sequelize'
+
 export default function (sequelize, DataTypes) {
   const Session = sequelize.define('Session', {
     sessionStart: {

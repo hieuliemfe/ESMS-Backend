@@ -1,5 +1,5 @@
 /* jshint indent: 1 */
-import { Sequelize } from 'sequelize'
+import { Sequelize } from 'sequelize';
 
 export default function (sequelize, DataTypes) {
   var Emotion = sequelize.define('Emotion', {
