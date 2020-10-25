@@ -1,4 +1,5 @@
 /* jshint indent: 1 */
+import { Sequelize } from 'sequelize'
 
 export default function (sequelize, DataTypes) {
   var Emotion = sequelize.define('Emotion', {
@@ -9,12 +10,12 @@ export default function (sequelize, DataTypes) {
     },
     createdAt: {
       type: DataTypes.DATE,
-      defaultValue: new Date(),
+      defaultValue: Sequelize.fn('NOW'),
       field: 'created_at'
     },
     updatedAt: {
       type: DataTypes.DATE,
-      defaultValue: new Date(),
+      defaultValue: Sequelize.fn('NOW'),
       field: 'updated_at'
     }
   }, {

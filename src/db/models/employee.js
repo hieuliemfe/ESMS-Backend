@@ -1,6 +1,7 @@
 /* jshint indent: 1 */
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
+import { Sequelize } from 'sequelize';
 
 export default function (sequelize, DataTypes) {
   var Employee = sequelize.define('Employee', {
@@ -55,12 +56,12 @@ export default function (sequelize, DataTypes) {
     },
     createdAt: {
       type: DataTypes.DATE,
-      defaultValue: new Date(),
+      defaultValue: Sequelize.fn('NOW'),
       field: 'created_at'
     },
     updatedAt: {
       type: DataTypes.DATE,
-      defaultValue: new Date(),
+      defaultValue: Sequelize.fn('NOW'),
       field: 'updated_at'
     }
   }, {
