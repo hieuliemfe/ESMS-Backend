@@ -24,7 +24,7 @@ services:
       ADMINER_DEFAULT_DB_NAME: esmsdb
       ADMINER_DESIGN: nette
     ports:
-      - "9090:8080"
+      - "8080:8080"
 
   esmsbe:
     depends_on:
