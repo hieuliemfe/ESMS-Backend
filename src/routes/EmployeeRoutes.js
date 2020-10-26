@@ -24,13 +24,28 @@ import { isManager } from '../middlewares/authorization';
 *     summary: Get all employees details.
 *     consumes:
 *       - application/json
+*     parameters:
+*       - name: startDate
+*         in: query
+*         required: false
+*         description: (yyyy-mm-dd) Selected date that is used as a starting point for the period.
+*         schema:
+*           type : string
+*           format: date-time
+*       - name: endDate
+*         in: query
+*         required: false
+*         description: (yyyy-mm-dd) Selected date that is used as a starting point for the period.
+*         schema:
+*           type : string
+*           format: date-time
 *     responses:
 *       200:
 *         description: Displays employee details
 *       401:
 *         description: Employee not found.
 */
-router.get('/', passport.authenticate('jwt', {session: false}), isManager, Controller.view.get);
+router.get('/', passport.authenticate('jwt', { session: false }), isManager, Controller.view.get);
 
 /**
 * @swagger
@@ -57,7 +72,7 @@ router.get('/', passport.authenticate('jwt', {session: false}), isManager, Contr
 *       404:
 *         description: Employee not found.
 */
-router.get('/:employeeCode', passport.authenticate('jwt', {session: false}), isManager, Controller.view_one.get);
+router.get('/:employeeCode', passport.authenticate('jwt', { session: false }), isManager, Controller.view_one.get);
 
 /**
 * @swagger
@@ -93,7 +108,7 @@ router.get('/:employeeCode', passport.authenticate('jwt', {session: false}), isM
 *       404:
 *         description: Employee not found.
 */
-router.put('/:id/avatar', passport.authenticate('jwt', {session: false}), isManager, Controller.update_avatar_url.put);
+router.put('/:id/avatar', passport.authenticate('jwt', { session: false }), isManager, Controller.update_avatar_url.put);
 
 /**
 * @swagger
@@ -120,7 +135,7 @@ router.put('/:id/avatar', passport.authenticate('jwt', {session: false}), isMana
 *       401:
 *         description: Employee not found.
 */
-router.put('/:employeeCode/subscription', passport.authenticate('jwt', {session: false}), isManager, Controller.set_subscription_status.put);
+router.put('/:employeeCode/subscription', passport.authenticate('jwt', { session: false }), isManager, Controller.set_subscription_status.put);
 
 /**
 * @swagger
@@ -147,7 +162,7 @@ router.put('/:employeeCode/subscription', passport.authenticate('jwt', {session:
 *       404:
 *         description: Employee not found.
 */
-router.delete('/:employeeCode', passport.authenticate('jwt', {session: false}), isManager, Controller.set_avail_status.delete);
+router.delete('/:employeeCode', passport.authenticate('jwt', { session: false }), isManager, Controller.set_avail_status.delete);
 
 /**
 * @swagger
@@ -172,6 +187,6 @@ router.delete('/:employeeCode', passport.authenticate('jwt', {session: false}), 
 *       401:
 *         description: Bad employee(s) in the file
 */
-router.post('/bulk-register', passport.authenticate('jwt', {session: false}), isManager,fileUpload.single("file"), Controller.bulk_register.post);
+router.post('/bulk-register', passport.authenticate('jwt', { session: false }), isManager, fileUpload.single("file"), Controller.bulk_register.post);
 
 export default router;

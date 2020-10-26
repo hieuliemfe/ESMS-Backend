@@ -30,12 +30,12 @@ const seed = async () => {
           .then(() => models.Employee.bulkCreate(employeeSeed))
           .then(() => models.Customer.bulkCreate(customerSeed))
           .then(() => models.Queue.bulkCreate(queueSeed))
-          .then(() => models.Session.bulkCreate(sessionSeed))
           .then(() => models.Task.bulkCreate(taskSeed))
           //junction seeds
           .then(() => models.CounterCategory.bulkCreate(counterCategorySeed))
-          .then(() => models.SessionTask.bulkCreate(sessionTaskSeed))
           .then(() => models.Shift.bulkCreate(shiftSeed))
+          .then(() => models.Session.bulkCreate(sessionSeed))
+          .then(() => models.SessionTask.bulkCreate(sessionTaskSeed))
           .then((res, err) => {
             if (err) {
               console.log(`ERROR at seeding data: ${err}`);

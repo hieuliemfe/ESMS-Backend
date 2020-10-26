@@ -11,6 +11,8 @@ import { employeeRole, employeeRoleCode } from '../db/models/employee';
 import fs from 'fs';
 import { DefaultError } from '../utils/errorHandler';
 import publicRuntimeConfig from '../configurations';
+import { shiftStatus } from '../db/config/statusConfig'
+import { calculateShiftEmotionLevel } from '../utils/emotionUtil'
 const JWT_SECRET = publicRuntimeConfig.JWT_SECRET;
 function minFourDigits(number) {
   return (number < 1000 ? '000' : '') + number;
@@ -208,60 +210,23 @@ export default {
     async get(req, res, next) {
       try {
         //Data from request
-        const queryData = url.parse(req.url, true).query;
-        var query = queryData.query;
-        const roleID = queryData.roleId;
-        const isDeleted = queryData.isDeleted;
-        var whereCondition;
-        //Validate data from request
-        if (query == undefined) {
-          query = '';
-        }
-        if (queryData.order == undefined) {
-          queryData.order = 'created_at,asc'
-        }
-        const orderOptions = queryData.order.split(",");
+        const { employeeCode, fullname } = req.query
+        //if query doesn't specify the time period
+        const startDate = req.query.startDate ? req.query.startDate : new Date().setHours(0, 0, 0)
+        const endDate = req.query.endDate ? req.query.endDate : new Date().setHours(23, 59, 0)
+        const order = req.query.order ? req.query.order : 'created_at,asc'
+        let whereEmployeeCondition = '';
 
-        if (roleID && roleID != '') {
-          if (isDeleted == 'true' || isDeleted == 'false') {
-            //RoleID + isDeleted
-            whereCondition = {
-              [Op.or]: [
-                { employeeCode: { [Op.like]: '%' + query + '%' } },
-                { fullname: { [Op.like]: '%' + query + '%' } }
-              ],
-              role_id: roleID,
-              is_deleted: isDeleted,
-            }
-          } else {
-            //RoleID only
-            whereCondition = {
-              [Op.or]: [
-                { employeeCode: { [Op.like]: '%' + query + '%' } },
-                { fullname: { [Op.like]: '%' + query + '%' } }
-              ],
-              role_id: roleID,
-            }
-          }
-        } else if (isDeleted == 'true' || isDeleted == 'false') {
-          //isDeleted only
-          whereCondition = {
+        if (fullname && employeeCode != undefined) {
+          whereEmployeeCondition = {
             [Op.or]: [
-              { employeeCode: { [Op.like]: '%' + query + '%' } },
-              { fullname: { [Op.like]: '%' + query + '%' } }
-            ],
-            is_deleted: isDeleted,
-          }
-        } else {
-          //employeeCode & fullname only
-          whereCondition = {
-            [Op.or]: [
-              { employeeCode: { [Op.like]: '%' + query + '%' } },
-              { fullname: { [Op.like]: '%' + query + '%' } }
+              { employeeCode: { [Op.like]: '%' + employeeCode + '%' } },
+              { fullname: { [Op.like]: '%' + fullname + '%' } }
             ],
           }
         }
-
+        const orderOptions = order.split(",");
+        //employeeCode & fullname only
         const employees = await models.Employee.findAll({
           attributes: [
             'id',
@@ -276,13 +241,47 @@ export default {
             'updatedAt',
             'avatarUrl'
           ],
-          where: whereCondition,
+          where: whereEmployeeCondition,
           order: [
             [orderOptions[0], orderOptions[1]],
           ],
-          raw: false,
-          distinct: true,
         });
+        const shifts = await models.Shift.findAll({
+          attributes: ['id', 'employee_id'],
+          where: {
+            [Op.and]: [
+              {
+                shiftStart: { [Op.gte]: startDate }
+              },
+              {
+                shiftEnd: { [Op.lte]: endDate }
+              },
+            ],
+            statusId: shiftStatus.INACTIVE,
+          },
+          include: [{
+            model: models.Session,
+            attributes: ['info', 'employee_id'],
+            as: 'Session',
+          }]
+        })
+        employees.forEach(employee => {
+          let employeeInactiveShifts = [];
+          shifts.forEach(shift => {
+            if (shift.employee_id == employee.id) {
+              employeeInactiveShifts.push(shift);
+            }
+          })
+          if (employeeInactiveShifts.length > 0) {
+            const shiftEmotionLevel = calculateShiftEmotionLevel(employeeInactiveShifts);
+            employee.setDataValue('shiftEmotionLevel', shiftEmotionLevel);
+            if (shiftEmotionLevel < 0) {
+              employee.setDataValue('performanceStatus', 'Warning');
+            } else if (shiftEmotionLevel >= 0) {
+              employee.setDataValue('performanceStatus', 'Normal');
+            }
+          }
+        })
         res.status(status.OK)
           .send({
             status: true,
@@ -388,6 +387,7 @@ export default {
       }
     }
   },
+
   update_avatar_url: {
     async put(req, res, next) {
       try {
