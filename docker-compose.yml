@@ -24,13 +24,15 @@ services:
       ADMINER_DEFAULT_DB_NAME: esmsdb
       ADMINER_DESIGN: nette
     ports:
-      - "8080:8080"
+      - "9090:8080"
 
   esmsbe:
     depends_on:
       - esmsdb
-    build: .
-    image: esmsbe:devlocal
+    build:
+      context: .
+      dockerfile: esmsbe.Dockerfile
+    image: esmsbe:latest
     restart: always
     ports:
       - "4000:8000"
