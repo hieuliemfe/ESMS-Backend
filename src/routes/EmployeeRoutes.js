@@ -28,17 +28,31 @@ import { isManager } from '../middlewares/authorization';
 *       - name: startDate
 *         in: query
 *         required: false
-*         description: (yyyy-mm-dd) Selected date that is used as a starting point for the period.
+*         description: (yyyy-mm-ddThh:mm:ss) Selected date that is used as a starting point for the period.
 *         schema:
 *           type : string
 *           format: date-time
 *       - name: endDate
 *         in: query
 *         required: false
-*         description: (yyyy-mm-dd) Selected date that is used as a starting point for the period.
+*         description: (yyyy-mm-ddThh:mm:ss) Selected date that is used as a ending point for the period.
 *         schema:
 *           type : string
 *           format: date-time
+*       - name: fullname
+*         in: query
+*         required: false
+*         description: Employee's fullname to filter
+*         schema:
+*           type : string
+*           format: string
+*       - name: employeeCode
+*         in: query
+*         required: false
+*         description: Employee's code to filter
+*         schema:
+*           type : string
+*           format: string
 *     responses:
 *       200:
 *         description: Displays employee details

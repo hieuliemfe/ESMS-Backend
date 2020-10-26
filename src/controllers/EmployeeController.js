@@ -217,7 +217,7 @@ export default {
         const order = req.query.order ? req.query.order : 'created_at,asc'
         let whereEmployeeCondition = '';
 
-        if (fullname && employeeCode != undefined) {
+        if (fullname || employeeCode != undefined) {
           whereEmployeeCondition = {
             [Op.or]: [
               { employeeCode: { [Op.like]: '%' + employeeCode + '%' } },
