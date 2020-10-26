@@ -29,8 +29,10 @@ services:
   esmsbe:
     depends_on:
       - esmsdb
-    build: .
-    image: esmsbe:devlocal
+    build:
+      context: .
+      dockerfile: esmsbe.Dockerfile
+    image: esmsbe:latest
     restart: always
     ports:
       - "4000:8000"
