@@ -5,6 +5,23 @@ import status from 'http-status';
 
 export default {
 
+  view_all: {
+    async get(req, res, next) {
+      try {
+        const result = await models.Category.findAll();
+          res.status(status.OK)
+            .send({
+              status: true,
+              message: result,
+            });
+      } catch
+      (error) {
+        next(error);
+      }
+    }
+  },
+
+
   view_by_counter_id: {
     async get(req, res, next) {
       try {

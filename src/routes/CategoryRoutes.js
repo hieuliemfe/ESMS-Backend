@@ -14,6 +14,26 @@ import { isBankTeller } from '../middlewares/authorization';
 
 /**
 * @swagger
+* /categories:
+*   get:
+*     tags:
+*       - Categories
+*     name: Get categories.
+*     summary: Get categories.
+*     consumes:
+*       - application/json
+*     responses:
+*       200:
+*         description: A list of task types is displayed.
+*       400:
+*         description: Error.
+*       401:
+*         description: Forbidden.
+*/
+router.get('/', Controller.view_all.get);
+
+/**
+* @swagger
 * /categories/counters/{counterId}:
 *   get:
 *     tags:
