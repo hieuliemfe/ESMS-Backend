@@ -7,16 +7,14 @@ import jwt from 'jsonwebtoken';
 import { Op } from "sequelize";
 import url from 'url';
 import readXlsxFile from "read-excel-file/node";
-import { employeeRole, employeeRoleCode } from '../db/models/employee';
+import { generateEmployeeInfo } from '../utils/employeeUtil';
 import fs from 'fs';
 import { DefaultError } from '../utils/errorHandler';
 import publicRuntimeConfig from '../configurations';
 import { shiftStatus } from '../db/config/statusConfig'
 import { calculateShiftEmotionLevel } from '../utils/emotionUtil'
 const JWT_SECRET = publicRuntimeConfig.JWT_SECRET;
-function minFourDigits(number) {
-  return (number < 1000 ? '000' : '') + number;
-}
+
 
 export default {
   // Public Routes
@@ -53,134 +51,51 @@ export default {
   bulk_register: {
     async post(req, res, next) {
       try {
-        const currentDate = Date.now();
-        let day = new Date(currentDate);
-
         if (req.file == undefined) {
           return res.status(400).send("Please upload an excel file!");
         }
-        const employeeList = await models.Employee.findAll();
-        let managerCount = employeeList.filter(function (employee) {
-          return employee.roleId == employeeRole.MANAGER;
-        }).length;
-        let adminCount = employeeList.filter(function (employee) {
-          return employee.roleId == employeeRole.ADMIN;
-        }).length;
-        let bankTellerCount = employeeList.filter(function (employee) {
-          return employee.roleId == employeeRole.BANK_TELLER;
-        }).length;
         let path =
           __basedir + "/" + req.file.filename;
         await readXlsxFile(path).then((rows) => {
-
           // skip header
           rows.shift();
-          let employees = [];
-          rows.forEach((row) => {
-            //Generate data:
-            let employeeCode;
-            const fullnameArray = row[1].toString().split(" ");
-            //employeeCode
-            switch (row[3]) {
-              case 1: {
-                employeeCode = employeeRoleCode.ADMIN + minFourDigits((adminCount + 1));
-                adminCount++;
-                break;
-              }
-              case 2: {
-                employeeCode = employeeRoleCode.MANAGER + minFourDigits((managerCount + 1));
-                managerCount++;
-                break;
-              }
-              case 3: {
-                employeeCode = employeeRoleCode.BANK_TELLER + minFourDigits((bankTellerCount + 1));
-                bankTellerCount++;
-                break;
-              }
-            }
-
-            //email
-            const email =
-              fullnameArray[fullnameArray.length - 1].toLowerCase() + '.'
-              + fullnameArray[0].toLowerCase()
-              + day.getMinutes() + day.getSeconds()
-              + "@mail.com";
-            //password
-            const password = Math.random().toString(36).slice(-8);
-            let employee = {
-              employeeCode: employeeCode,
-              password: password,
-              email: email,
-              fullname: row[1],
-              phoneNumber: row[2],
-              roleId: row[3],
-            };
-            employees.push(employee);
+          rows.forEach(async (row) => {
+            //create employee
+            let employee = await generateEmployeeInfo(row[1], row[3], row[2]);
+            await models.Employee.create(employee);
           });
-          models.Employee.bulkCreate(employees)
-            .then(() => {
-              fs.unlink(path, (err) => {
-                if (err) {
-                  console.error(err)
-                  return
-                }
-              });
-              res.status(200).send({
-                status: true,
-                message: "Uploaded the file successfully: " + req.file.originalname,
-              });
-            })
-            .catch((error) => {
-              res.status(500).send({
-                status: false,
-                message: "Fail to import data into database!",
-                error: error.message,
-              });
-            });
+          fs.unlink(path, (err) => {
+            if (err) {
+              console.error(err)
+              return
+            }
+          });
         });
+        res.status(status.CREATED)
+          .send({
+            status: true,
+            message: 1,
+          });
       } catch (error) {
         next(error);
       }
-    },
+    }
   },
 
   register: {
     async post(req, res, next) {
       try {
-        const currentDate = Date.now();
-        let day = new Date(currentDate);
         const { fullname, roleId, phoneNumber, avatarUrl } = req.body;
-        //Generate data:
-        const fullnameArray = fullname.split(" ");
-        //employeeCode
-        const employeeCode =
-          fullnameArray[fullnameArray.length - 1]
-          + fullnameArray[0]
-          + day.getMinutes() + day.getSeconds()
-        //email
-        const email =
-          fullnameArray[fullnameArray.length - 1].toLowerCase() + '.'
-          + fullnameArray[0].toLowerCase()
-          + day.getMinutes() + day.getSeconds()
-          + "@mail.com";
-        //password
-        const password = Math.random().toString(36).slice(-8);
-        await models.Employee.create({
-          email,
-          fullname,
-          phoneNumber,
-          avatarUrl,
-          employeeCode,
-          password,
-          roleId,
-        });
-        res.status(status.CREATED).send({
-          status: true,
-          message: {
-            "employeeCode": employeeCode,
-            "password": password
-          },
-        });
+        const employee = await generateEmployeeInfo(fullname, roleId, phoneNumber, avatarUrl);
+        await models.Employee.create(employee);
+        res.status(status.CREATED)
+          .send({
+            status: true,
+            message: {
+              "employeeCode": employee.employeeCode,
+              "password": employee.password
+            },
+          });
       } catch (error) {
         next(error);
       }

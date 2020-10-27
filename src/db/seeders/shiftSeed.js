@@ -117,27 +117,4 @@ export default [
     shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 4) + "T18:00:00.000+07:00"),
     shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 4) + "T23:00:00.000+07:00")
   },
-  //next 5 days
-  {
-    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
-    counterId: 1,
-    statusId: shiftStatus.UPCOMING,
-    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 5) + "T08:00:00.000+07:00"),
-    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 5) + "T12:00:00.000+07:00")
-  },
-  {
-    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
-    counterId: 1,
-    statusId: shiftStatus.UPCOMING,
-    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 5) + "T13:00:00.000+07:00"),
-    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 5) + "T17:00:00.000+07:00")
-  },
-
-  {
-    employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
-    counterId: 1,
-    statusId: shiftStatus.UPCOMING,
-    shiftStart: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 5) + "T18:00:00.000+07:00"),
-    shiftEnd: new Date("2020-" + (currentDate.getMonth() + 1) + "-" + (currentDate.getDate() + 5) + "T23:00:00.000+07:00")
-  },
 ]
