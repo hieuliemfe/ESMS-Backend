@@ -5,9 +5,138 @@ import status from 'http-status';
 import url from 'url';
 import jwt from 'jsonwebtoken';
 import { DefaultError } from '../utils/errorHandler';
-import { sessionTaskStatus, shiftStatus } from '../db/config/statusConfig'
+import { shiftStatus } from '../db/config/statusConfig'
 export default {
 
+  view: {
+    async get(req, res, next) {
+      try {
+        //Data from request
+        const { order, employeeCode, fullname, status } = req.query
+        const startDate = req.query.startDate ? req.query.startDate : new Date().setHours(0, 0, 0)
+        const endDate = req.query.endDate ? req.query.endDate : new Date().setHours(23, 59, 0)
+        //generate condition
+        let whereEmployeeCondition = null;
+        let employee;
+        if (fullname || employeeCode != undefined) {
+          employee = await models.Employee.findOne({
+            where: {
+              [Op.or]: [
+                { employeeCode: { [Op.like]: '%' + employeeCode + '%' } },
+                { fullname: { [Op.like]: '%' + fullname + '%' } }
+              ],
+            }
+          })
+          whereEmployeeCondition = {
+            employee_id: employee.id
+          }
+        }
+        var whereCondition = {
+          [Op.and]: [{
+            sessionEnd: { [Op.gte]: startDate },
+          },
+          {
+            sessionEnd: { [Op.lte]: endDate },
+          },
+            whereEmployeeCondition
+          ]
+        };
+        //order the result
+        var orderQuery = order ? order : 'created_at,asc';
+        const orderOptions = orderQuery.split(",");
+        //query starts here.
+        const sessions = await models.Session.findAll({
+          attributes: [
+            'id',
+            'employeeId',
+            'sessionStart',
+            'sessionEnd',
+            'info',
+            'createdAt',
+            'updatedAt',
+          ],
+          where: whereCondition,
+          order: [
+            [orderOptions[0], orderOptions[1]],
+          ],
+          raw: false,
+          distinct: true,
+        });
+        //get result by positive/negative
+        let result = [];
+        sessions.forEach(session => {
+          const parsedInfo = JSON.parse(session.info);
+          switch (status) {
+            case 'negative': {
+              if (parsedInfo.emotion_level < 0) {
+                session.setDataValue('status', 'Negative')
+                result.push(session);
+              }
+              break;
+            }
+            case 'positive': {
+              if (parsedInfo.emotion_level > 0) {
+                session.setDataValue('status', 'Positive')
+                result.push(session);
+              }
+              break;
+            }
+            case undefined: {
+              if (parsedInfo.emotion_level < 0) {
+                session.setDataValue('status', 'Negative')
+              } else {
+                session.setDataValue('status', 'Positive')
+              }
+              result.push(session);
+            }
+          }
+        });
+        res.status(200)
+          .send({
+            status: true,
+            message: result,
+          });
+      } catch
+      (error) {
+        next(error);
+      }
+    }
+  },
+  view_one: {
+    async get(req, res, next) {
+      try {
+        const { sessionId } = req.params;
+        if (!sessionId) {
+          res.send({
+            success: false,
+            message: "Please input session id."
+          })
+        }
+        const sessionDetails = await models.Session.findOne({
+          where: {
+            id: sessionId
+          },
+          include: [{
+            model: models.Period,
+            exclude: ['emotion_id', 'session_id'],
+            as: 'Period',
+            include: [{
+              model: models.Emotion,
+              attributes: ['emotion_name'],
+              as: 'Emotion',
+            }]
+          }],
+        })
+        res.status(status.OK)
+          .send({
+            success: true,
+            message: sessionDetails
+          })
+      } catch (error) {
+        next(error);
+      }
+    }
+  },
   create: {
     async post(req, res, next) {
       try {
@@ -33,69 +162,6 @@ export default {
       }
     }
   },
-  view: {
-    async get(req, res, next) {
-      try {
-        //Data from request
-        const queryData = url.parse(req.url, true).query;
-        var query = queryData.query;
-        var whereCondition;
-        //Validate data from request
-        if (query == undefined) {
-          query = '';
-          whereCondition = null;
-        } else {
-          const employee = await models.Employee.findOne({
-            where: { employeeCode: query },
-            attributes: ['id', 'employeeCode']
-          });
-          if (employee) {
-            whereCondition = {
-              employeeId: employee.id
-            }
-          }
-          else {
-            whereCondition = {
-              employeeId: query
-            }
-          }
-        }
-        if (queryData.order == undefined) {
-          queryData.order = 'created_at,asc'
-        }
-        const orderOptions = queryData.order.split(",");
-
-        const sessions = await models.Session.findAll({
-          include: [{
-            model: models.Period
-          }],
-          attributes: [
-            'id',
-            'employeeId',
-            'sessionStart',
-            'sessionEnd',
-            'createdAt',
-            'updatedAt',
-          ],
-          where: whereCondition,
-          order: [
-            [orderOptions[0], orderOptions[1]],
-          ],
-          raw: false,
-          distinct: true,
-        });
-        res.status(status.OK)
-          .send({
-            status: true,
-            message: sessions,
-          });
-      } catch
-      (error) {
-        next(error);
-      }
-    }
-  },
-
   start_session: {
     async put(req, res, next) {
       try {
@@ -188,5 +254,68 @@ export default {
       }
     }
   },
+
+  // view_old: {
+  //   async get(req, res, next) {
+  //     try {
+  //       //Data from request
+  //       const queryData = url.parse(req.url, true).query;
+  //       var query = queryData.query;
+  //       var whereCondition;
+  //       //Validate data from request
+  //       if (query == undefined) {
+  //         query = '';
+  //         whereCondition = null;
+  //       } else {
+  //         const employee = await models.Employee.findOne({
+  //           where: { employeeCode: query },
+  //           attributes: ['id', 'employeeCode']
+  //         });
+  //         if (employee) {
+  //           whereCondition = {
+  //             employeeId: employee.id
+  //           }
+  //         }
+  //         else {
+  //           whereCondition = {
+  //             employeeId: query
+  //           }
+  //         }
+  //       }
+  //       if (queryData.order == undefined) {
+  //         queryData.order = 'created_at,asc'
+  //       }
+  //       const orderOptions = queryData.order.split(",");
+
+  //       const sessions = await models.Session.findAll({
+  //         include: [{
+  //           model: models.Period
+  //         }],
+  //         attributes: [
+  //           'id',
+  //           'employeeId',
+  //           'sessionStart',
+  //           'sessionEnd',
+  //           'createdAt',
+  //           'updatedAt',
+  //         ],
+  //         where: whereCondition,
+  //         order: [
+  //           [orderOptions[0], orderOptions[1]],
+  //         ],
+  //         raw: false,
+  //         distinct: true,
+  //       });
+  //       res.status(status.OK)
+  //         .send({
+  //           status: true,
+  //           message: sessions,
+  //         });
+  //     } catch
+  //     (error) {
+  //       next(error);
+  //     }
+  //   }
+  // },
 
 }

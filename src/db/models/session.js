@@ -34,7 +34,8 @@ export default function (sequelize, DataTypes) {
   });
   Session.associate = function (models) {
     Session.hasMany(models.Period, {
-      foreignKey: 'session_id'
+      foreignKey: 'session_id',
+      as: 'Period'
     });
     Session.belongsTo(models.Customer, {
       foreignKey: 'customer_id',
