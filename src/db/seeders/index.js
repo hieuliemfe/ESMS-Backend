@@ -13,6 +13,7 @@ import taskSeed from './taskSeed';
 //junction seeds
 import sessionTaskSeed from './sessionTaskSeed';
 import counterCategorySeed from './counterCategorySeed';
+import shiftTypeSeed from './shiftTypeSeed'
 import shiftSeed from './shiftSeed';
 
 const seed = async () => {
@@ -25,6 +26,7 @@ const seed = async () => {
           //library seeds
           .then(() => models.Emotion.bulkCreate(emotionSeed))
           .then(() => models.Category.bulkCreate(categorySeed))
+          .then(() => models.ShiftType.bulkCreate(shiftTypeSeed))
           //sample data seeds
           .then(() => models.Counter.bulkCreate(counterSeed))
           .then(() => models.Employee.bulkCreate(employeeSeed))
