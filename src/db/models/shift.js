@@ -31,6 +31,10 @@ export default function (sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       field: 'status_id',
     },
+    shiftTypeId: {
+      type: DataTypes.INTEGER,
+      field: 'shift_type_id'
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: Sequelize.fn('NOW'),

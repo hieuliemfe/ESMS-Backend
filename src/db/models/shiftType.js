@@ -14,6 +14,15 @@ export default function (sequelize, DataTypes) {
             unique: false,
             field: 'name'
         },
+        shiftStart: {
+            type: DataTypes.DATE,
+            field: 'shiftStart'
+        },
+        shiftEnd: {
+            type: DataTypes.DATE,
+            unique: false,
+            field: 'shiftEnd'
+        },
         createdAt: {
             type: DataTypes.DATE,
             defaultValue: Sequelize.fn('NOW'),
