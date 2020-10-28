@@ -15,11 +15,11 @@ export default function (sequelize, DataTypes) {
             field: 'name'
         },
         shiftStart: {
-            type: DataTypes.DATE,
+            type: DataTypes.TIME,
             field: 'shiftStart'
         },
         shiftEnd: {
-            type: DataTypes.DATE,
+            type: DataTypes.TIME,
             unique: false,
             field: 'shiftEnd'
         },
