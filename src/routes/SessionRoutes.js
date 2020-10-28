@@ -58,6 +58,25 @@ import { isBankTeller, isManager } from '../middlewares/authorization';
 *         schema:
 *           type : string
 *           format: string
+*       - name: shiftType
+*         in: query
+*         required: false
+*         description: shiftType to filter (morning || afternoon || night)
+*         schema:
+*           type : string
+*           format: string
+*       - name: limit
+*         in: query
+*         required: false
+*         description: Default value is 10.
+*         schema:
+*           type : integer
+*       - name: page
+*         in: query
+*         required: false
+*         description: Default value is 1.
+*         schema:
+*           type : integer
 *     responses:
 *       200:
 *         description: A list of sessions is displayed.

@@ -6,17 +6,45 @@ import url from 'url';
 import jwt from 'jsonwebtoken';
 import { DefaultError } from '../utils/errorHandler';
 import { shiftStatus } from '../db/config/statusConfig'
+import { shiftTypes } from '../db/config/shiftTypeConfig';
+import { setEpochMillisTime } from '../utils/timeUtil';
 export default {
 
   view: {
     async get(req, res, next) {
       try {
         //Data from request
-        const { order, employeeCode, fullname, status } = req.query
-        const startDate = req.query.startDate ? req.query.startDate : new Date().setHours(0, 0, 0)
+        const { order, employeeCode, fullname, status, shiftType } = req.query
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+        const page = req.query.page ? parseInt(req.query.page) : 1
+        const offset = limit * (page - 1);
+        const startDate = req.query.startDate ? req.query.startDate : setEpochMillisTime(0, 0, 0, 0, 0)
         const endDate = req.query.endDate ? req.query.endDate : new Date().setHours(23, 59, 0)
         //generate condition
         let whereEmployeeCondition = null;
+        let whereShiftTypeCondition = '';
+        if (shiftType) {
+          switch (shiftType.toString().toLowerCase()) {
+            case 'morning': {
+              whereShiftTypeCondition = {
+                shiftTypeId: shiftTypes.MORNING
+              }
+              break;
+            };
+            case 'afternoon': {
+              whereShiftTypeCondition = {
+                shiftTypeId: shiftTypes.AFTERNOON
+              }
+              break;
+            }
+            case 'night': {
+              whereShiftTypeCondition = {
+                shiftTypeId: shiftTypes.NIGHT
+              }
+              break;
+            }
+          };
+        }
         let employee;
         if (fullname || employeeCode != undefined) {
           employee = await models.Employee.findOne({
@@ -38,11 +66,11 @@ export default {
           {
             sessionEnd: { [Op.lte]: endDate },
           },
-            whereEmployeeCondition
+            whereEmployeeCondition,
           ]
         };
         //order the result
-        var orderQuery = order ? order : 'created_at,asc';
+        var orderQuery = order ? order : 'id,desc';
         const orderOptions = orderQuery.split(",");
         //query starts here.
         const sessions = await models.Session.findAll({
@@ -56,10 +84,18 @@ export default {
             'updatedAt',
           ],
           where: whereCondition,
+          include: [{
+            model: models.Shift,
+            attributes: [],
+            where: whereShiftTypeCondition,
+            as: 'Shift'
+          }],
           order: [
             [orderOptions[0], orderOptions[1]],
           ],
           raw: false,
+          limit: limit,
+          offset: offset,
           distinct: true,
         });
         //get result by positive/negative
