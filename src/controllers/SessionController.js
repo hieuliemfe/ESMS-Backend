@@ -67,6 +67,7 @@ export default {
         for (const session of sessions) {
           const employee = await models.Employee.findByPk(session.employeeId);
           session.setDataValue('avatarUrl', employee.avatarUrl)
+          session.setDataValue('employeeFullname', employee.fullname)
           const parsedInfo = JSON.parse(session.info);
           switch (status) {
             case 'negative': {
