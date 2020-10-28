@@ -64,7 +64,9 @@ export default {
         });
         //get result by positive/negative
         let result = [];
-        sessions.forEach(session => {
+        for (const session of sessions) {
+          const employee = await models.Employee.findByPk(session.employeeId);
+          session.setDataValue('avatarUrl', employee.avatarUrl)
           const parsedInfo = JSON.parse(session.info);
           switch (status) {
             case 'negative': {
@@ -90,7 +92,7 @@ export default {
               result.push(session);
             }
           }
-        });
+        }
         res.status(200)
           .send({
             status: true,
@@ -102,6 +104,7 @@ export default {
       }
     }
   },
+
   view_one: {
     async get(req, res, next) {
       try {
@@ -112,25 +115,18 @@ export default {
             message: "Please input session id."
           })
         }
-        const sessionDetails = await models.Session.findOne({
+        const session = await models.Session.findOne({
           where: {
             id: sessionId
           },
-          include: [{
-            model: models.Period,
-            exclude: ['emotion_id', 'session_id'],
-            as: 'Period',
-            include: [{
-              model: models.Emotion,
-              attributes: ['emotion_name'],
-              as: 'Emotion',
-            }]
-          }],
         })
+        session.setDataValue('info', JSON.parse(session.info))
+        // const emotionDurations = getEmotionDurations(session);
+        // session.setDataValue('emotionDurations', emotionDurations)
         res.status(status.OK)
           .send({
             success: true,
-            message: sessionDetails
+            message: session
           })
       } catch (error) {
         next(error);
