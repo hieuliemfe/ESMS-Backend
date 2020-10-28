@@ -1,21 +1,17 @@
 /* jshint indent: 1 */
-import { Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize'
 
 export default function (sequelize, DataTypes) {
-  const Task = sequelize.define('Task', {
+  const Counter = sequelize.define('Counter', {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
       field: 'name'
     },
-    code: {
-      type: DataTypes.STRING,
-      field: 'code'
-    },
-    categoryId: {
+    number: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      field: 'category_id'
+      field: 'number'
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -28,14 +24,15 @@ export default function (sequelize, DataTypes) {
       field: 'updated_at'
     }
   }, {
-    tableName: 'task',
+    tableName: 'counter',
   });
 
-  Task.associate = function (models) {
-    Task.belongsTo(models.Category, {
-      foreignKey: "category_id",
-      as: 'Category'
+  Counter.associate = function (models) {
+    //A counter will have many queues from customers.
+    Counter.hasMany(models.Queue, {
+      as: 'Queue',
+      foreignKey: 'counter_id',
     });
   }
-  return Task;
+  return Counter;
 };

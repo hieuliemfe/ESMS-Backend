@@ -1,12 +1,12 @@
 /* jshint indent: 1 */
-import { Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize'
 
 export default function (sequelize, DataTypes) {
-  const Role = sequelize.define('Role', {
-    roleName: {
+  const Category = sequelize.define('Category', {
+    categoryName: {
       type: DataTypes.STRING,
       allowNull: false,
-      field: 'role_name'
+      field: 'category_name'
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -19,13 +19,13 @@ export default function (sequelize, DataTypes) {
       field: 'updated_at'
     }
   }, {
-    tableName: 'role',
+    tableName: 'category',
   });
 
-  Role.associate = function (models) {
-    models.Role.hasMany(models.Employee, {
-      foreignKey: "role_id"
+  Category.associate = function (models) {
+    Category.hasMany(models.Queue, {
+      foreignKey: "category_id"
     });
   }
-  return Role;
+  return Category;
 };

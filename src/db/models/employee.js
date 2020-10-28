@@ -1,6 +1,7 @@
 /* jshint indent: 1 */
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
+import { Sequelize } from 'sequelize';
 
 export default function (sequelize, DataTypes) {
   var Employee = sequelize.define('Employee', {
@@ -55,12 +56,14 @@ export default function (sequelize, DataTypes) {
     },
     createdAt: {
       type: DataTypes.DATE,
+      defaultValue: Sequelize.fn('NOW'),
       field: 'created_at'
     },
     updatedAt: {
       type: DataTypes.DATE,
+      defaultValue: Sequelize.fn('NOW'),
       field: 'updated_at'
-    },
+    }
   }, {
     tableName: 'employee',
     hooks: {
@@ -85,19 +88,26 @@ export default function (sequelize, DataTypes) {
   });
 
   Employee.associate = function (models) {
+    //Each employee will have a role.
     Employee.belongsTo(models.Role, {
       foreignKey: 'role_id',
       as: 'Role'
     });
-    Employee.hasMany(models.Session, {
+    //An employee will have many shifts with customers.
+    Employee.hasMany(models.Shift, {
       foreignKey: 'employee_id'
     });
-
-    Employee.belongsToMany(models.Task, {
-      as: 'Task',
-      through: "employee_task",
-      foreignKey: 'employee_id',
-  });
   }
   return Employee;
 };
+
+export const employeeRoleCode = {
+  ADMIN: 'AD',
+  MANAGER: 'MG',
+  BANK_TELLER: 'BT'
+}
+export const employeeRole = {
+  ADMIN: 1,
+  MANAGER: 2,
+  BANK_TELLER: 3
+}

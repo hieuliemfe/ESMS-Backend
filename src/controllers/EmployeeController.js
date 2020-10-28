@@ -1,17 +1,18 @@
 'use strict';
-import { query } from "express-validator";
+
 import models from '../db/models/index';
 import status from 'http-status';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Op } from "sequelize";
-import validationResult from 'express-validator';
 import url from 'url';
 import readXlsxFile from "read-excel-file/node";
-
+import { generateEmployeeInfo } from '../utils/employeeUtil';
 import fs from 'fs';
 import { DefaultError } from '../utils/errorHandler';
 import publicRuntimeConfig from '../configurations';
+import { shiftStatus } from '../db/config/statusConfig'
+import { calculateShiftEmotionLevel } from '../utils/emotionUtil'
 const JWT_SECRET = publicRuntimeConfig.JWT_SECRET;
 
 
@@ -58,82 +59,43 @@ export default {
         await readXlsxFile(path).then((rows) => {
           // skip header
           rows.shift();
-          let employees = [];
-          rows.forEach((row) => {
-            let employee = {
-              employeeCode: row[1],
-              password: "password",
-              email: row[2],
-              fullname: row[3],
-              phoneNumber: row[4],
-              roleId: 2,
-            };
-            employees.push(employee);
+          rows.forEach(async (row) => {
+            //create employee
+            let employee = await generateEmployeeInfo(row[1], row[3], row[2]);
+            await models.Employee.create(employee);
           });
-          models.Employee.bulkCreate(employees)
-            .then(() => {
-              fs.unlink(path, (err) => {
-                if (err) {
-                  console.error(err)
-                  return
-                }
-              });
-              res.status(200).send({
-                status: true,
-                message: "Uploaded the file successfully: " + req.file.originalname,
-              });
-            })
-            .catch((error) => {
-              res.status(500).send({
-                status: false,
-                message: "Fail to import data into database!",
-                error: error.message,
-              });
-            });
+          fs.unlink(path, (err) => {
+            if (err) {
+              console.error(err)
+              return
+            }
+          });
         });
+        res.status(status.CREATED)
+          .send({
+            status: true,
+            message: 1,
+          });
       } catch (error) {
         next(error);
       }
-    },
+    }
   },
 
   register: {
     async post(req, res, next) {
       try {
-        const currentDate = Date.now();
-        let day = new Date(currentDate);
         const { fullname, roleId, phoneNumber, avatarUrl } = req.body;
-        //Generate data:
-        const fullnameArray = fullname.split(" ");
-        //employeeCode
-        const employeeCode =
-          fullnameArray[fullnameArray.length - 1]
-          + fullnameArray[0]
-          + day.getMinutes() + day.getSeconds()
-        //email
-        const email =
-          fullnameArray[fullnameArray.length - 1].toLowerCase() + '.'
-          + fullnameArray[0].toLowerCase()
-          + day.getMinutes() + day.getSeconds()
-          + "@mail.com";
-        //password
-        const password = Math.random().toString(36).slice(-8);
-        await models.Employee.create({
-          email,
-          fullname,
-          phoneNumber,
-          avatarUrl,
-          employeeCode,
-          password,
-          roleId,
-        });
-        res.status(status.CREATED).send({
-          status: true,
-          message: {
-            "employeeCode": employeeCode,
-            "password": password
-          },
-        });
+        const employee = await generateEmployeeInfo(fullname, roleId, phoneNumber, avatarUrl);
+        await models.Employee.create(employee);
+        res.status(status.CREATED)
+          .send({
+            status: true,
+            message: {
+              "employeeCode": employee.employeeCode,
+              "password": employee.password
+            },
+          });
       } catch (error) {
         next(error);
       }
@@ -163,60 +125,23 @@ export default {
     async get(req, res, next) {
       try {
         //Data from request
-        const queryData = url.parse(req.url, true).query;
-        var query = queryData.query;
-        const roleID = queryData.roleId;
-        const isDeleted = queryData.isDeleted;
-        var whereCondition;
-        //Validate data from request
-        if (query == undefined) {
-          query = '';
-        }
-        if (queryData.order == undefined) {
-          queryData.order = 'created_at,asc'
-        }
-        const orderOptions = queryData.order.split(",");
+        const { employeeCode, fullname } = req.query
+        //if query doesn't specify the time period
+        const startDate = req.query.startDate ? req.query.startDate : new Date().setHours(0, 0, 0)
+        const endDate = req.query.endDate ? req.query.endDate : new Date().setHours(23, 59, 0)
+        const order = req.query.order ? req.query.order : 'created_at,asc'
+        let whereEmployeeCondition = '';
 
-        if (roleID && roleID != '') {
-          if (isDeleted == 'true' || isDeleted == 'false') {
-            //RoleID + isDeleted
-            whereCondition = {
-              [Op.or]: [
-                { employeeCode: { [Op.like]: '%' + query + '%' } },
-                { fullname: { [Op.like]: '%' + query + '%' } }
-              ],
-              role_id: roleID,
-              is_deleted: isDeleted,
-            }
-          } else {
-            //RoleID only
-            whereCondition = {
-              [Op.or]: [
-                { employeeCode: { [Op.like]: '%' + query + '%' } },
-                { fullname: { [Op.like]: '%' + query + '%' } }
-              ],
-              role_id: roleID,
-            }
-          }
-        } else if (isDeleted == 'true' || isDeleted == 'false') {
-          //isDeleted only
-          whereCondition = {
+        if (fullname || employeeCode != undefined) {
+          whereEmployeeCondition = {
             [Op.or]: [
-              { employeeCode: { [Op.like]: '%' + query + '%' } },
-              { fullname: { [Op.like]: '%' + query + '%' } }
-            ],
-            is_deleted: isDeleted,
-          }
-        } else {
-          //employeeCode & fullname only
-          whereCondition = {
-            [Op.or]: [
-              { employeeCode: { [Op.like]: '%' + query + '%' } },
-              { fullname: { [Op.like]: '%' + query + '%' } }
+              { employeeCode: { [Op.like]: '%' + employeeCode + '%' } },
+              { fullname: { [Op.like]: '%' + fullname + '%' } }
             ],
           }
         }
-
+        const orderOptions = order.split(",");
+        //employeeCode & fullname only
         const employees = await models.Employee.findAll({
           attributes: [
             'id',
@@ -231,13 +156,47 @@ export default {
             'updatedAt',
             'avatarUrl'
           ],
-          where: whereCondition,
+          where: whereEmployeeCondition,
           order: [
             [orderOptions[0], orderOptions[1]],
           ],
-          raw: false,
-          distinct: true,
         });
+        const shifts = await models.Shift.findAll({
+          attributes: ['id', 'employee_id'],
+          where: {
+            [Op.and]: [
+              {
+                shiftStart: { [Op.gte]: startDate }
+              },
+              {
+                shiftEnd: { [Op.lte]: endDate }
+              },
+            ],
+            statusId: shiftStatus.INACTIVE,
+          },
+          include: [{
+            model: models.Session,
+            attributes: ['info', 'employee_id'],
+            as: 'Session',
+          }]
+        })
+        employees.forEach(employee => {
+          let employeeInactiveShifts = [];
+          shifts.forEach(shift => {
+            if (shift.employee_id == employee.id) {
+              employeeInactiveShifts.push(shift);
+            }
+          })
+          if (employeeInactiveShifts.length > 0) {
+            const shiftEmotionLevel = calculateShiftEmotionLevel(employeeInactiveShifts);
+            employee.setDataValue('shiftEmotionLevel', shiftEmotionLevel);
+            if (shiftEmotionLevel < 0) {
+              employee.setDataValue('performanceStatus', 'Warning');
+            } else if (shiftEmotionLevel >= 0) {
+              employee.setDataValue('performanceStatus', 'Normal');
+            }
+          }
+        })
         res.status(status.OK)
           .send({
             status: true,
@@ -343,6 +302,7 @@ export default {
       }
     }
   },
+
   update_avatar_url: {
     async put(req, res, next) {
       try {
@@ -379,7 +339,7 @@ export default {
         const token = req.headers.authorization.replace('Bearer ', '')
         const tokenDecoded = jwt.decode(token)
         models.Employee.findOne({
-          attributes: { exclude: ['password', 'role_id','roleId'] },
+          attributes: { exclude: ['password', 'role_id', 'roleId'] },
           include: {
             model: models.Role,
             as: 'Role'

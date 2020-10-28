@@ -1,11 +1,14 @@
 import RootRoutes from './RootRoutes';
 import EmployeeRoutes from './EmployeeRoutes';
-import FaceRoutes from './FaceRoutes';
 import EmailRoutes from './EmailRoutes';
 import SessionRoutes from './SessionRoutes';
 import CustomerRoutes from './CustomerRoutes';
-import TaskRoutes from './TaskRoutes';
+import SessionTaskRoutes from './SessionTaskRoutes';
 import RoleRoutes from './RoleRoutes';
+import CounterRoutes from './CounterRoutes';
+import QueueRoutes from './QueueRoutes'
+import CategoryRoutes from './CategoryRoutes';
+import ShiftRoutes from './ShiftRoutes';
 
 const Router = [
   {
@@ -21,10 +24,6 @@ const Router = [
     handler: CustomerRoutes
   },
   {
-    path: '/faces',
-    handler: FaceRoutes,
-  },
-  {
     path: '/emails',
     handler: EmailRoutes,
   },
@@ -33,13 +32,29 @@ const Router = [
     handler: SessionRoutes,
   },
   {
-    path: '/tasks',
-    handler: TaskRoutes,
+    path: '/session-tasks',
+    handler: SessionTaskRoutes,
   },
   {
     path: '/roles',
     handler: RoleRoutes,
-  }
+  },
+  {
+    path: '/counters',
+    handler: CounterRoutes
+  },
+  {
+    path: '/queues',
+    handler: QueueRoutes
+  },
+  {
+    path: '/categories',
+    handler: CategoryRoutes
+  },
+  {
+    path: '/shifts',
+    handler: ShiftRoutes
+  },
 ];
 
 export default Router;

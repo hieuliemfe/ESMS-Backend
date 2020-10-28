@@ -8,7 +8,7 @@ export default {
 
     view: {
         async get(req, res, next) {
-            
+
             try {
                 const roles = await models.Role.findAll({
                 });
