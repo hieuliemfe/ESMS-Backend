@@ -125,11 +125,12 @@ export default {
     async get(req, res, next) {
       try {
         //Data from request
-        const { employeeCode, fullname } = req.query
+        const { employeeCode, fullname, emotionStatus } = req.query
         //if query doesn't specify the time period
         const startDate = req.query.startDate ? req.query.startDate : new Date().setHours(0, 0, 0)
         const endDate = req.query.endDate ? req.query.endDate : new Date().setHours(23, 59, 0)
         const order = req.query.order ? req.query.order : 'created_at,asc'
+        let result = [];
         let whereEmployeeCondition = '';
 
         if (fullname || employeeCode != undefined) {
@@ -182,25 +183,37 @@ export default {
         })
         employees.forEach(employee => {
           let employeeInactiveShifts = [];
+
           shifts.forEach(shift => {
             if (shift.employee_id == employee.id) {
               employeeInactiveShifts.push(shift);
             }
           })
           if (employeeInactiveShifts.length > 0) {
-            const shiftEmotionLevel = calculateShiftEmotionLevel(employeeInactiveShifts);
-            employee.setDataValue('shiftEmotionLevel', shiftEmotionLevel);
-            if (shiftEmotionLevel < 0) {
-              employee.setDataValue('performanceStatus', 'Warning');
-            } else if (shiftEmotionLevel >= 0) {
-              employee.setDataValue('performanceStatus', 'Normal');
+            const emotionLevel = calculateShiftEmotionLevel(employeeInactiveShifts);
+            employee.setDataValue('emotionLevel', emotionLevel);
+            if (emotionLevel < -0.4) {
+              employee.setDataValue('emotionWarning', true);
+            } else if (emotionLevel >= -0.4) {
+              employee.setDataValue('emotionWarning', false);
+            }
+            if (emotionStatus == 'negative') {
+              if (emotionLevel < -0.4) {
+                result.push(employee)
+              }
+            } else if (emotionStatus == 'positive') {
+              if (emotionLevel >= -0.4) {
+                result.push(employee)
+              }
+            } else if (emotionStatus == undefined) {
+              result.push(employee)
             }
           }
         })
         res.status(status.OK)
           .send({
             status: true,
-            message: employees,
+            message: result,
           });
       } catch
       (error) {

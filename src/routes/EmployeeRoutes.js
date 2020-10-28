@@ -53,6 +53,13 @@ import { isManager } from '../middlewares/authorization';
 *         schema:
 *           type : string
 *           format: string
+*       - name: emotionStatus
+*         in: query
+*         required: false
+*         description: Emotion status to filter (positive || negative)
+*         schema:
+*           type : string
+*           format: string
 *     responses:
 *       200:
 *         description: Displays employee details
