@@ -47,7 +47,7 @@ export default {
               ]
             },
             order: [
-              ['number', 'desc'],
+              ['number', 'asc'],
             ],
             attributes: ["id", "number", "createdAt", "updatedAt"]
           }).then(queues => {
