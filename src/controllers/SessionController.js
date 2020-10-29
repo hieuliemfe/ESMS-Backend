@@ -121,11 +121,30 @@ export default {
                 }
                 break;
               }
+              case 'neutral': {
+                if (parsedInfo.emotion_level == 0 && !parsedInfo.emotionless_warning) {
+                  session.setDataValue('status', 'Neutral')
+                  result.push(session);
+                }
+                break;
+              }
+              case 'emotionless': {
+                if (parsedInfo.emotion_level == 0 && parsedInfo.emotionless_warning) {
+                  session.setDataValue('status', 'Emotionless')
+                  result.push(session);
+                }
+                break;
+              }
             }
           } else {
             if (parsedInfo.emotion_level < 0) {
               session.setDataValue('status', 'Negative')
-            } else {
+            } else if (parsedInfo.emotion_level == 0) {
+              session.setDataValue('status', 'Neutral')
+              if (parsedInfo.emotionless_warning) {
+                session.setDataValue('status', 'Emotionless')
+              }
+            } else if (parsedInfo.emotion_level > 0) {
               session.setDataValue('status', 'Positive')
             }
             result.push(session);

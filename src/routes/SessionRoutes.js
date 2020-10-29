@@ -54,7 +54,7 @@ import { isBankTeller, isManager } from '../middlewares/authorization';
 *       - name: status
 *         in: query
 *         required: false
-*         description: sessionStatus to filter (negative || positive)
+*         description: sessionStatus to filter (negative || positive || neutral || emotionless)
 *         schema:
 *           type : string
 *           format: string
