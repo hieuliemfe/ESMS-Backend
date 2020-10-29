@@ -105,29 +105,30 @@ export default {
           session.setDataValue('avatarUrl', employee.avatarUrl)
           session.setDataValue('employeeFullname', employee.fullname)
           const parsedInfo = JSON.parse(session.info);
-          switch (status.toLowerCase()) {
-            case 'negative': {
-              if (parsedInfo.emotion_level < 0) {
-                session.setDataValue('status', 'Negative')
-                result.push(session);
+          if (status != undefined) {
+            switch (status.toLowerCase()) {
+              case 'negative': {
+                if (parsedInfo.emotion_level < 0) {
+                  session.setDataValue('status', 'Negative')
+                  result.push(session);
+                }
+                break;
               }
-              break;
-            }
-            case 'positive': {
-              if (parsedInfo.emotion_level > 0) {
-                session.setDataValue('status', 'Positive')
-                result.push(session);
+              case 'positive': {
+                if (parsedInfo.emotion_level > 0) {
+                  session.setDataValue('status', 'Positive')
+                  result.push(session);
+                }
+                break;
               }
-              break;
             }
-            case undefined: {
-              if (parsedInfo.emotion_level < 0) {
-                session.setDataValue('status', 'Negative')
-              } else {
-                session.setDataValue('status', 'Positive')
-              }
-              result.push(session);
+          } else {
+            if (parsedInfo.emotion_level < 0) {
+              session.setDataValue('status', 'Negative')
+            } else {
+              session.setDataValue('status', 'Positive')
             }
+            result.push(session);
           }
         }
         res.status(200)
