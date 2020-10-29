@@ -13,6 +13,7 @@ import { DefaultError } from '../utils/errorHandler';
 import publicRuntimeConfig from '../configurations';
 import { shiftStatus } from '../db/config/statusConfig'
 import { calculateShiftEmotionLevel } from '../utils/emotionUtil'
+import { setEpochMillisTime } from '../utils/timeUtil';
 const JWT_SECRET = publicRuntimeConfig.JWT_SECRET;
 
 
@@ -127,7 +128,7 @@ export default {
         //Data from request
         const { employeeCode, fullname, emotionStatus } = req.query
         //if query doesn't specify the time period
-        const startDate = req.query.startDate ? req.query.startDate : new Date().setHours(0, 0, 0)
+        const startDate = req.query.startDate ? req.query.startDate : setEpochMillisTime(0, 0, 0, 0, 0)
         const endDate = req.query.endDate ? req.query.endDate : new Date().setHours(23, 59, 0)
         const order = req.query.order ? req.query.order : 'created_at,asc'
         let result = [];
@@ -173,7 +174,6 @@ export default {
                 shiftEnd: { [Op.lte]: endDate }
               },
             ],
-            statusId: shiftStatus.INACTIVE,
           },
           include: [{
             model: models.Session,
@@ -197,16 +197,17 @@ export default {
             } else if (emotionLevel >= -0.4) {
               employee.setDataValue('emotionWarning', false);
             }
-            if (emotionStatus == 'negative') {
+            if (emotionStatus == undefined) {
+              result.push(employee)
+            }
+            else if (emotionStatus.toLowerCase() == 'negative') {
               if (emotionLevel < -0.4) {
                 result.push(employee)
               }
-            } else if (emotionStatus == 'positive') {
+            } else if (emotionStatus.toLowerCase() == 'positive') {
               if (emotionLevel >= -0.4) {
                 result.push(employee)
               }
-            } else if (emotionStatus == undefined) {
-              result.push(employee)
             }
           }
         })
