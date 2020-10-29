@@ -105,7 +105,7 @@ export default {
           session.setDataValue('avatarUrl', employee.avatarUrl)
           session.setDataValue('employeeFullname', employee.fullname)
           const parsedInfo = JSON.parse(session.info);
-          switch (status) {
+          switch (status.toLowerCase()) {
             case 'negative': {
               if (parsedInfo.emotion_level < 0) {
                 session.setDataValue('status', 'Negative')
