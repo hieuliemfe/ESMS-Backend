@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { Op } from "sequelize";
 import sequelize from 'sequelize'
 import { shiftStatus } from '../db/config/statusConfig';
+import { calculateStressLevel } from '../utils/emotionUtil'
 export default {
 
   view_active_shift: {
@@ -235,10 +236,10 @@ export default {
           let negativeSessionCount = 0;
           let angryWarningCount = 0;
           let noFaceWarningCount = 0;
+          let stressLevel;
           //start analyze data
           shiftSessions.forEach(shiftSession => {
             const parsedInfo = JSON.parse(shiftSession.info);
-            console.log("shiftINFO: " + parsedInfo.emotion_level);
             //if it's a neutral session
             if (parsedInfo.emotion_level == 0) {
               //if there's a emotionless warning found
@@ -258,7 +259,12 @@ export default {
             }
             angryWarningCount += parsedInfo.angry_warning;
             noFaceWarningCount += parsedInfo.no_face_detected_warning;
-          })
+          });
+          stressLevel = calculateStressLevel(shiftSessions);
+          let stressWarning = false
+          if (stressLevel > 0) {
+            stressWarning = true
+          }
           res.status(status.OK)
             .send({
               success: true,
@@ -269,11 +275,12 @@ export default {
                 negativeSessions: negativeSessionCount,
                 emotionlessSessions: emotionlessSessionCount,
                 angryWarnings: angryWarningCount,
-                noFaceWarnings: noFaceWarningCount
+                noFaceWarnings: noFaceWarningCount,
+                stressLevel: stressLevel,
+                stressWarning: stressWarning
               }
             });
         }
-
       } catch (error) {
         next(error)
       }
