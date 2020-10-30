@@ -8,31 +8,37 @@
 import express from 'express';
 import Controller from '../controllers/EmailController';
 let router = express.Router();
-import passport from 'passport';
+
 /**
 * @swagger
-* /emails/{id}:
+* /emails/action:
 *   post:
 *     tags:
 *       - Email Service
 *     name: Send an email
-*     summary: Send an email template to an employee
+*     summary: Send an action email to an employee
 *     consumes:
 *       - application/json
-*     parameters:
-*       - name: body
-*         in: body
-*         schema:
-*           type: object
-*           properties:
-*             email:
-*               type: string
-*         required:
-*           - email
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               employeeCode:
+*                 type: string
+*               type:
+*                 type: string
+*               date:
+*                 type: string
+*                 format: date
 *     responses:
 *       200:
-*         description: Email sent to employee.
+*         description: Email is sent.
+*       417:
+*         description: Bad employeeCode, type or date
 */
-router.post('/email', Controller.send_email.post);
+router.post('/action', Controller.send_action_email.post);
 
 export default router;
