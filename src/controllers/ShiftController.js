@@ -239,26 +239,28 @@ export default {
           let stressLevel;
           //start analyze data
           shiftSessions.forEach(shiftSession => {
-            const parsedInfo = JSON.parse(shiftSession.info);
-            //if it's a neutral session
-            if (parsedInfo.emotion_level == 0) {
-              //if there's a emotionless warning found
-              if (parsedInfo.emotionless_warning) {
-                emotionlessSessionCount++;
+            if (shiftSession.info != undefined) {
+              const parsedInfo = JSON.parse(shiftSession.info);
+              //if it's a neutral session
+              if (parsedInfo.emotion_level == 0) {
+                //if there's a emotionless warning found
+                if (parsedInfo.emotionless_warning) {
+                  emotionlessSessionCount++;
+                } else {
+                  neutralSessionCount++;
+                }
               } else {
-                neutralSessionCount++;
+                //if it's a positive session
+                if (parsedInfo.emotion_level > 0) {
+                  positiveSessionCount++;
+                  //if it's a negative session
+                } else if (parsedInfo.emotion_level < 0) {
+                  negativeSessionCount++;
+                }
               }
-            } else {
-              //if it's a positive session
-              if (parsedInfo.emotion_level > 0) {
-                positiveSessionCount++;
-                //if it's a negative session
-              } else if (parsedInfo.emotion_level < 0) {
-                negativeSessionCount++;
-              }
+              angryWarningCount += parsedInfo.angry_warning;
+              noFaceWarningCount += parsedInfo.no_face_detected_warning;
             }
-            angryWarningCount += parsedInfo.angry_warning;
-            noFaceWarningCount += parsedInfo.no_face_detected_warning;
           });
           stressLevel = calculateStressLevel(shiftSessions);
           let stressWarning = false

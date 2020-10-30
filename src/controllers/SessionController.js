@@ -104,50 +104,52 @@ export default {
           const employee = await models.Employee.findByPk(session.employeeId);
           session.setDataValue('avatarUrl', employee.avatarUrl)
           session.setDataValue('employeeFullname', employee.fullname)
-          const parsedInfo = JSON.parse(session.info);
-          if (status != undefined) {
-            switch (status.toLowerCase()) {
-              case 'negative': {
-                if (parsedInfo.emotion_level < 0) {
-                  session.setDataValue('status', 'Negative')
-                  result.push(session);
+          if (session.info != undefined) {
+            const parsedInfo = JSON.parse(session.info);
+            if (status != undefined) {
+              switch (status.toLowerCase()) {
+                case 'negative': {
+                  if (parsedInfo.emotion_level < 0) {
+                    session.setDataValue('status', 'Negative')
+                    result.push(session);
+                  }
+                  break;
                 }
-                break;
-              }
-              case 'positive': {
-                if (parsedInfo.emotion_level > 0) {
-                  session.setDataValue('status', 'Positive')
-                  result.push(session);
+                case 'positive': {
+                  if (parsedInfo.emotion_level > 0) {
+                    session.setDataValue('status', 'Positive')
+                    result.push(session);
+                  }
+                  break;
                 }
-                break;
-              }
-              case 'neutral': {
-                if (parsedInfo.emotion_level == 0 && !parsedInfo.emotionless_warning) {
-                  session.setDataValue('status', 'Neutral')
-                  result.push(session);
+                case 'neutral': {
+                  if (parsedInfo.emotion_level == 0 && !parsedInfo.emotionless_warning) {
+                    session.setDataValue('status', 'Neutral')
+                    result.push(session);
+                  }
+                  break;
                 }
-                break;
+                case 'emotionless': {
+                  if (parsedInfo.emotion_level == 0 && parsedInfo.emotionless_warning) {
+                    session.setDataValue('status', 'Emotionless')
+                    result.push(session);
+                  }
+                  break;
+                }
               }
-              case 'emotionless': {
-                if (parsedInfo.emotion_level == 0 && parsedInfo.emotionless_warning) {
+            } else {
+              if (parsedInfo.emotion_level < 0) {
+                session.setDataValue('status', 'Negative')
+              } else if (parsedInfo.emotion_level == 0) {
+                session.setDataValue('status', 'Neutral')
+                if (parsedInfo.emotionless_warning) {
                   session.setDataValue('status', 'Emotionless')
-                  result.push(session);
                 }
-                break;
+              } else if (parsedInfo.emotion_level > 0) {
+                session.setDataValue('status', 'Positive')
               }
+              result.push(session);
             }
-          } else {
-            if (parsedInfo.emotion_level < 0) {
-              session.setDataValue('status', 'Negative')
-            } else if (parsedInfo.emotion_level == 0) {
-              session.setDataValue('status', 'Neutral')
-              if (parsedInfo.emotionless_warning) {
-                session.setDataValue('status', 'Emotionless')
-              }
-            } else if (parsedInfo.emotion_level > 0) {
-              session.setDataValue('status', 'Positive')
-            }
-            result.push(session);
           }
         }
         res.status(200)
@@ -177,7 +179,10 @@ export default {
             id: sessionId
           },
         })
-        session.setDataValue('info', JSON.parse(session.info))
+        if (session != undefined && session.info != undefined) {
+          const parsedInfo = JSON.parse(session.info);
+          session.setDataValue('info', parsedInfo)
+        }
         // const emotionDurations = getEmotionDurations(session);
         // session.setDataValue('emotionDurations', emotionDurations)
         res.status(status.OK)
