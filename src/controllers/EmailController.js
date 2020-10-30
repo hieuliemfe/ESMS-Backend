@@ -5,7 +5,7 @@ import status from 'http-status';
 import { createEmail, sendEmail } from '../services/email-service/service'
 import { mailTypes } from '../services/email-service/contentConfig'
 export default {
-  
+
   send_action_email: {
     async post(req, res, next) {
       try {
