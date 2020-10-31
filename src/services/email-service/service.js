@@ -50,7 +50,7 @@ export const sendEmail = (email, receiverEmail) => {
     }
   });
   const message = {
-    from: process.env.EMAIL_SERVICE_SENDER, // Sender address
+    from: process.env.EMAIL_SERVICE_USERNAME, // Sender address
     to: receiverEmail,         // List of recipients
     subject: "[ESMS Team] Notice regarding your performance", // Subject line
     //text: "heelo world",
