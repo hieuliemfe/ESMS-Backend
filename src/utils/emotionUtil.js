@@ -1,7 +1,8 @@
 'use strict'
 
+
 export const calculateShiftEmotionLevel = (shiftSessions) => {
-  let positiveScoreSum = 0, negativeScoreSum = 0;
+  let happyDurationSum = 0, angryDurationSum = 0, neutralDurationSum = 0;
   shiftSessions.forEach(shiftSession => {
     const sessions = shiftSession.Session;
     sessions.forEach(session => {
@@ -18,22 +19,9 @@ export const calculateShiftEmotionLevel = (shiftSessions) => {
       }
     });
   });
-
-  const totalScoreSum = positiveScoreSum + negativeScoreSum;
-  const positivePercent = (positiveScoreSum / totalScoreSum) * 100;
-  const negativePercent = (negativeScoreSum / totalScoreSum) * 100;
-  const difference = positivePercent - negativePercent;
-  //2 / (1 +exp(-0.05*x)) -1
-  const shiftEmotionLevel = (2 / (1 + Math.exp(-0.05 * difference))) - 1;
-  // console.log(`=============positive: ${positiveScoreSum}`)
-  // console.log(`=============negative: ${negativeScoreSum}`)
-  // console.log(`=============positive: ${positivePercent}`)
-  // console.log(`=============negative: ${negativePercent}`)
-  // console.log(`=============difference: ${difference}`)
-  // console.log(`=============shiftEmo: ${shiftEmotionLevel}`)
+  const shiftEmotionLevel = angryDurationSum / (happyDurationSum + angryDurationSum + neutralDurationSum)
   return shiftEmotionLevel;
 }
-
 export const calculateStressLevel = (shiftSessions) => {
   let positiveDurationSum = 0, negativeDurationSum = 0, neutralDurationSum = 0;
 
@@ -76,4 +64,3 @@ export const getEmotionDurations = (session) => {
     return result;
   }
 }
-
