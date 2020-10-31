@@ -26,15 +26,15 @@ services:
     ports:
       - "8080:8080"
 
-  # esmsbe:
-  #   depends_on:
-  #     - esmsdb
-  #   build:
-  #     context: .
-  #     dockerfile: esmsbe.Dockerfile
-  #   image: esmsbe:latest
-  #   restart: always
-  #   ports:
-  #     - "4000:8000"
+  esmsbe:
+    depends_on:
+      - esmsdb
+    build:
+      context: .
+      dockerfile: esmsbe.Dockerfile
+    image: esmsbe:latest
+    restart: always
+    ports:
+      - "4000:8000"
 volumes:
   dbvol:
