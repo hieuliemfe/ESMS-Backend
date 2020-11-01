@@ -27,7 +27,6 @@ import passport from 'passport';
 *       400:
 *         description: Error.
 */
-
 router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_shift_list.get);
 
 /**
@@ -73,11 +72,7 @@ router.get('/active-shift', passport.authenticate('jwt', { session: false }), is
 *       400:
 *         description: Error.
 */
-
 router.get('/:shiftId/summary', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.sum_up.get);
-
-
-
 
 /**
 * @swagger
@@ -104,7 +99,6 @@ router.get('/:shiftId/summary', passport.authenticate('jwt', { session: false })
 *       400:
 *         description: Error.
 */
-
 router.put('/:shiftId/checkout', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.checkout.put);
 
 /**
@@ -132,7 +126,6 @@ router.put('/:shiftId/checkout', passport.authenticate('jwt', { session: false }
 *       400:
 *         description: Error.
 */
-
 router.put('/:shiftId/checkin', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.checkin.put);
 
 export default router;
