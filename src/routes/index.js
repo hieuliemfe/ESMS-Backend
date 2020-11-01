@@ -9,6 +9,7 @@ import CounterRoutes from './CounterRoutes';
 import QueueRoutes from './QueueRoutes'
 import CategoryRoutes from './CategoryRoutes';
 import ShiftRoutes from './ShiftRoutes';
+import ManagerRoutes from './ManagerRoutes';
 
 const Router = [
   {
@@ -54,6 +55,10 @@ const Router = [
   {
     path: '/shifts',
     handler: ShiftRoutes
+  },
+  {
+    path: '/managers',
+    handler: ManagerRoutes
   },
 ];
 
