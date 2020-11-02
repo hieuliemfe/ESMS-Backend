@@ -6,7 +6,6 @@ import { Storage } from '@google-cloud/storage'
 export const uploadEvidence = async (fileUpload) => {
   try {
     let evidenceUrl;
-
     const gc = new Storage({
       keyFilename: path.join(__dirname + '/../' + process.env.GCS_EVIDENCE_CREDENTIAL),
       projectId: process.env.GCS_EVIDENCE_PROJECT_ID
