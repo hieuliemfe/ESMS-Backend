@@ -37,7 +37,7 @@ import fileUpload from "../middlewares/fileUpload.js";
 *                 format: binary
 *     responses:
 *       200:
-*         description: A list of sessions is displayed.
+*         description: The evidence will be uploaded.
 *       400:
 *         description: Error.
 *       401:
