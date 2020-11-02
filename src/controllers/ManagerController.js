@@ -6,6 +6,8 @@ import fs from 'fs';
 import path from 'path';
 
 import stressLevelsConfig from '../configurations/stressLevels.json';
+import negativeLevelsConfig from '../configurations/negativeLevels.json';
+
 export default {
 
   get_stress_levels: {
@@ -49,11 +51,60 @@ export default {
                 message: JSON.stringify(stressLevelsConfig)
               })
           });
-
         }
       } catch (error) {
         next(error)
       }
     }
   },
+
+  get_negative_levels: {
+    async get(req, res, next) {
+      try {
+        res.status(status.OK)
+          .send({
+            success: true,
+            message: negativeLevelsConfig.negative_levels
+          })
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+  update_negative_level: {
+    async put(req, res, next) {
+      try {
+        let result;
+        const { negativeLevelId } = req.params;
+        const { value, description, link } = req.body
+        if (stressLevelId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "Must input at least one stress level."
+            })
+        } else {
+          result = negativeLevelsConfig;
+          result.negative_levels.forEach(config => {
+            if (config.id == negativeLevelId) {
+              config.description = description,
+                config.link = link,
+                config.value = value
+            }
+          })
+          fs.writeFile(path.resolve('./src/configurations/negativeLevels.json'), JSON.stringify(result), (err) => {
+            res.status(status.OK)
+              .send({
+                success: true,
+                message: JSON.stringify(negativeLevelsConfig)
+              })
+          });
+        }
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
 };
+

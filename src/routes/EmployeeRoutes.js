@@ -60,6 +60,13 @@ import { isManager } from '../middlewares/authorization';
 *         schema:
 *           type : string
 *           format: string
+*       - name: duration
+*         in: query
+*         required: false
+*         description: Duration limit for the search result
+*         schema:
+*           type : string
+*           format: string
 *     responses:
 *       200:
 *         description: Displays employee details
