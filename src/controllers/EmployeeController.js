@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Op } from "sequelize";
 import url from 'url';
-import { endOfWeek, endOfMonth, parseISO } from 'date-fns';
+import { endOfWeek, endOfMonth, endOfYear, parseISO } from 'date-fns';
 import readXlsxFile from "read-excel-file/node";
 import { generateEmployeeInfo } from '../utils/employeeUtil';
 import fs from 'fs';
@@ -143,6 +143,10 @@ export default {
             }
             case 'monthly': {
               endDate = endOfMonth(parseISO(startDate))
+              break;
+            }
+            case 'yearly': {
+              endDate = endOfYear(parseISO(startDate))
               break;
             }
           }

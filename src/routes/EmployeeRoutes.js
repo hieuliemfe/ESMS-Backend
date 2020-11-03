@@ -63,7 +63,7 @@ import { isManager } from '../middlewares/authorization';
 *       - name: duration
 *         in: query
 *         required: false
-*         description: Duration limit for the search result
+*         description: Duration limit for the search result (daily, weekly, monthly, yearly)
 *         schema:
 *           type : string
 *           format: string
