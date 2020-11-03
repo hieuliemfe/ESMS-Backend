@@ -35,7 +35,7 @@ export default function (sequelize, DataTypes) {
       field: 'phone_number'
     },
     avatarUrl: {
-      type: DataTypes.STRING(65534),
+      type: DataTypes.TEXT,
       allowNull: true,
       field: 'avatar_url'
     },
