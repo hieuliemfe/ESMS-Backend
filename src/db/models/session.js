@@ -16,11 +16,11 @@ export default function (sequelize, DataTypes) {
       field: 'employee_id',
     },
     info: {
-      type: DataTypes.STRING(1000),
+      type: DataTypes.TEXT,
       field: 'info',
     },
     evidenceUrl: {
-      type: DataTypes.STRING(1000),
+      type: DataTypes.TEXT,
       field: 'evidence_url'
     },
     createdAt: {
