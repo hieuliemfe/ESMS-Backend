@@ -5,15 +5,14 @@ import status from 'http-status';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Op } from "sequelize";
-import url from 'url';
 import readXlsxFile from "read-excel-file/node";
 import { generateEmployeeInfo } from '../utils/employeeUtil';
-import fs from 'fs';
 import { DefaultError } from '../utils/errorHandler';
 import publicRuntimeConfig from '../configurations';
-import { shiftStatus } from '../db/config/statusConfig'
 import { calculateShiftEmotionLevel } from '../utils/emotionUtil'
 import { setEpochMillisTime } from '../utils/timeUtil';
+import { Readable } from 'stream';
+
 const JWT_SECRET = publicRuntimeConfig.JWT_SECRET;
 
 
@@ -55,21 +54,14 @@ export default {
         if (req.file == undefined) {
           return res.status(400).send("Please upload an excel file!");
         }
-        let path =
-          __basedir + "/" + req.file.filename;
-        await readXlsxFile(path).then((rows) => {
+        const stream = Readable.from(req.file.buffer);
+        await readXlsxFile(stream).then((rows) => {
           // skip header
           rows.shift();
           rows.forEach(async (row) => {
             //create employee
             let employee = await generateEmployeeInfo(row[1], row[3], row[2]);
             await models.Employee.create(employee);
-          });
-          fs.unlink(path, (err) => {
-            if (err) {
-              console.error(err)
-              return
-            }
           });
         });
         res.status(status.CREATED)

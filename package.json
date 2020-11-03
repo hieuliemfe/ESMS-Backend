@@ -10,6 +10,7 @@
     "deploy": "yarn build && pm2-runtime start ./dist/app.bundle.js --name esms-backend -i 1"
   },
   "dependencies": {
+    "@google-cloud/storage": "^5.4.0",
     "axios": "^0.20.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
