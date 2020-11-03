@@ -1,0 +1,34 @@
+{
+  "negative_emotion_levels": [
+    {
+      "type": 0,
+      "value": 1,
+      "limit": 1,
+      "action": "Go to the doctor"
+    },
+    {
+      "type": 1,
+      "value": 0.2,
+      "limit": 7,
+      "action": "Suspend for 1 day"
+    },
+    {
+      "type": 2,
+      "value": 0.15,
+      "limit": 8,
+      "action": "Suspend for 30 minutes"
+    },
+    {
+      "type": 3,
+      "value": 0.1,
+      "limit": 8,
+      "action": "Suspend for 15 minutes"
+    },
+    {
+      "type": 4,
+      "value": 0.05,
+      "limit": 10,
+      "action": "Send behavior guideline"
+    }
+  ]
+}

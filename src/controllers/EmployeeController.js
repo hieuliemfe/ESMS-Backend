@@ -6,13 +6,14 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Op } from "sequelize";
 import url from 'url';
+import { endOfWeek, endOfMonth, endOfYear, parseISO } from 'date-fns';
 import readXlsxFile from "read-excel-file/node";
 import { generateEmployeeInfo } from '../utils/employeeUtil';
 import fs from 'fs';
 import { DefaultError } from '../utils/errorHandler';
 import publicRuntimeConfig from '../configurations';
 import { shiftStatus } from '../db/config/statusConfig'
-import { calculateShiftEmotionLevel } from '../utils/emotionUtil'
+import { calculateShiftEmotionLevel, getTypeWarning } from '../utils/emotionUtil'
 import { setEpochMillisTime } from '../utils/timeUtil';
 const JWT_SECRET = publicRuntimeConfig.JWT_SECRET;
 
@@ -126,10 +127,34 @@ export default {
     async get(req, res, next) {
       try {
         //Data from request
-        const { employeeCode, fullname, emotionStatus } = req.query
+        const { employeeCode, fullname, duration } = req.query
+        let startDate = req.query.startDate ? req.query.startDate : new Date().setHours(0, 0, 0);
+        let endDate;
         //if query doesn't specify the time period
-        const startDate = req.query.startDate ? req.query.startDate : setEpochMillisTime(0, 0, 0, 0, 0)
-        const endDate = req.query.endDate ? req.query.endDate : new Date().setHours(23, 59, 0)
+        if (duration != undefined) {
+          switch (duration) {
+            case 'daily': {
+              endDate = new Date().setHours(23, 59, 0)
+              break;
+            }
+            case 'weekly': {
+              endDate = endOfWeek(parseISO(startDate));
+              break;
+            }
+            case 'monthly': {
+              endDate = endOfMonth(parseISO(startDate))
+              break;
+            }
+            case 'yearly': {
+              endDate = endOfYear(parseISO(startDate))
+              break;
+            }
+          }
+        } else {
+          endDate = req.query.endDate ? req.query.endDate : endOfWeek(parseISO(startDate))
+        }
+        console.log(`===== STARTDATE:${startDate}`)
+        console.log(`======ENDDATE:${endDate}`);
         const order = req.query.order ? req.query.order : 'created_at,asc'
         let result = [];
         let whereEmployeeCondition = '';
@@ -145,19 +170,7 @@ export default {
         const orderOptions = order.split(",");
         //employeeCode & fullname only
         const employees = await models.Employee.findAll({
-          attributes: [
-            'id',
-            'employeeCode',
-            'email',
-            'fullname',
-            'phoneNumber',
-            'roleId',
-            'isSubscribed',
-            'isDeleted',
-            'createdAt',
-            'updatedAt',
-            'avatarUrl'
-          ],
+          attributes: { exclude: ['password', 'role_id'] },
           where: whereEmployeeCondition,
           order: [
             [orderOptions[0], orderOptions[1]],
@@ -190,25 +203,12 @@ export default {
             }
           })
           if (employeeInactiveShifts.length > 0) {
-            const emotionLevel = calculateShiftEmotionLevel(employeeInactiveShifts);
-            employee.setDataValue('emotionLevel', emotionLevel);
-            if (emotionLevel < -0.4) {
-              employee.setDataValue('emotionWarning', true);
-            } else if (emotionLevel >= -0.4) {
-              employee.setDataValue('emotionWarning', false);
+            const typeCount = calculateShiftEmotionLevel(employeeInactiveShifts, req.query.duration);
+            const warning = getTypeWarning(typeCount);
+            if (warning != null) {
+              employee.setDataValue('emotionWarning', warning);
             }
-            if (emotionStatus == undefined) {
-              result.push(employee)
-            }
-            else if (emotionStatus.toLowerCase() == 'negative') {
-              if (emotionLevel < -0.4) {
-                result.push(employee)
-              }
-            } else if (emotionStatus.toLowerCase() == 'positive') {
-              if (emotionLevel >= -0.4) {
-                result.push(employee)
-              }
-            }
+            result.push(employee);
           }
         })
         res.status(status.OK)

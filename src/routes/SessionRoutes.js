@@ -85,8 +85,6 @@ import { isBankTeller, isManager } from '../middlewares/authorization';
 */
 router.get('/', passport.authenticate('jwt', { session: false }), isManager, Controller.view.get);
 
-
-
 /**
 * @swagger
 * /sessions:

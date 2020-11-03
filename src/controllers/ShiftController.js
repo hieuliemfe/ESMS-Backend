@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { Op } from "sequelize";
 import sequelize from 'sequelize'
 import { shiftStatus } from '../db/config/statusConfig';
-import { calculateStressLevel } from '../utils/emotionUtil'
+import { calculateStressLevel, getStressSolution } from '../utils/emotionUtil'
 export default {
 
   view_active_shift: {
@@ -203,8 +203,6 @@ export default {
     async get(req, res, next) {
       try {
         const { shiftId } = req.params
-        const token = req.headers.authorization.replace('Bearer ', '')
-        const tokenDecoded = jwt.decode(token)
         const currentShift = await models.Shift.findOne({
           where: {
             id: shiftId
@@ -263,6 +261,8 @@ export default {
             }
           });
           stressLevel = calculateStressLevel(shiftSessions);
+          const stressSolution = getStressSolution(stressLevel);
+
           let stressWarning = false
           if (stressLevel > 0) {
             stressWarning = true
@@ -279,7 +279,8 @@ export default {
                 angryWarnings: angryWarningCount,
                 noFaceWarnings: noFaceWarningCount,
                 stressLevel: stressLevel,
-                stressWarning: stressWarning
+                stressWarning: stressWarning,
+                stressSolution: stressSolution
               }
             });
         }

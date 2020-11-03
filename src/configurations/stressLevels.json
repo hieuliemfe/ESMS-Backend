@@ -1,0 +1,27 @@
+{
+  "stress_levels": [
+    {
+      "id": 1,
+      "value": 0.2,
+      "description": "We have found you to be stressed. How about an entertaining video for a change?",
+      "link": "https://www.youtube.com/watch?v=pYcpZJVmXvU"
+    },
+    {
+      "id": 2,
+      "value": 0.4,
+      "description": "We have found you to be moderately stressed. We suggest you to contact with your manager for assistance."
+    },
+    {
+      "id": 3,
+      "value": 0.7,
+      "description": "We have found you to be severely stressed. Please contact medical support as soon as possible.",
+      "link": "http://umc.edu.vn/Home/ViewDetail/1578"
+    },
+    {
+      "id": 4,
+      "value": 0.9,
+      "description": "U mad bro",
+      "link": "http://umc.edu.vn/Home/ViewDetail/1578"
+    }
+  ]
+}
