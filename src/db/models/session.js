@@ -19,6 +19,10 @@ export default function (sequelize, DataTypes) {
       type: DataTypes.STRING(1000),
       field: 'info',
     },
+    evidenceUrl: {
+      type: DataTypes.STRING(1000),
+      field: 'evidence_url'
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: Sequelize.fn('NOW'),

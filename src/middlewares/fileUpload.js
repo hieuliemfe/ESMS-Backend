@@ -1,5 +1,6 @@
 import multer from "multer";
 
+var storage = multer.memoryStorage(); 
 const excelFilter = (req, file, cb) => {
   if (
     file.mimetype.includes("excel") ||
@@ -10,16 +11,6 @@ const excelFilter = (req, file, cb) => {
     cb("Please upload only excel file.", false);
   }
 };
+var uploadFile = multer({ storage: storage });
 
-var storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, __basedir + "/");
-  },
-  filename: (req, file, cb) => {
-    console.log(file.originalname);
-    cb(null, `${Date.now()}-potato-${file.originalname}`);
-  },
-});
-
-var uploadFile = multer({ storage: storage, fileFilter: excelFilter });
 export default uploadFile;
