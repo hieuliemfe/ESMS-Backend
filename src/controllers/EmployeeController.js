@@ -11,7 +11,7 @@ import readXlsxFile from "read-excel-file/node";
 import { generateEmployeeInfo } from '../utils/employeeUtil';
 import { DefaultError } from '../utils/errorHandler';
 import publicRuntimeConfig from '../configurations';
-import { calculateShiftEmotionLevel } from '../utils/emotionUtil'
+import { calculateShiftEmotionLevel, getTypeWarning } from '../utils/emotionUtil'
 import { setEpochMillisTime } from '../utils/timeUtil';
 import { Readable } from 'stream';
 
