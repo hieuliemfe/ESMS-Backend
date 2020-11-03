@@ -1,14 +1,14 @@
 'use strict'
-import { setEpochMillisTime } from '../../utils/timeUtil';
+import { setEpochMillisTime, updateEpochMillisTime } from '../../utils/timeUtil';
 
-let currentDate = new Date();
-currentDate = setEpochMillisTime(currentDate, 0, 0, 0, 0);
+let currentDate = new Date().toLocaleString("en-US", { timeZone: "UTC" });
+
 export default [
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
     shift_id: 1,
-    sessionStart: setEpochMillisTime(currentDate, 7, 5, 0, 0),
-    sessionEnd: setEpochMillisTime(currentDate, 7, 40, 0, 0),
+    sessionStart: updateEpochMillisTime(currentDate, 0, 7, 5, 0),
+    sessionEnd: updateEpochMillisTime(currentDate, 0, 7, 40, 0),
     info: JSON.stringify(
       {
         "total_session_duration": 63642,
@@ -35,8 +35,8 @@ export default [
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
     shift_id: 1,
-    sessionStart: setEpochMillisTime(currentDate, 7, 30, 0, 0),
-    sessionEnd: setEpochMillisTime(currentDate, 8, 0, 0, 0),
+    sessionStart: updateEpochMillisTime(currentDate, 0, 7, 30, 0),
+    sessionEnd: updateEpochMillisTime(currentDate, 0, 8, 0, 0),
     info: JSON.stringify(
       {
         "total_session_duration": 14801,
@@ -63,8 +63,8 @@ export default [
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
     shift_id: 1,
-    sessionStart: setEpochMillisTime(currentDate, 8, 5, 0, 0),
-    sessionEnd: setEpochMillisTime(currentDate, 8, 30, 0, 0),
+    sessionStart: updateEpochMillisTime(currentDate, 0,  8, 5, 0),
+    sessionEnd: updateEpochMillisTime(currentDate, 0, 8, 30, 0),
     info: JSON.stringify(
       {
         "total_session_duration": 14801,
@@ -91,8 +91,8 @@ export default [
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
     shift_id: 1,
-    sessionStart: setEpochMillisTime(currentDate, 8, 45, 0, 0),
-    sessionEnd: setEpochMillisTime(currentDate, 9, 0, 0, 0),
+    sessionStart: updateEpochMillisTime(currentDate, 0,  8, 45, 0),
+    sessionEnd: updateEpochMillisTime(currentDate, 0, 9, 0, 0),
     info: JSON.stringify(
       {
         "total_session_duration": 14801,
@@ -119,8 +119,8 @@ export default [
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
     shift_id: 1,
-    sessionStart: setEpochMillisTime(currentDate, 9, 10, 0, 0),
-    sessionEnd: setEpochMillisTime(currentDate, 9, 30, 0, 0),
+    sessionStart: updateEpochMillisTime(currentDate, 0,  10, 45, 0),
+    sessionEnd: updateEpochMillisTime(currentDate, 0, 11, 39, 0),
     info: JSON.stringify(
       {
         "total_session_duration": 14801,
