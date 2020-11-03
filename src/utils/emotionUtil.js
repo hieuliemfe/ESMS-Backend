@@ -4,7 +4,8 @@ import stressLevelsConfig from '../configurations/stressLevels.json';
 import negativeLevelConfig from '../configurations/negativeLevels.json';
 
 export const calculateShiftEmotionLevel = (shiftSessions) => {
-  let negativeEmotionTypes = negativeLevelConfig.negative_emotion_level_types;
+  let negativeEmotionTypes = negativeLevelConfig.negative_emotion_levels;
+  //array to count the number of occurence of sessions
   let typeCount = Array.from({ length: negativeEmotionTypes.length }, () => 0)
   shiftSessions.forEach(shiftSession => {
     const sessions = shiftSession.Session;
@@ -25,7 +26,7 @@ export const calculateShiftEmotionLevel = (shiftSessions) => {
 }
 
 export const getSessionType = (angryPercentage) => {
-  let negativeEmotionTypes = negativeLevelConfig.negative_emotion_level_types;
+  let negativeEmotionTypes = negativeLevelConfig.negative_emotion_levels;
   for (var i = 0; i < negativeEmotionTypes.length; i++) {
     if (angryPercentage <= negativeEmotionTypes[i].value && angryPercentage > (negativeEmotionTypes[i + 1] == undefined ? 0 : negativeEmotionTypes[i + 1].value)) {
       console.log(`ANGRYPERCENTAGE:${angryPercentage}`)
@@ -36,7 +37,7 @@ export const getSessionType = (angryPercentage) => {
 }
 
 export const getTypeWarning = (typeCount) => {
-  let negativeEmotionTypes = negativeLevelConfig.negative_emotion_level_types;
+  let negativeEmotionTypes = negativeLevelConfig.negative_emotion_levels;
   for (var i = 0; i < typeCount.length; i++) {
     for (var j = 0; j < negativeEmotionTypes.length; j++) {
       if (typeCount[i] <= negativeEmotionTypes[j].limit) {

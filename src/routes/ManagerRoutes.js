@@ -11,10 +11,10 @@ let router = express.Router();
 
 /**
 * @swagger
-* /managers/stress-levels/:
+* /managers/stress-levels:
 *   get:
 *     tags:
-*       - Managers
+*       - Managers - Stress levels
 *     name: Get stress sensitivity level for .env
 *     summary: Get stress sensitivity level for .env
 *     consumes:
@@ -27,10 +27,37 @@ router.get('/stress-levels', Controller.get_stress_levels.get);
 
 /**
 * @swagger
+* /managers/stress-levels:
+*   post:
+*     tags:
+*       - Managers - Stress levels
+*     name: Add stress sensitivity level for .env
+*     summary: Add stress sensitivity level for .env
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               value:
+*                 type: integer
+*               description:
+*                 type: string
+*               link:
+*                 type: string
+*     responses:
+*       200:
+*         description: level updated.
+*/
+router.post('/stress-levels', Controller.create_stress_level.post);
+
+/**
+* @swagger
 * /managers/stress-levels/{stressLevelId}:
 *   put:
 *     tags:
-*       - Managers
+*       - Managers - Stress levels
 *     name: set stress sensitivity level for .env
 *     summary: set stress sensitivity level for .env
 *     parameters:
@@ -63,10 +90,33 @@ router.put('/stress-levels/:stressLevelId', Controller.update_stress_level.put);
 
 /**
 * @swagger
-* /managers/negative-levels/:
+* /managers/stress-levels/{stressLevelId}:
+*   delete:
+*     tags:
+*       - Managers - Stress levels
+*     name: delete a stress sensitivity level for .env
+*     summary: delete a  stress sensitivity level for .env
+*     parameters:
+*       - name: stressLevelId
+*         in: path
+*         required: true
+*         description: Select a stress level with matching id.
+*         schema:
+*           type : integer
+*           format: string
+*           minimum: 1
+*     responses:
+*       200:
+*         description: level updated.
+*/
+router.delete('/stress-levels/:stressLevelId', Controller.delete_stress_level.delete);
+
+/**
+* @swagger
+* /managers/negative-levels:
 *   get:
 *     tags:
-*       - Managers
+*       - Managers - Negative levels
 *     name: Get negative sensitivity level for .env
 *     summary: Get stress sensitivity level for .env
 *     consumes:
@@ -81,17 +131,44 @@ router.get('/negative-levels', Controller.get_negative_levels.get);
 
 /**
 * @swagger
-* /managers/stress-levels/{stressLevelId}:
+* /managers/negative-levels:
+*   post:
+*     tags:
+*       - Managers - Negative levels
+*     name: create negative sensitivity level for .env
+*     summary: create negative sensitivity level for .env
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               value:
+*                 type: integer
+*               limit:
+*                 type: integer
+*               action:
+*                 type: string
+*     responses:
+*       200:
+*         description: level updated.
+*/
+router.post('/negative-levels', Controller.create_negative_level.post);
+
+/**
+* @swagger
+* /managers/negative-levels/{negativeLevelType}:
 *   put:
 *     tags:
-*       - Managers
-*     name: set stress sensitivity level for .env
-*     summary: set stress sensitivity level for .env
+*       - Managers - Negative levels
+*     name: set negative sensitivity level for the system
+*     summary: set negative sensitivity level for the system
 *     parameters:
-*       - name: stressLevelId
+*       - name: negativeLevelType
 *         in: path
 *         required: true
-*         description: Select a stress level with matching id.
+*         description: Select a negative level
 *         schema:
 *           type : integer
 *           format: string
@@ -105,9 +182,9 @@ router.get('/negative-levels', Controller.get_negative_levels.get);
 *             properties:
 *               value:
 *                 type: integer
-*               description:
-*                 type: string
-*               link:
+*               limit:
+*                 type: integer
+*               action:
 *                 type: string
 *     responses:
 *       200:
@@ -115,40 +192,29 @@ router.get('/negative-levels', Controller.get_negative_levels.get);
 *       401:
 *         description: Unauthorized
 */
-router.put('/stress-levels/:stressLevelId', Controller.update_negative_level.put);
+router.put('/negative-levels/:negativeLevelType', Controller.update_negative_level.put);
 
+/**
+* @swagger
+* /managers/negative-levels/{negativeLevelType}:
+*   delete:
+*     tags:
+*       - Managers - Negative levels
+*     name: set negative sensitivity level for the system
+*     summary: set negative sensitivity level for the system
+*     parameters:
+*       - name: negativeLevelType
+*         in: path
+*         required: true
+*         description: Select a stress level with matching id.
+*         schema:
+*           type : integer
+*           format: string
+*           minimum: 1
+*     responses:
+*       200:
+*         description: level updated.
+*/
+router.delete('/negative-levels/:negativeLevelType', Controller.delete_negative_level.delete);
 
 export default router;
-
-// /**
-// * @swagger
-// * /managers/stress-levels/:
-// *   put:
-// *     tags:
-// *       - Managers
-// *     name: set stress sensitivity level for .env
-// *     summary: set stress sensitivity level for .env
-// *     requestBody:
-// *       required: true
-// *       content:
-// *         application/json:
-// *           schema:
-// *             type: object
-// *             properties:
-// *               stress_levels:
-// *                 type: array
-// *                 items:
-// *                   type: object
-// *                   properties:
-// *                     value:
-// *                       type: integer
-// *                     description:
-// *                       type: string
-// *                     link:
-// *                       type: string
-// *     responses:
-// *       200:
-// *         description: Email is sent.
-// *       417:
-// *         description: Bad employeeCode, type or date
-// */
