@@ -10,6 +10,7 @@ import QueueRoutes from './QueueRoutes'
 import CategoryRoutes from './CategoryRoutes';
 import ShiftRoutes from './ShiftRoutes';
 import ManagerRoutes from './ManagerRoutes';
+import VideoRoutes from './VideoRoutes';
 
 const Router = [
   {
@@ -59,6 +60,10 @@ const Router = [
   {
     path: '/managers',
     handler: ManagerRoutes
+  },
+  {
+    path: '/videos',
+    handler: VideoRoutes
   },
 ];
 
