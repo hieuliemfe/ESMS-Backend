@@ -7,6 +7,9 @@
 
 import express from 'express';
 import Controller from '../controllers/ManagerController';
+import passport from 'passport';
+import { isManager } from '../middlewares/authorization';
+
 let router = express.Router();
 
 /**
@@ -23,7 +26,7 @@ let router = express.Router();
 *       200:
 *         description: Levels updated.
 */
-router.get('/stress-levels', Controller.get_stress_levels.get);
+router.get('/stress-levels', passport.authenticate('jwt', { session: false }), isManager, Controller.get_stress_levels.get);
 
 /**
 * @swagger
@@ -50,7 +53,7 @@ router.get('/stress-levels', Controller.get_stress_levels.get);
 *       200:
 *         description: level updated.
 */
-router.post('/stress-levels', Controller.create_stress_level.post);
+router.post('/stress-levels', passport.authenticate('jwt', { session: false }), isManager, Controller.create_stress_level.post);
 
 /**
 * @swagger
@@ -86,7 +89,7 @@ router.post('/stress-levels', Controller.create_stress_level.post);
 *       200:
 *         description: level updated.
 */
-router.put('/stress-levels/:stressLevelId', Controller.update_stress_level.put);
+router.put('/stress-levels/:stressLevelId', passport.authenticate('jwt', { session: false }), isManager, Controller.update_stress_level.put);
 
 /**
 * @swagger
@@ -109,7 +112,7 @@ router.put('/stress-levels/:stressLevelId', Controller.update_stress_level.put);
 *       200:
 *         description: level updated.
 */
-router.delete('/stress-levels/:stressLevelId', Controller.delete_stress_level.delete);
+router.delete('/stress-levels/:stressLevelId', passport.authenticate('jwt', { session: false }), isManager, Controller.delete_stress_level.delete);
 
 /**
 * @swagger
@@ -127,7 +130,7 @@ router.delete('/stress-levels/:stressLevelId', Controller.delete_stress_level.de
 *       401:
 *         description: Unauthorized
 */
-router.get('/negative-levels', Controller.get_negative_levels.get);
+router.get('/negative-levels', passport.authenticate('jwt', { session: false }), isManager, Controller.get_negative_levels.get);
 
 /**
 * @swagger
@@ -154,7 +157,7 @@ router.get('/negative-levels', Controller.get_negative_levels.get);
 *       200:
 *         description: level updated.
 */
-router.post('/negative-levels', Controller.create_negative_level.post);
+router.post('/negative-levels', passport.authenticate('jwt', { session: false }), isManager, Controller.create_negative_level.post);
 
 /**
 * @swagger
@@ -192,7 +195,7 @@ router.post('/negative-levels', Controller.create_negative_level.post);
 *       401:
 *         description: Unauthorized
 */
-router.put('/negative-levels/:negativeLevelType', Controller.update_negative_level.put);
+router.put('/negative-levels/:negativeLevelType', passport.authenticate('jwt', { session: false }), isManager, Controller.update_negative_level.put);
 
 /**
 * @swagger
@@ -215,6 +218,6 @@ router.put('/negative-levels/:negativeLevelType', Controller.update_negative_lev
 *       200:
 *         description: level updated.
 */
-router.delete('/negative-levels/:negativeLevelType', Controller.delete_negative_level.delete);
+router.delete('/negative-levels/:negativeLevelType', passport.authenticate('jwt', { session: false }), isManager, Controller.delete_negative_level.delete);
 
 export default router;

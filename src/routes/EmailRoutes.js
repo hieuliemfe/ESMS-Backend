@@ -7,6 +7,10 @@
 
 import express from 'express';
 import Controller from '../controllers/EmailController';
+import passport from 'passport'
+import { isManager } from '../middlewares/authorization';
+
+
 let router = express.Router();
 
 /**
@@ -39,6 +43,6 @@ let router = express.Router();
 *       417:
 *         description: Bad employeeCode, type or date
 */
-router.post('/action', Controller.send_action_email.post);
+router.post('/action', passport.authenticate('jwt', { session: false }), isManager, Controller.send_action_email.post);
 
 export default router;
