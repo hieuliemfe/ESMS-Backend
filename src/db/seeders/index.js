@@ -15,7 +15,10 @@ import sessionTaskSeed from './sessionTaskSeed';
 import counterCategorySeed from './counterCategorySeed';
 import shiftTypeSeed from './shiftTypeSeed'
 import shiftSeed from './shiftSeed';
-
+import negativeEmotionCriteriaSeed from './negativeEmotionCriteriaSeed';
+import negativeEmotionActionSeed from './negativeEmotionActionSeed';
+import stressCriteriaSeed from './stressSuggestionSeed';
+import stressSuggestionSeed from './stressCriteriaSeed';
 const seed = async () => {
   //check if data already exists.
   await models.Role.count()
@@ -27,6 +30,10 @@ const seed = async () => {
           .then(() => models.Emotion.bulkCreate(emotionSeed))
           .then(() => models.Category.bulkCreate(categorySeed))
           .then(() => models.ShiftType.bulkCreate(shiftTypeSeed))
+          .then(() => models.NegativeEmotionCriteria.bulkCreate(negativeEmotionCriteriaSeed))
+          .then(() => models.NegativeEmotionAction.bulkCreate(negativeEmotionActionSeed))
+          .then(() => models.StressCriteria.bulkCreate(stressCriteriaSeed))
+          .then(() => models.StressSuggestion.bulkCreate(stressSuggestionSeed))
           //sample data seeds
           .then(() => models.Counter.bulkCreate(counterSeed))
           .then(() => models.Employee.bulkCreate(employeeSeed))
