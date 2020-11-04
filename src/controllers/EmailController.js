@@ -87,7 +87,15 @@ export default {
       }
     }
   },
-
+  get_email_types: {
+    async get(req, res, next) {
+      try {
+        res.status(status.OK).send(mailTypes)
+      } catch (error) {
+        next(error);
+      }
+    }
+  },
 
 
 };

@@ -90,6 +90,6 @@ router.post('/stress-solution', passport.authenticate('jwt', { session: false })
 *       417:
 *         description: Bad employeeCode, type or date
 */
-// router.get('/types', passport.authenticate('jwt', { session: false }), isManager, Controller.send_stress_solution_email.post);
+router.get('/types', passport.authenticate('jwt', { session: false }), isManager, Controller.get_email_types.get);
 
 export default router;
