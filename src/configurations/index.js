@@ -18,7 +18,9 @@ const publicRuntimeConfig = {
   GCS_EVIDENCE_PROJECT_ID: process.env.GCS_EVIDENCE_PROJECT_ID,
   GCS_EVIDENCE_CREDENTIAL: process.env.GCS_EVIDENCE_CREDENTIAL,
   GCS_EVIDENCE_BUCKET_NAME: process.env.GCS_EVIDENCE_BUCKET_NAME,
-
+  //Email service Configs
+  EMAIL_SERVICE_DKIM_KEY: process.env.EMAIL_SERVICE_DKIM_KEY,
+  
   JWT_SECRET: process.env.JWT_SECRET,
 };
 export default publicRuntimeConfig;

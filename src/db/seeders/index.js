@@ -17,8 +17,8 @@ import shiftTypeSeed from './shiftTypeSeed'
 import shiftSeed from './shiftSeed';
 import negativeEmotionCriteriaSeed from './negativeEmotionCriteriaSeed';
 import negativeEmotionActionSeed from './negativeEmotionActionSeed';
-import stressCriteriaSeed from './stressSuggestionSeed';
-import stressSuggestionSeed from './stressCriteriaSeed';
+import stressCriteriaSeed from './stressCriteriaSeed';
+import stressSuggestionSeed from './stressSuggestionSeed';
 const seed = async () => {
   //check if data already exists.
   await models.Role.count()
