@@ -1,16 +1,25 @@
 'use strict';
 
 import status from 'http-status';
-import fs from 'fs';
 import models from '../db/models/index';
-import path from 'path';
 import periodicityConfig from '../db/config/periodicityConfig';
 export default {
 
   get_stress_criterias: {
     async get(req, res, next) {
       try {
-        const stressCriteria = await models.StressCriteria.findAll()
+        let { periodicityId } = req.query;
+        if (periodicityId == undefined) {
+          periodicityId = periodicityConfig.WEEKLY;
+        }
+        const stressCriteria = await models.StressCriteria.findAll({
+          include: [{
+            model: models.StressSuggestion,
+            where: {
+              periodicityId: periodicityId
+            }
+          }],
+        })
         res.status(status.OK)
           .send({
             success: true,
@@ -37,6 +46,37 @@ export default {
             condition: condition,
             operator: operator,
             comparingNumber: comparingNumber
+          })
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
+        }
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
+  create_stress_suggestion: {
+    async post(req, res, next) {
+      try {
+        const { limit, percentageLimit, link, periodicityId, suggestion, criteriaId } = req.body
+        if (percentageLimit == undefined || periodicityId == undefined || suggestion == undefined || criteriaId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "Missing or invalid input."
+            })
+        } else {
+          const result = models.StressSuggestion.create({
+            limit: limit,
+            percentageLimit: percentageLimit,
+            link: link,
+            periodicityId: periodicityId,
+            suggestion: suggestion,
+            criteriaId: criteriaId
           })
           res.status(status.CREATED)
             .send({
@@ -91,6 +131,50 @@ export default {
     }
   },
 
+  update_stress_suggestion: {
+    async put(req, res, next) {
+      try {
+        const { suggestionId } = req.params;
+        if (suggestionId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "No suggestionId found."
+            })
+          return;
+        }
+        const { limit, percentageLimit, link, periodicityId, suggestion, criteriaId } = req.body
+        if (percentageLimit == undefined || periodicityId == undefined || suggestion == undefined || criteriaId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "Missing or invalid input."
+            })
+        } else {
+          const result = models.StressSuggestion.update({
+            limit: limit,
+            percentageLimit: percentageLimit,
+            link: link,
+            periodicityId: periodicityId,
+            suggestion: suggestion,
+            criteriaId: criteriaId
+          }, {
+            where: {
+              id: suggestionId
+            }
+          })
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
+        }
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
   delete_stress_level: {
     async delete(req, res, next) {
       try {
@@ -103,9 +187,37 @@ export default {
             })
           return;
         }
-        const result = models.StressCriteria.destroy({
+        const result = await models.StressCriteria.destroy({
           where: {
             id: criteriaId
+          }
+        })
+        res.status(status.OK)
+          .send({
+            success: true,
+            message: result
+          })
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
+  delete_stress_suggestion: {
+    async delete(req, res, next) {
+      try {
+        const { suggestionId } = req.params;
+        if (suggestionId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "No suggestionId found."
+            })
+          return;
+        }
+        const result = await models.StressSuggestion.destroy({
+          where: {
+            id: suggestionId
           }
         })
         res.status(status.OK)
@@ -173,7 +285,35 @@ export default {
       }
     }
   },
-
+  create_negative_emotion_action: {
+    async post(req, res, next) {
+      try {
+        const { limit, percentageLimit, periodicityId, action, criteriaId } = req.body
+        if (percentageLimit == undefined || periodicityId == undefined || action == undefined || criteriaId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "Missing or invalid input."
+            })
+        } else {
+          const result = models.NegativeEmotionAction.create({
+            limit: limit,
+            percentageLimit: percentageLimit,
+            periodicityId: periodicityId,
+            action: action,
+            criteriaId: criteriaId
+          })
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
+        }
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
   update_negative_emotion_criteria: {
     async put(req, res, next) {
       try {
@@ -215,6 +355,48 @@ export default {
     }
   },
 
+  update_negative_emotion_action: {
+    async put(req, res, next) {
+      try {
+        const { actionId } = req.params;
+        if (actionId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "actionId missing."
+            })
+        }
+        const { limit, percentageLimit, periodicityId, action, criteriaId } = req.body
+        if (percentageLimit == undefined || periodicityId == undefined || action == undefined || criteriaId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "Missing or invalid input."
+            })
+        } else {
+          const result = models.NegativeEmotionAction.update({
+            limit: limit,
+            percentageLimit: percentageLimit,
+            periodicityId: periodicityId,
+            action: action,
+            criteriaId: criteriaId
+          }, {
+            where: {
+              id: actionId
+            }
+          })
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
+        }
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
   delete_negative_emotion_criteria: {
     async delete(req, res, next) {
       try {
@@ -230,6 +412,34 @@ export default {
         const result = models.NegativeEmotionCriteria.destroy({
           where: {
             id: criteriaId
+          }
+        })
+        res.status(status.OK)
+          .send({
+            success: true,
+            message: result
+          })
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
+  delete_negative_emotion_action: {
+    async delete(req, res, next) {
+      try {
+        const { actionId } = req.params;
+        if (actionId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "No actionId found."
+            })
+          return;
+        }
+        const result = models.NegativeEmotionAction.destroy({
+          where: {
+            id: actionId
           }
         })
         res.status(status.OK)
