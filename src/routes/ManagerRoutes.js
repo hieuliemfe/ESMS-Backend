@@ -123,6 +123,14 @@ router.delete('/stress-criterias/:criteriaId', passport.authenticate('jwt', { se
 *       - Managers - Negative levels
 *     name: Get negative sensitivity level for .env
 *     summary: Get stress sensitivity level for .env
+*     parameters:
+*       - name: periodicityId
+*         in: query
+*         required: false
+*         description: Time period for the action (1 - daily | 2 - weekly | 3- monthly | 4 - yearly)
+*         schema:
+*           type : integer
+*           format: string
 *     consumes:
 *       - application/json
 *     responses:

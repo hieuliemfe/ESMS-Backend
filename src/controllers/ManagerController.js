@@ -4,6 +4,7 @@ import status from 'http-status';
 import fs from 'fs';
 import models from '../db/models/index';
 import path from 'path';
+import periodicityConfig from '../db/config/periodicityConfig';
 export default {
 
   get_stress_criterias: {
@@ -120,8 +121,19 @@ export default {
 
   get_negative_emotion_criterias: {
     async get(req, res, next) {
+      let { periodicityId } = req.query;
+      if (periodicityId == undefined) {
+        periodicityId = periodicityConfig.WEEKLY
+      }
       try {
-        const negativeEmotionCriterias = await models.NegativeEmotionCriteria.findAll()
+        const negativeEmotionCriterias = await models.NegativeEmotionCriteria.findAll({
+          include: [{
+            model: models.NegativeEmotionAction,
+            where: {
+              periodicityId: periodicityId
+            }
+          }],
+        })
         res.status(status.OK)
           .send({
             success: true,

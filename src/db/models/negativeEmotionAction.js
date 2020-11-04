@@ -13,7 +13,7 @@ export default function (sequelize, DataTypes) {
       field: 'percentage_limit'
     },
     periodicityId: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       field: "periodicity_id",
     },
     action: {
