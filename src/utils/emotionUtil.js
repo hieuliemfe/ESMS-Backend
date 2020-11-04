@@ -132,20 +132,19 @@ export const getStressSuggestion = async (sessionCount, typeCount, periodicityId
   let suggestion = '';
   let url = '';
   // console.log("=====find action by NUMBER limit");
-  for (var i = stressSuggestion.length - 1; i > 0; --i) {
-    // console.log(`====== LIMIT: ${stressSuggestion[i].limit}`)
-    if (stressSuggestion[i].limit != null && typeCount[i] >= parseInt(stressSuggestion[i].limit)) {
-      // console.log(`=======SUGESTTION:${suggestion}`)
-      url = stressSuggestion[i].link
-      suggestion = stressSuggestion[i].suggestion
+  // for (var i = stressSuggestion.length - 1; i > 0; --i) {
+  //   // console.log(`====== LIMIT: ${stressSuggestion[i].limit}`)
+  //   if (stressSuggestion[i].limit != null && typeCount[i] >= parseInt(stressSuggestion[i].limit)) {
+  //     // console.log(`=======SUGESTTION:${suggestion}`)
+  //     url = stressSuggestion[i].link
+  //     suggestion = stressSuggestion[i].suggestion
 
-      return {
-        url: url,
-        suggestion: suggestion
-      };
-    }
-  }
-  //find action by number limit
+  //     return {
+  //       url: url,
+  //       suggestion: suggestion
+  //     };
+  //   }
+  // }
   // console.log("=====find action by percentage limit");
   for (var i = stressSuggestion.length - 1; i > 0; --i) {
     if ((typeCount[i] / sessionCount) >= stressSuggestion.percentageLimit) {

@@ -79,8 +79,6 @@ router.post('/stress-criterias', passport.authenticate('jwt', { session: false }
 *           schema:
 *             type: object
 *             properties:
-*               limit:
-*                 type: integer
 *               criteriaId:
 *                 type: integer
 *               percentageLimit:
@@ -121,12 +119,12 @@ router.post('/stress-criterias/suggestions', passport.authenticate('jwt', { sess
 *           schema:
 *             type: object
 *             properties:
-*               value:
+*               condition:
+*                 type: string
+*               operator:
+*                 type: string
+*               comparingNumber:
 *                 type: integer
-*               description:
-*                 type: string
-*               link:
-*                 type: string
 *     responses:
 *       200:
 *         description: level updated.
@@ -157,8 +155,6 @@ router.put('/stress-criterias/:criteriaId', passport.authenticate('jwt', { sessi
 *           schema:
 *             type: object
 *             properties:
-*               limit:
-*                 type: integer
 *               criteriaId:
 *                 type: integer
 *               percentageLimit:

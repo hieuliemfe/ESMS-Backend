@@ -3,10 +3,10 @@ import { Sequelize } from 'sequelize';
 
 export default function (sequelize, DataTypes) {
   const StressSuggestion = sequelize.define('StressSuggestion', {
-    limit: {
-      type: DataTypes.INTEGER,
-      field: 'limit'
-    },
+    // limit: {
+    //   type: DataTypes.INTEGER,
+    //   field: 'limit'
+    // },
     percentageLimit: {
       type: DataTypes.FLOAT,
       field: 'percentage_limit'

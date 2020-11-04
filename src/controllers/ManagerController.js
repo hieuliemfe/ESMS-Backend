@@ -62,7 +62,7 @@ export default {
   create_stress_suggestion: {
     async post(req, res, next) {
       try {
-        const { limit, percentageLimit, link, periodicityId, suggestion, criteriaId } = req.body
+        const { percentageLimit, link, periodicityId, suggestion, criteriaId } = req.body
         if (percentageLimit == undefined || periodicityId == undefined || suggestion == undefined || criteriaId == undefined) {
           res.status(status.EXPECTATION_FAILED)
             .send({
@@ -71,7 +71,6 @@ export default {
             })
         } else {
           const result = models.StressSuggestion.create({
-            limit: limit,
             percentageLimit: percentageLimit,
             link: link,
             periodicityId: periodicityId,
@@ -143,7 +142,7 @@ export default {
             })
           return;
         }
-        const { limit, percentageLimit, link, periodicityId, suggestion, criteriaId } = req.body
+        const { percentageLimit, link, periodicityId, suggestion, criteriaId } = req.body
         if (percentageLimit == undefined || periodicityId == undefined || suggestion == undefined || criteriaId == undefined) {
           res.status(status.EXPECTATION_FAILED)
             .send({
@@ -152,7 +151,6 @@ export default {
             })
         } else {
           const result = models.StressSuggestion.update({
-            limit: limit,
             percentageLimit: percentageLimit,
             link: link,
             periodicityId: periodicityId,
