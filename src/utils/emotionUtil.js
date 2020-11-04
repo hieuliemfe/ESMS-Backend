@@ -78,10 +78,9 @@ export const getEmployeeEmotionReport = ((employee, sessionCount, typeCount, neg
     sessionTypeName = negativeEmotionCriteria.rows[i].operator
       + (negativeEmotionCriteria.rows[i].comparingNumber * 100) + "%";
     result = {
-      [sessionTypeName]: {
-        "count": typeCount[i],
-        "percentage": percentage
-      }
+      "condition": sessionTypeName,
+      "count": typeCount[i],
+      "percentage": percentage
     }
     sessionTypes.push(result);
   }
