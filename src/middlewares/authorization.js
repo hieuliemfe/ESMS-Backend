@@ -73,7 +73,7 @@ export function isAuthorized(req, res, next) {
   }).then(employee => {
     if (employee) {
       if (employee.isDeleted) throw new DefaultError(status.FORBIDDEN, 'Account is blocked');
-      if (tokenDecoded.roleName !== 'Admin' && tokenDecoded.roleName !== 'Manager') throw new DefaultError(status.FORBIDDEN, 'Error Forbidden');
+      if (tokenDecoded.roleName == undefined ) throw new DefaultError(status.FORBIDDEN, 'Error Forbidden');
       next(null, employee);
     } else {
       throw new DefaultError(status.UNAUTHORIZED, 'You are not authorized to perform this action!');
