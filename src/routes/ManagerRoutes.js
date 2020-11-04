@@ -130,7 +130,7 @@ router.delete('/stress-levels/:stressLevelId', passport.authenticate('jwt', { se
 *       401:
 *         description: Unauthorized
 */
-router.get('/negative-levels', passport.authenticate('jwt', { session: false }), isManager, Controller.get_negative_levels.get);
+router.get('/negative-levels', passport.authenticate('jwt', { session: false }), isManager, Controller.get_negative_emotion_criterias.get);
 
 /**
 * @swagger
@@ -147,28 +147,29 @@ router.get('/negative-levels', passport.authenticate('jwt', { session: false }),
 *           schema:
 *             type: object
 *             properties:
-*               value:
-*                 type: integer
-*               limit:
-*                 type: integer
-*               action:
+*               condition:
 *                 type: string
+*               operator:
+*                 type: string
+*                 limit: 2
+*               comparingNumber:
+*                 type: integer
 *     responses:
 *       200:
 *         description: level updated.
 */
-router.post('/negative-levels', passport.authenticate('jwt', { session: false }), isManager, Controller.create_negative_level.post);
+router.post('/negative-levels', passport.authenticate('jwt', { session: false }), isManager, Controller.create_negative_emotion_criteria.post);
 
 /**
 * @swagger
-* /managers/negative-levels/{negativeLevelType}:
+* /managers/negative-levels/{criteriaId}:
 *   put:
 *     tags:
 *       - Managers - Negative levels
 *     name: set negative sensitivity level for the system
 *     summary: set negative sensitivity level for the system
 *     parameters:
-*       - name: negativeLevelType
+*       - name: criteriaId
 *         in: path
 *         required: true
 *         description: Select a negative level
@@ -183,30 +184,31 @@ router.post('/negative-levels', passport.authenticate('jwt', { session: false })
 *           schema:
 *             type: object
 *             properties:
-*               value:
-*                 type: integer
-*               limit:
-*                 type: integer
-*               action:
+*               condition:
 *                 type: string
+*               operator:
+*                 type: string
+*                 limit: 2
+*               comparingNumber:
+*                 type: integer
 *     responses:
 *       200:
 *         description: level updated
 *       401:
 *         description: Unauthorized
 */
-router.put('/negative-levels/:negativeLevelType', passport.authenticate('jwt', { session: false }), isManager, Controller.update_negative_level.put);
+router.put('/negative-levels/:criteriaId', passport.authenticate('jwt', { session: false }), isManager, Controller.update_negative_emotion_criteria.put);
 
 /**
 * @swagger
-* /managers/negative-levels/{negativeLevelType}:
+* /managers/negative-levels/{criteriaId}:
 *   delete:
 *     tags:
 *       - Managers - Negative levels
 *     name: set negative sensitivity level for the system
 *     summary: set negative sensitivity level for the system
 *     parameters:
-*       - name: negativeLevelType
+*       - name: criteriaId
 *         in: path
 *         required: true
 *         description: Select a stress level with matching id.
@@ -218,6 +220,6 @@ router.put('/negative-levels/:negativeLevelType', passport.authenticate('jwt', {
 *       200:
 *         description: level updated.
 */
-router.delete('/negative-levels/:negativeLevelType', passport.authenticate('jwt', { session: false }), isManager, Controller.delete_negative_level.delete);
+router.delete('/negative-levels/:criteriaId', passport.authenticate('jwt', { session: false }), isManager, Controller.delete_negative_emotion_criteria.delete);
 
 export default router;

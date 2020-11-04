@@ -2,11 +2,8 @@
 
 import status from 'http-status';
 import fs from 'fs';
+import models from '../db/models/index';
 import path from 'path';
-
-import stressLevelsConfig from '../configurations/stressLevels.json';
-import negativeLevelsConfig from '../configurations/negativeLevels.json';
-
 export default {
 
   get_stress_levels: {
@@ -45,13 +42,11 @@ export default {
           }
           result.stress_levels.push(newLevel);
           result.stress_levels.sort((a, b) => parseFloat(a.value) - parseFloat(b.value));
-          fs.writeFile(path.resolve('./src/configurations/stressLevels.json'), JSON.stringify(result), (err) => {
-            res.status(status.OK)
-              .send({
-                success: true,
-                message: stressLevelsConfig
-              })
-          });
+          res.status(status.OK)
+            .send({
+              success: true,
+              message: stressLevelsConfig
+            })
         }
       } catch (error) {
         next(error)
@@ -128,13 +123,14 @@ export default {
     }
   },
 
-  get_negative_levels: {
+  get_negative_emotion_criterias: {
     async get(req, res, next) {
       try {
+        const negativeEmotionCriterias = await models.NegativeEmotionCriteria.findAll()
         res.status(status.OK)
           .send({
             success: true,
-            message: negativeLevelsConfig.negative_emotion_levels
+            message: negativeEmotionCriterias
           })
       } catch (error) {
         next(error)
@@ -142,35 +138,28 @@ export default {
     }
   },
 
-  create_negative_level: {
+  create_negative_emotion_criteria: {
     async post(req, res, next) {
       try {
-        let result;
-        let newLevel;
-        const { value, limit, action } = req.body
-        if (value == undefined || limit == undefined || action == undefined) {
+        const { condition, operator, comparingNumber } = req.body
+        if (condition == undefined || condition.match("[a-zA-Z]") || operator == undefined || comparingNumber == undefined) {
           res.status(status.EXPECTATION_FAILED)
             .send({
               success: false,
-              message: "Must input at least one negative level."
+              message: "Missing or invalid input."
             })
         } else {
-          result = negativeLevelsConfig;
-          newLevel = {
-            type: result.negative_emotion_levels.length + 1,
-            value: value,
-            limit: limit,
-            action: action,
-          }
-          result.negative_emotion_levels.push(newLevel);
-          result.negative_emotion_levels.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
-          fs.writeFile(path.resolve('./src/configurations/negativeLevels.json'), JSON.stringify(result), (err) => {
-            res.status(status.OK)
-              .send({
-                success: true,
-                message: negativeLevelsConfig
-              })
-          });
+          const result = models.NegativeEmotionCriteria.create({
+            condition: condition,
+            operator: operator,
+            comparingNumber: comparingNumber
+
+          })
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
         }
       } catch (error) {
         next(error)
@@ -178,35 +167,40 @@ export default {
     }
   },
 
-  update_negative_level: {
+  update_negative_emotion_criteria: {
     async put(req, res, next) {
       try {
-        let result;
-        const { negativeLevelType } = req.params;
-        const { value, limit, action } = req.body
-        if (negativeLevelType == undefined) {
+        const { criteriaId } = req.params;
+        if (criteriaId == undefined) {
           res.status(status.EXPECTATION_FAILED)
             .send({
               success: false,
-              message: "Must input at least one negative level."
+              message: "No criteriaID found."
+            })
+          return;
+        }
+        const { condition, operator, comparingNumber } = req.body
+        if (condition == undefined || condition.match("[a-zA-Z]") || operator == undefined || comparingNumber == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "Missing or invalid input."
             })
         } else {
-          result = negativeLevelsConfig;
-          result.negative_emotion_levels.forEach(config => {
-            if (config.type == negativeLevelType) {
-              config.value = value,
-                config.limit = limit,
-                config.action = action
+          const result = models.NegativeEmotionCriteria.update({
+            condition: condition,
+            operator: operator,
+            comparingNumber: comparingNumber
+          }, {
+            where: {
+              id: criteriaId
             }
           })
-          result.negative_emotion_levels.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
-          fs.writeFile(path.resolve('./src/configurations/negativeLevels.json'), JSON.stringify(result), (err) => {
-            res.status(status.OK)
-              .send({
-                success: true,
-                message: negativeLevelsConfig
-              })
-          });
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
         }
       } catch (error) {
         next(error)
@@ -214,38 +208,32 @@ export default {
     }
   },
 
-  delete_negative_level: {
+  delete_negative_emotion_criteria: {
     async delete(req, res, next) {
       try {
-        let result;
-        const { negativeLevelType } = req.params;
-        if (negativeLevelType == undefined) {
+        const { criteriaId } = req.params;
+        if (criteriaId == undefined) {
           res.status(status.EXPECTATION_FAILED)
             .send({
               success: false,
-              message: "Must input at least one neagtive level."
+              message: "No criteriaID found."
             })
-        } else {
-          result = negativeLevelsConfig;
-          for (var i = 0; i < result.negative_emotion_levels.length; i++) {
-            if (result.negative_emotion_levels[i].type == negativeLevelType) {
-              result.negative_emotion_levels.splice(i, 1);
-            }
-          }
-          result.negative_emotion_levels.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
-          fs.writeFile(path.resolve('./src/configurations/negativeLevels.json'), JSON.stringify(result), (err) => {
-            res.status(status.OK)
-              .send({
-                success: true,
-                message: negativeLevelsConfig
-              })
-          });
+          return;
         }
+        const result = models.NegativeEmotionCriteria.destroy({
+          where: {
+            id: criteriaId
+          }
+        })
+        res.status(status.OK)
+          .send({
+            success: true,
+            message: result
+          })
+
       } catch (error) {
         next(error)
       }
     }
   },
-
 };
-

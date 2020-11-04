@@ -11,6 +11,7 @@ import readXlsxFile from "read-excel-file/node";
 import { generateEmployeeInfo } from '../utils/employeeUtil';
 import { DefaultError } from '../utils/errorHandler';
 import publicRuntimeConfig from '../configurations';
+import PeriodicityIds from '../db/config/periodicityConfig';
 import { calculateShiftEmotionLevel, getTypeWarning } from '../utils/emotionUtil'
 import { setEpochMillisTime } from '../utils/timeUtil';
 import { Readable } from 'stream';
@@ -121,35 +122,42 @@ export default {
       try {
         //Data from request
         const { employeeCode, fullname, duration } = req.query
-        let startDate = req.query.startDate ? req.query.startDate : new Date().setHours(0, 0, 0);
+        let startDate = req.query.startDate ? req.query.startDate : new Date().toISOString();
         let endDate;
+        let result = [];
+        let periodicityId = 0;
         //if query doesn't specify the time period
         if (duration != undefined) {
           switch (duration) {
             case 'daily': {
               endDate = new Date().setHours(23, 59, 0)
+              periodicityId = PeriodicityIds.DAILY;
               break;
             }
             case 'weekly': {
               endDate = endOfWeek(parseISO(startDate));
+              periodicityId = PeriodicityIds.WEEKLY;
               break;
             }
             case 'monthly': {
               endDate = endOfMonth(parseISO(startDate))
+              periodicityId = PeriodicityIds.MONTHLY;
               break;
             }
             case 'yearly': {
               endDate = endOfYear(parseISO(startDate))
+              periodicityId = PeriodicityIds.YEARLY;
               break;
             }
           }
         } else {
           endDate = req.query.endDate ? req.query.endDate : endOfWeek(parseISO(startDate))
+          periodicityId = PeriodicityIds.WEEKLY
         }
         console.log(`===== STARTDATE:${startDate}`)
         console.log(`======ENDDATE:${endDate}`);
         const order = req.query.order ? req.query.order : 'created_at,asc'
-        let result = [];
+
         let whereEmployeeCondition = '';
 
         if (fullname || employeeCode != undefined) {
@@ -187,23 +195,24 @@ export default {
             as: 'Session',
           }]
         })
-        employees.forEach(employee => {
+        for (const employee of employees) {
           let employeeInactiveShifts = [];
-
-          shifts.forEach(shift => {
+          for (const shift of shifts) {
             if (shift.employee_id == employee.id) {
               employeeInactiveShifts.push(shift);
             }
-          })
-          if (employeeInactiveShifts.length > 0) {
-            const typeCount = calculateShiftEmotionLevel(employeeInactiveShifts, req.query.duration);
-            const warning = getTypeWarning(typeCount);
-            if (warning != null) {
-              employee.setDataValue('emotionWarning', warning);
-            }
-            result.push(employee);
           }
-        })
+          if (employeeInactiveShifts.length > 0) {
+            try {
+              const result = await calculateShiftEmotionLevel(employee, employeeInactiveShifts, periodicityId);
+              employee.setDataValue('action', result.action);
+              employee.setDataValue('report', result.report);
+            } catch (error) {
+              next(error);
+            }
+          }
+          result.push(employee);
+        }
         res.status(status.OK)
           .send({
             status: true,

@@ -1,110 +1,178 @@
 'use strict'
 
-import stressLevelsConfig from '../configurations/stressLevels.json';
-import negativeLevelConfig from '../configurations/negativeLevels.json';
+import models from '../db/models/index';
 
-export const calculateShiftEmotionLevel = (shiftSessions) => {
-  let negativeEmotionTypes = negativeLevelConfig.negative_emotion_levels;
+export const calculateShiftEmotionLevel = async (employee, shiftSessions, periodicityId) => {
+  const negativeEmotionCriteria = await models.NegativeEmotionCriteria.findAndCountAll();
+  let criteriaArray = []
+  negativeEmotionCriteria.rows.forEach(criteria => {
+    const criteriaString = criteria.condition + criteria.operator + criteria.comparingNumber;
+    criteriaArray.push(criteriaString);
+  })
   //array to count the number of occurence of sessions
-  let typeCount = Array.from({ length: negativeEmotionTypes.length }, () => 0)
+  let typeCount = Array.from({ length: negativeEmotionCriteria.count }, () => 0)
+  let sessionCount = 0;
   shiftSessions.forEach(shiftSession => {
     const sessions = shiftSession.Session;
     sessions.forEach(session => {
       if (session.info != undefined) {
         const parsedInfo = JSON.parse(session.info)
-        let totalSessionDuration = parsedInfo.total_session_duration;
-        let angryPercentage = parsedInfo.emotions_duration[0] / totalSessionDuration;
-        //if there's angry emotion found
-        if (angryPercentage != 0) {
-          let type = getSessionType(angryPercentage);
-          typeCount[type] = typeCount[type] + 1;
+        const emotionDurations = parsedInfo.emotions_duration;
+        for (var i = 0; i < criteriaArray.length; i++) {
+          const condition = convertConditions(emotionDurations, criteriaArray[i]);
+          // console.log(`MATCH?${eval(condition)}`)
+          if (eval(condition)) {
+            typeCount[i]++;
+          }
         }
       }
+      sessionCount++;
     });
   });
-  return typeCount
+  const action = await getNegativeEmotionAction(sessionCount, typeCount, periodicityId)
+  const report = getEmployeeEmotionReport(employee, sessionCount, typeCount, negativeEmotionCriteria);
+  // console.log(`RESULT: ${result}`)
+  return {
+    action: action,
+    report: report
+  };
 }
 
-export const getSessionType = (angryPercentage) => {
-  let negativeEmotionTypes = negativeLevelConfig.negative_emotion_levels;
-  for (var i = 0; i < negativeEmotionTypes.length; i++) {
-    if (angryPercentage <= negativeEmotionTypes[i].value && angryPercentage > (negativeEmotionTypes[i + 1] == undefined ? 0 : negativeEmotionTypes[i + 1].value)) {
-      console.log(`ANGRYPERCENTAGE:${angryPercentage}`)
-      console.log(`=======================emotionType:${negativeEmotionTypes[i].type}`)
-      return negativeEmotionTypes[i].type;
-    }
+export const convertConditions = (emotions_duration, condition) => {
+  var sumExpressions = condition.match(/\[([0-9],)*[0-9]*\]/g)
+  sumExpressions.forEach(expression => {
+    var sum = calsum(emotions_duration, expression)
+    condition = condition.split(expression).join(sum)
+  });
+  // console.log(`====CONDITION: ${condition}`)
+  return condition
+}
+
+function calsum(emotions_duration, emotionIndexes) {
+  var array = JSON.parse(emotionIndexes)
+  var sum = 0
+  for (var i = 0; i < array.length; i++) {
+    sum += emotions_duration[array[i]]
   }
+  return sum
 }
 
-export const getTypeWarning = (typeCount) => {
-  let negativeEmotionTypes = negativeLevelConfig.negative_emotion_levels;
-  for (var i = 0; i < typeCount.length; i++) {
-    for (var j = 0; j < negativeEmotionTypes.length; j++) {
-      if (typeCount[i] <= negativeEmotionTypes[j].limit) {
-        return {
-          warning: `There are ${typeCount[i]} sessions of this bank teller in which percentage of negative emotions is ${negativeEmotionTypes[j].value * 100}%.`,
-          suggestedAction: `${negativeEmotionTypes[j].action}`
-        }
-      }
-    }
-  }
-}
-
-export const getEmotionSolution = (emotionLevel) => {
-  let solutions = negativeLevelConfig.negative_levels
-  for (var i = 0; i < solutions.length; i++) {
-    if (stressLevel > solutions[i].value && stressLevel <= (solutions[i + 1] == undefined ? 1 : solutions[i + 1].value)) {
-      return solutions[i]
-    }
-  }
-  return null;
-}
-
-//sterss-related functions
-export const calculateStressLevel = (shiftSessions) => {
-  let angryDurationSum = 0, happyDurationSum = 0;
-  let totalSessionDuration = 0;
-  shiftSessions.forEach(session => {
-    if (session.info != undefined) {
-      const parsedInfo = JSON.parse(session.info)
-      totalSessionDuration += parsedInfo.emotions_duration.reduce((a, b) => a + b, 0);
-      angryDurationSum += parsedInfo.emotions_duration[0];
-      happyDurationSum += parsedInfo.emotions_duration[3];
+export const getNegativeEmotionAction = async (sessionCount, typeCount, periodicityId) => {
+  // console.log(`periodicityId:${periodicityId}`)
+  console.log(`typeCount:${typeCount}`)
+  const negativeEmotionAction = await models.NegativeEmotionAction.findAll({
+    where: {
+      periodicity_id: periodicityId
     }
   });
-  const stressLevel = (angryDurationSum / totalSessionDuration);
-  console.log(`=============stressLevel: ${stressLevel}`)
-  return stressLevel;
-}
-
-export const getStressSolution = (stressLevel) => {
-  let solutions = stressLevelsConfig.stress_levels
-  for (var i = 0; i < solutions.length; i++) {
-    if (stressLevel > solutions[i].value && stressLevel <= (solutions[i + 1] == undefined ? 1 : solutions[i + 1].value)) {
-      return solutions[i]
+  let action = '';
+  //find action by number limit
+  for (var i = negativeEmotionAction.length - 1; i > 0; --i) {
+    if (negativeEmotionAction[i].limit != null && typeCount[i] >= parseInt(negativeEmotionAction[i].limit)) {
+      console.log("ACTION:" + negativeEmotionAction[i].action)
+      action = negativeEmotionAction[i].action
+      return action;
     }
   }
-  return null;
+  //find action by percentage limit
+  if (action == '') {
+    for (var i = negativeEmotionAction.length - 1; i > 0; --i) {
+      if ((typeCount[i] / sessionCount) >= negativeEmotionAction.percentageLimit) {
+        console.log("====ACTION:" + negativeEmotionAction[i].action)
+        action = negativeEmotionAction[i].action
+        return action;
+      }
+    }
+  } return null;
 }
 
-// export const getEmotionDurations = (session) => {
-//   if (session.info != undefined) {
+export const getEmployeeEmotionReport = ((employee, sessionCount, typeCount, negativeEmotionCriteria) => {
+  //getTotalsessions
+  employee.setDataValue('totalSessions', sessionCount);
+  let sessionTypes = [];
+  let sessionTypeName
+  let result;
+  for (var i = 0; i < negativeEmotionCriteria.count; i++) {
+    let percentage = (typeCount[i] / sessionCount) * 100 + "%";
+    sessionTypeName = negativeEmotionCriteria.rows[i].operator
+      + (negativeEmotionCriteria.rows[i].comparingNumber * 100) + "%";
+    result = {
+      [sessionTypeName]: {
+        "count": typeCount[i],
+        "percentage": percentage
+      }
+    }
+    sessionTypes.push(result);
+  }
+  // console.log(sessionTypes)
+  return sessionTypes;
+});
 
-//     let emotionDurations = JSON.parse(session.info).emotions_duration;
-//     let result = {
-//       "angry": emotionDurations[0],
-//       "disgusted": emotionDurations[1],
-//       "fearful": emotionDurations[2],
-//       "happy": emotionDurations[3],
-//       "neutral": emotionDurations[4],
-//       "sad": emotionDurations[5],
-//       "suprised": emotionDurations[6],
-//       "noFaceDetected": emotionDurations[7],
-//     }
-//     console.log(`=========result:${result}`)
-//     return result;
-//   }
-// }
+// sterss-related functions
+export const calculateStressLevel = async (shiftSessions) => {
+  const stressCriteria = await models.StressCriteria.findAndCountAll();
+  let criteriaArray = []
+  stressCriteria.rows.forEach(criteria => {
+    const criteriaString = criteria.condition + criteria.operator + criteria.comparingNumber;
+    criteriaArray.push(criteriaString);
+  })
+  //array to count the number of occurence of sessions
+  let typeCount = Array.from({ length: negativeEmotionCriteria.count }, () => 0)
+  let sessionCount = 0;
+  shiftSessions.forEach(shiftSession => {
+    const sessions = shiftSession.Session;
+    sessions.forEach(session => {
+      if (session.info != undefined) {
+        const parsedInfo = JSON.parse(session.info)
+        const emotionDurations = parsedInfo.emotions_duration;
+        for (var i = 0; i < criteriaArray.length; i++) {
+          const condition = convertConditions(emotionDurations, criteriaArray[i]);
+          // console.log(`MATCH?${eval(condition)}`)
+          if (eval(condition)) {
+            typeCount[i]++;
+          }
+        }
+      }
+      sessionCount++;
+    });
+  });
+  const action = await getNegativeEmotionAction(sessionCount, typeCount, periodicityId)
+  const report = getEmployeeEmotionReport(employee, sessionCount, typeCount, negativeEmotionCriteria);
+  // console.log(`RESULT: ${result}`)
+  return {
+    action: action,
+    report: report
+  };
+}
+
+export const getStressSuggestion = async (sessionCount, typeCount, periodicityId) => {
+  // console.log(`periodicityId:${periodicityId}`)
+  console.log(`typeCount:${typeCount}`)
+  const stressSuggestion = await models.StressSuggestion.findAll({
+    where: {
+      periodicity_id: periodicityId
+    }
+  });
+  let suggestion = '';
+  //find action by number limit
+  for (var i = stressSuggestion.length - 1; i > 0; --i) {
+    if (stressSuggestion[i].limit != null && typeCount[i] >= parseInt(stressSuggestion[i].limit)) {
+      console.log("SUGGESTION:" + stressSuggestion[i].suggestion)
+      suggestion = stressSuggestion[i].suggestion
+      return action;
+    }
+  }
+  //find action by percentage limit
+  if (suggestion == '') {
+    for (var i = stressSuggestion.length - 1; i > 0; --i) {
+      if ((typeCount[i] / sessionCount) >= stressSuggestion.percentageLimit) {
+        console.log("====SUGGESTION:" + stressSuggestion[i].suggestion)
+        action = stressSuggestion[i].suggestion
+        return suggestion;
+      }
+    }
+  } return null;
+}
 
 // export const calculateShiftEmotionLevel_OLD = (shiftSessions) => {
 //   let positiveScoreSum = 0, negativeScoreSum = 0;
