@@ -10,7 +10,7 @@ import Controller from '../controllers/SessionController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
-import { isBankTeller, isManager } from '../middlewares/authorization';
+import { isAuthorized, isBankTeller, isManager } from '../middlewares/authorization';
 
 /**
 * @swagger
@@ -83,7 +83,7 @@ import { isBankTeller, isManager } from '../middlewares/authorization';
 *       400:
 *         description: Error.
 */
-router.get('/', passport.authenticate('jwt', { session: false }), isManager, Controller.view.get);
+router.get('/', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.view.get);
 
 /**
 * @swagger
