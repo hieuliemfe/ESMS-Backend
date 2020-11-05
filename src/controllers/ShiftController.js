@@ -5,7 +5,8 @@ import jwt from 'jsonwebtoken';
 import { Op } from "sequelize";
 import sequelize from 'sequelize'
 import { shiftStatus } from '../db/config/statusConfig';
-import { calculateStressLevel, getStressSolution } from '../utils/emotionUtil'
+import { calculateStressLevel } from '../utils/emotionUtil'
+import periodicityConfig from '../db/config/periodicityConfig';
 export default {
 
   view_active_shift: {
@@ -203,10 +204,17 @@ export default {
     async get(req, res, next) {
       try {
         const { shiftId } = req.params
-        const currentShift = await models.Shift.findOne({
+        console.log(shiftId)
+        const currentShift = await models.Shift.findAll({
+          attributes: ['id'],
           where: {
             id: shiftId
-          }
+          },
+          include: [{
+            model: models.Session,
+            attributes: ['info', 'employee_id'],
+            as: 'Session',
+          }]
         })
         if (!currentShift) {
           return res.status(status.INTERNAL_SERVER_ERROR)
@@ -221,7 +229,7 @@ export default {
             'info'
           ],
           where: {
-            shift_id: currentShift.id
+            shift_id: currentShift[0].id
           }
         });
 
@@ -260,13 +268,7 @@ export default {
               noFaceWarningCount += parsedInfo.no_face_detected_warning;
             }
           });
-          stressLevel = calculateStressLevel(shiftSessions);
-          const stressSolution = getStressSolution(stressLevel);
-
-          let stressWarning = false
-          if (stressLevel > 0) {
-            stressWarning = true
-          }
+          const stressWarning = await calculateStressLevel(currentShift, periodicityConfig.WEEKLY);
           res.status(status.OK)
             .send({
               success: true,
@@ -278,9 +280,8 @@ export default {
                 emotionlessSessions: emotionlessSessionCount,
                 angryWarnings: angryWarningCount,
                 noFaceWarnings: noFaceWarningCount,
-                stressLevel: stressLevel,
-                stressWarning: stressWarning,
-                stressSolution: stressSolution
+                url: stressWarning.url,
+                suggestion: stressWarning.suggestion
               }
             });
         }

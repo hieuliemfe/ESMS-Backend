@@ -51,4 +51,51 @@ export default {
       }
     }
   },
+
+  send_stress_solution_email: {
+    async post(req, res, next) {
+      try {
+        const { employeeCode, videoUrl } = req.body;
+        if (employeeCode == undefined || videoUrl == undefined) {
+          res.status(status.EXPECTATION_FAILED).send({
+            success: false,
+            message: "Must input videoUrl type AND employeeCode"
+          })
+        } else {
+          const employee = await models.Employee.findOne({
+            where: {
+              employeeCode: employeeCode
+            },
+          });
+          if (!employee) {
+            res.status(status.EXPECTATION_FAILED)
+              .send({
+                status: false,
+                message: "Employee not found."
+              })
+          } else {
+            const email = await createEmail(employee, 'stress_relieving', "", videoUrl)
+            const result = await sendEmail(email, employee.email);
+            res.send({
+              status: true,
+              message: result
+            })
+          }
+        }
+      } catch (error) {
+        next(error);
+      }
+    }
+  },
+  get_email_types: {
+    async get(req, res, next) {
+      try {
+        res.status(status.OK).send(mailTypes)
+      } catch (error) {
+        next(error);
+      }
+    }
+  },
+
+
 };

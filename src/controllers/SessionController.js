@@ -274,9 +274,9 @@ export default {
           });
         } else {
           let periodList = [];
-          emotions.forEach((emotion) => {
+          for (const emotion of emotions) {
             const periods = emotion.periods;
-            periods.forEach((period) => {
+            for (const period of periods) {
               let addResult = {
                 sessionId: sessionId,
                 emotionId: emotion.emotion,
@@ -285,11 +285,11 @@ export default {
                 duration: period.duration
               };
               periodList.push(addResult);
-            });
-          });
-          const addPeriodResult = models.Period.bulkCreate(periodList)
+            };
+          };
+          const addPeriodResult = await models.Period.bulkCreate(periodList)
           if (addPeriodResult) {
-            const result = models.Session.update(
+            const result = await models.Session.update(
               {
                 sessionEnd: new Date(),
                 // info: info
@@ -312,7 +312,23 @@ export default {
       }
     }
   },
-
+  get_guideline: {
+    async get(req, res, next) {
+      try {
+        const guideline = await models.Guideline.findOne({
+          where: {
+            title: req.params.title
+          }
+        })
+        res.status(status.OK).send({
+          status: true,
+          message: guideline,
+        })
+      } catch (error) {
+        next(error);
+      }
+    }
+  },
   // view_old: {
   //   async get(req, res, next) {
   //     try {

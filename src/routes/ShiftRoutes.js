@@ -72,7 +72,7 @@ router.get('/active-shift', passport.authenticate('jwt', { session: false }), is
 *       400:
 *         description: Error.
 */
-router.get('/:shiftId/summary', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.sum_up.get);
+router.get('/:shiftId/summary', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.sum_up.get);
 
 /**
 * @swagger

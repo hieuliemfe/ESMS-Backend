@@ -1,21 +1,29 @@
 'use strict';
 
 import status from 'http-status';
-import fs from 'fs';
-import path from 'path';
-
-import stressLevelsConfig from '../configurations/stressLevels.json';
-import negativeLevelsConfig from '../configurations/negativeLevels.json';
-
+import models from '../db/models/index';
+import periodicityConfig from '../db/config/periodicityConfig';
 export default {
 
-  get_stress_levels: {
+  get_stress_criterias: {
     async get(req, res, next) {
       try {
+        let { periodicityId } = req.query;
+        if (periodicityId == undefined) {
+          periodicityId = periodicityConfig.WEEKLY;
+        }
+        const stressCriteria = await models.StressCriteria.findAll({
+          include: [{
+            model: models.StressSuggestion,
+            where: {
+              periodicityId: periodicityId
+            }
+          }],
+        })
         res.status(status.OK)
           .send({
             success: true,
-            message: stressLevelsConfig.stress_levels
+            message: stressCriteria
           })
       } catch (error) {
         next(error)
@@ -23,35 +31,25 @@ export default {
     }
   },
 
-  create_stress_level: {
+  create_stress_criteria: {
     async post(req, res, next) {
       try {
-        let result;
-        let newLevel;
-        const { value, description, link } = req.body
-        if (value == undefined || description == undefined) {
+        const { condition } = req.body
+        if (condition == undefined || condition.match("[a-zA-Z]")) {
           res.status(status.EXPECTATION_FAILED)
             .send({
               success: false,
-              message: "Missing field(s) found."
+              message: "Missing or invalid input."
             })
         } else {
-          result = stressLevelsConfig;
-          newLevel = {
-            id: result.stress_levels.length + 1,
-            value: value,
-            description: description,
-            link: link,
-          }
-          result.stress_levels.push(newLevel);
-          result.stress_levels.sort((a, b) => parseFloat(a.value) - parseFloat(b.value));
-          fs.writeFile(path.resolve('./src/configurations/stressLevels.json'), JSON.stringify(result), (err) => {
-            res.status(status.OK)
-              .send({
-                success: true,
-                message: stressLevelsConfig
-              })
-          });
+          const result = await models.StressCriteria.create({
+            condition: condition,
+          })
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
         }
       } catch (error) {
         next(error)
@@ -59,35 +57,111 @@ export default {
     }
   },
 
-  update_stress_level: {
-    async put(req, res, next) {
+  create_stress_suggestion: {
+    async post(req, res, next) {
       try {
-        let result;
-        const { stressLevelId } = req.params;
-        const { value, description, link } = req.body
-        if (stressLevelId == undefined) {
+        const { percentageLimit, link, periodicityId, suggestion, criteriaId } = req.body
+        if (percentageLimit == undefined || periodicityId == undefined || suggestion == undefined || criteriaId == undefined) {
           res.status(status.EXPECTATION_FAILED)
             .send({
               success: false,
-              message: "Must input at least one stress level."
+              message: "Missing or invalid input."
             })
         } else {
-          result = stressLevelsConfig;
-          result.stress_levels.forEach(config => {
-            if (config.id == stressLevelId) {
-              config.description = description,
-                config.link = link,
-                config.value = value
+          const result = await models.StressSuggestion.create({
+            percentageLimit: percentageLimit,
+            link: link,
+            periodicityId: periodicityId,
+            suggestion: suggestion,
+            criteriaId: criteriaId
+          })
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
+        }
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
+  update_stress_criteria: {
+    async put(req, res, next) {
+      try {
+        const { criteriaId } = req.params;
+        if (criteriaId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "No criteriaID found."
+            })
+          return;
+        }
+        const { condition } = req.body
+        if (condition == undefined || condition.match("[a-zA-Z]")) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "Missing or invalid input."
+            })
+        } else {
+          const result = await models.StressCriteria.update({
+            condition: condition
+          }, {
+            where: {
+              id: criteriaId
             }
           })
-          result.stress_levels.sort((a, b) => parseFloat(a.value) - parseFloat(b.value));
-          fs.writeFile(path.resolve('./src/configurations/stressLevels.json'), JSON.stringify(result), (err) => {
-            res.status(status.OK)
-              .send({
-                success: true,
-                message: stressLevelsConfig
-              })
-          });
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
+        }
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
+  update_stress_suggestion: {
+    async put(req, res, next) {
+      try {
+        const { suggestionId } = req.params;
+        if (suggestionId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "No suggestionId found."
+            })
+          return;
+        }
+        const { percentageLimit, link, periodicityId, suggestion, criteriaId } = req.body
+        if (percentageLimit == undefined || periodicityId == undefined || suggestion == undefined || criteriaId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "Missing or invalid input."
+            })
+        } else {
+          const result = await models.StressSuggestion.update({
+            percentageLimit: percentageLimit,
+            link: link,
+            periodicityId: periodicityId,
+            suggestion: suggestion,
+            criteriaId: criteriaId
+          }, {
+            where: {
+              id: suggestionId
+            }
+          })
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
         }
       } catch (error) {
         next(error)
@@ -98,43 +172,24 @@ export default {
   delete_stress_level: {
     async delete(req, res, next) {
       try {
-        let result;
-        const { stressLevelId } = req.params;
-        if (stressLevelId == undefined) {
+        const { criteriaId } = req.params;
+        if (criteriaId == undefined) {
           res.status(status.EXPECTATION_FAILED)
             .send({
               success: false,
-              message: "Must input at least one stress level."
+              message: "No criteriaID found."
             })
-        } else {
-          result = stressLevelsConfig;
-          for (var i = 0; i < result.stress_levels.length; i++) {
-            if (result.stress_levels[i].id == stressLevelId) {
-              result.stress_levels.splice(i, 1);
-            }
-          }
-          result.stress_levels.sort((a, b) => parseFloat(a.value) - parseFloat(b.value));
-          fs.writeFile(path.resolve('./src/configurations/stressLevels.json'), JSON.stringify(result), (err) => {
-            res.status(status.OK)
-              .send({
-                success: true,
-                message: stressLevelsConfig
-              })
-          });
+          return;
         }
-      } catch (error) {
-        next(error)
-      }
-    }
-  },
-
-  get_negative_levels: {
-    async get(req, res, next) {
-      try {
+        const result = await models.StressCriteria.destroy({
+          where: {
+            id: criteriaId
+          }
+        })
         res.status(status.OK)
           .send({
             success: true,
-            message: negativeLevelsConfig.negative_emotion_levels
+            message: result
           })
       } catch (error) {
         next(error)
@@ -142,104 +197,146 @@ export default {
     }
   },
 
-  create_negative_level: {
-    async post(req, res, next) {
-      try {
-        let result;
-        let newLevel;
-        const { value, limit, action } = req.body
-        if (value == undefined || limit == undefined || action == undefined) {
-          res.status(status.EXPECTATION_FAILED)
-            .send({
-              success: false,
-              message: "Must input at least one negative level."
-            })
-        } else {
-          result = negativeLevelsConfig;
-          newLevel = {
-            type: result.negative_emotion_levels.length + 1,
-            value: value,
-            limit: limit,
-            action: action,
-          }
-          result.negative_emotion_levels.push(newLevel);
-          result.negative_emotion_levels.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
-          fs.writeFile(path.resolve('./src/configurations/negativeLevels.json'), JSON.stringify(result), (err) => {
-            res.status(status.OK)
-              .send({
-                success: true,
-                message: negativeLevelsConfig
-              })
-          });
-        }
-      } catch (error) {
-        next(error)
-      }
-    }
-  },
-
-  update_negative_level: {
-    async put(req, res, next) {
-      try {
-        let result;
-        const { negativeLevelType } = req.params;
-        const { value, limit, action } = req.body
-        if (negativeLevelType == undefined) {
-          res.status(status.EXPECTATION_FAILED)
-            .send({
-              success: false,
-              message: "Must input at least one negative level."
-            })
-        } else {
-          result = negativeLevelsConfig;
-          result.negative_emotion_levels.forEach(config => {
-            if (config.type == negativeLevelType) {
-              config.value = value,
-                config.limit = limit,
-                config.action = action
-            }
-          })
-          result.negative_emotion_levels.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
-          fs.writeFile(path.resolve('./src/configurations/negativeLevels.json'), JSON.stringify(result), (err) => {
-            res.status(status.OK)
-              .send({
-                success: true,
-                message: negativeLevelsConfig
-              })
-          });
-        }
-      } catch (error) {
-        next(error)
-      }
-    }
-  },
-
-  delete_negative_level: {
+  delete_stress_suggestion: {
     async delete(req, res, next) {
       try {
-        let result;
-        const { negativeLevelType } = req.params;
-        if (negativeLevelType == undefined) {
+        const { suggestionId } = req.params;
+        if (suggestionId == undefined) {
           res.status(status.EXPECTATION_FAILED)
             .send({
               success: false,
-              message: "Must input at least one neagtive level."
+              message: "No suggestionId found."
+            })
+          return;
+        }
+        const result = await models.StressSuggestion.destroy({
+          where: {
+            id: suggestionId
+          }
+        })
+        res.status(status.OK)
+          .send({
+            success: true,
+            message: result
+          })
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
+  get_negative_emotion_criterias: {
+    async get(req, res, next) {
+      let { periodicityId } = req.query;
+      if (periodicityId == undefined) {
+        periodicityId = periodicityConfig.WEEKLY
+      }
+      try {
+        const negativeEmotionCriterias = await models.NegativeEmotionCriteria.findAll({
+          include: [{
+            model: models.NegativeEmotionAction,
+            where: {
+              periodicityId: periodicityId
+            }
+          }],
+        })
+        res.status(status.OK)
+          .send({
+            success: true,
+            message: negativeEmotionCriterias
+          })
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
+  create_negative_emotion_criteria: {
+    async post(req, res, next) {
+      try {
+        const { condition } = req.body
+        if (condition == undefined || condition.match("[a-zA-Z]")) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "Missing or invalid input."
             })
         } else {
-          result = negativeLevelsConfig;
-          for (var i = 0; i < result.negative_emotion_levels.length; i++) {
-            if (result.negative_emotion_levels[i].type == negativeLevelType) {
-              result.negative_emotion_levels.splice(i, 1);
+          const result = await models.NegativeEmotionCriteria.create({
+            condition: condition,
+          })
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
+        }
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+  create_negative_emotion_action: {
+    async post(req, res, next) {
+      try {
+        const { limit, percentageLimit, periodicityId, action, criteriaId } = req.body
+        if (percentageLimit == undefined || periodicityId == undefined || action == undefined || criteriaId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "Missing or invalid input."
+            })
+        } else {
+          const result = await models.NegativeEmotionAction.create({
+            limit: limit,
+            percentageLimit: percentageLimit,
+            periodicityId: periodicityId,
+            action: action,
+            criteriaId: criteriaId
+          })
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
+        }
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+  update_negative_emotion_criteria: {
+    async put(req, res, next) {
+      try {
+        const { criteriaId } = req.params;
+        if (criteriaId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "No criteriaID found."
+            })
+          return;
+        }
+        const { condition } = req.body
+        if (condition == undefined || condition.match("[a-zA-Z]")) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "Missing or invalid input."
+            })
+        } else {
+          const result = await models.NegativeEmotionCriteria.update({
+            condition: condition
+          }, {
+            where: {
+              id: criteriaId
             }
-          }
-          result.negative_emotion_levels.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
-          fs.writeFile(path.resolve('./src/configurations/negativeLevels.json'), JSON.stringify(result), (err) => {
-            res.status(status.OK)
-              .send({
-                success: true,
-                message: negativeLevelsConfig
-              })
-          });
+          })
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
         }
       } catch (error) {
         next(error)
@@ -247,5 +344,101 @@ export default {
     }
   },
 
-};
+  update_negative_emotion_action: {
+    async put(req, res, next) {
+      try {
+        const { actionId } = req.params;
+        if (actionId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "actionId missing."
+            })
+        }
+        const { limit, percentageLimit, periodicityId, action, criteriaId } = req.body
+        if (percentageLimit == undefined || periodicityId == undefined || action == undefined || criteriaId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "Missing or invalid input."
+            })
+        } else {
+          const result = await models.NegativeEmotionAction.update({
+            limit: limit,
+            percentageLimit: percentageLimit,
+            periodicityId: periodicityId,
+            action: action,
+            criteriaId: criteriaId
+          }, {
+            where: {
+              id: actionId
+            }
+          })
+          res.status(status.CREATED)
+            .send({
+              success: true,
+              message: result
+            })
+        }
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
 
+  delete_negative_emotion_criteria: {
+    async delete(req, res, next) {
+      try {
+        const { criteriaId } = req.params;
+        if (criteriaId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "No criteriaID found."
+            })
+          return;
+        }
+        const result = await models.NegativeEmotionCriteria.destroy({
+          where: {
+            id: criteriaId
+          }
+        })
+        res.status(status.OK)
+          .send({
+            success: true,
+            message: result
+          })
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+
+  delete_negative_emotion_action: {
+    async delete(req, res, next) {
+      try {
+        const { actionId } = req.params;
+        if (actionId == undefined) {
+          res.status(status.EXPECTATION_FAILED)
+            .send({
+              success: false,
+              message: "No actionId found."
+            })
+          return;
+        }
+        const result = await models.NegativeEmotionAction.destroy({
+          where: {
+            id: actionId
+          }
+        })
+        res.status(status.OK)
+          .send({
+            success: true,
+            message: result
+          })
+      } catch (error) {
+        next(error)
+      }
+    }
+  },
+};
