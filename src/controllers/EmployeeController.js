@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Op } from "sequelize";
 import url from 'url';
-import { endOfWeek, endOfMonth, endOfYear, parseISO } from 'date-fns';
+import { endOfWeek, endOfMonth, endOfYear, parseISO, set } from 'date-fns';
 import readXlsxFile from "read-excel-file/node";
 import { generateEmployeeInfo } from '../utils/employeeUtil';
 import { DefaultError } from '../utils/errorHandler';
@@ -122,7 +122,7 @@ export default {
       try {
         //Data from request
         const { employeeCode, fullname, duration } = req.query
-        let startDate = req.query.startDate ? req.query.startDate : new Date().toISOString();
+        let startDate = req.query.startDate ? req.query.startDate : set(new Date(), { hours: 0 }).toISOString();
         let endDate;
         let result = [];
         let periodicityId = 0;
