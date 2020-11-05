@@ -34,16 +34,16 @@ export default {
   create_stress_criteria: {
     async post(req, res, next) {
       try {
-        const { condition, operator, comparingNumber } = req.body
-        if (condition == undefined || condition.match("[a-zA-Z]") || operator == undefined || comparingNumber == undefined) {
+        const { condition } = req.body
+        if (condition == undefined || condition.match("[a-zA-Z]")) {
           res.status(status.EXPECTATION_FAILED)
             .send({
               success: false,
               message: "Missing or invalid input."
             })
         } else {
-          const result = models.StressCriteria.create({
-            condition: condition + operator + comparingNumber,
+          const result = await models.StressCriteria.create({
+            condition: condition,
           })
           res.status(status.CREATED)
             .send({
@@ -68,7 +68,7 @@ export default {
               message: "Missing or invalid input."
             })
         } else {
-          const result = models.StressSuggestion.create({
+          const result = await models.StressSuggestion.create({
             percentageLimit: percentageLimit,
             link: link,
             periodicityId: periodicityId,
@@ -99,18 +99,16 @@ export default {
             })
           return;
         }
-        const { condition, operator, comparingNumber } = req.body
-        if (condition == undefined || condition.match("[a-zA-Z]") || operator == undefined || comparingNumber == undefined) {
+        const { condition } = req.body
+        if (condition == undefined || condition.match("[a-zA-Z]")) {
           res.status(status.EXPECTATION_FAILED)
             .send({
               success: false,
               message: "Missing or invalid input."
             })
         } else {
-          const result = models.StressCriteria.update({
-            condition: condition,
-            operator: operator,
-            comparingNumber: comparingNumber
+          const result = await models.StressCriteria.update({
+            condition: condition
           }, {
             where: {
               id: criteriaId
@@ -148,7 +146,7 @@ export default {
               message: "Missing or invalid input."
             })
         } else {
-          const result = models.StressSuggestion.update({
+          const result = await models.StressSuggestion.update({
             percentageLimit: percentageLimit,
             link: link,
             periodicityId: periodicityId,
@@ -264,7 +262,7 @@ export default {
               message: "Missing or invalid input."
             })
         } else {
-          const result = models.NegativeEmotionCriteria.create({
+          const result = await models.NegativeEmotionCriteria.create({
             condition: condition,
           })
           res.status(status.CREATED)
@@ -289,7 +287,7 @@ export default {
               message: "Missing or invalid input."
             })
         } else {
-          const result = models.NegativeEmotionAction.create({
+          const result = await models.NegativeEmotionAction.create({
             limit: limit,
             percentageLimit: percentageLimit,
             periodicityId: periodicityId,
@@ -327,7 +325,7 @@ export default {
               message: "Missing or invalid input."
             })
         } else {
-          const result = models.NegativeEmotionCriteria.update({
+          const result = await models.NegativeEmotionCriteria.update({
             condition: condition
           }, {
             where: {
@@ -365,7 +363,7 @@ export default {
               message: "Missing or invalid input."
             })
         } else {
-          const result = models.NegativeEmotionAction.update({
+          const result = await models.NegativeEmotionAction.update({
             limit: limit,
             percentageLimit: percentageLimit,
             periodicityId: periodicityId,
@@ -400,7 +398,7 @@ export default {
             })
           return;
         }
-        const result = models.NegativeEmotionCriteria.destroy({
+        const result = await models.NegativeEmotionCriteria.destroy({
           where: {
             id: criteriaId
           }
@@ -428,7 +426,7 @@ export default {
             })
           return;
         }
-        const result = models.NegativeEmotionAction.destroy({
+        const result = await models.NegativeEmotionAction.destroy({
           where: {
             id: actionId
           }

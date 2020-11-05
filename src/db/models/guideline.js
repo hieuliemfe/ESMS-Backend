@@ -2,11 +2,14 @@
 import { Sequelize } from 'sequelize';
 
 export default function (sequelize, DataTypes) {
-  const StressCriteria = sequelize.define('StressCriteria', {
-    condition: {
+  const Guideline = sequelize.define('Guideline', {
+    title: {
       type: DataTypes.STRING,
-      allowNull: false,
-      field: 'condition'
+      field: 'title'
+    },
+    link: {
+      type: DataTypes.TEXT,
+      field: 'link'
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -19,13 +22,8 @@ export default function (sequelize, DataTypes) {
       field: 'updated_at'
     }
   }, {
-    tableName: 'stress_criteria',
+    tableName: 'guideline',
   });
 
-  StressCriteria.associate = function (models) {
-    models.StressCriteria.hasMany(models.StressSuggestion, {
-      foreignKey: "criteria_id"
-    });
-  }
-  return StressCriteria;
+  return Guideline;
 };

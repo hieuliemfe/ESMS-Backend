@@ -53,11 +53,6 @@ router.get('/stress-criterias', passport.authenticate('jwt', { session: false })
 *             properties:
 *               condition:
 *                 type: string
-*               operator:
-*                 type: string
-*                 limit: 2
-*               comparingNumber:
-*                 type: integer
 *     responses:
 *       200:
 *         description: level updated.
@@ -121,10 +116,6 @@ router.post('/stress-criterias/suggestions', passport.authenticate('jwt', { sess
 *             properties:
 *               condition:
 *                 type: string
-*               operator:
-*                 type: string
-*               comparingNumber:
-*                 type: integer
 *     responses:
 *       200:
 *         description: level updated.

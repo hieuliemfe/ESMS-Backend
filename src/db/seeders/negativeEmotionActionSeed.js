@@ -7,28 +7,33 @@ export default [
     percentageLimit: 0.4,
     criteriaId: 1,
     periodicityId: Periodicity.WEEKLY,
-    action: 'Reward'
+    action: 'Reward',
+    description: 'Send a reward to a bank teller'
   },
   {
     limit: 10,
     percentageLimit: 0.8,
     criteriaId: 3,
     periodicityId: Periodicity.WEEKLY,
-    action: 'Compliment'
+    action: 'Compliment',
+    description: 'Send a compliment to a bank teller'
+
   },
   {
     limit: 12,
     percentageLimit: 0.3,
     criteriaId: 3,
     periodicityId: Periodicity.WEEKLY,
-    action: 'Do nothing'
+    action: 'Do nothing',
+    description: 'No action for the bank teller'
   },
   {
     limit: 13,
     percentageLimit: 0.4,
     criteriaId: 3,
     periodicityId: Periodicity.WEEKLY,
-    action: 'Notify the bank teller'
+    action: 'Notify the bank teller',
+    description: 'Notify the user to behave better'
   },
   {
     limit: 14,

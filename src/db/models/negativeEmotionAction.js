@@ -21,6 +21,10 @@ export default function (sequelize, DataTypes) {
       allowNull: false,
       field: 'action'
     },
+    description: {
+      type: DataTypes.STRING,
+      field: 'description'
+    },
     criteriaId: {
       type: DataTypes.INTEGER,
       field: 'criteria_id'

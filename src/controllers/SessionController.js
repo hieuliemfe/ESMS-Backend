@@ -312,7 +312,23 @@ export default {
       }
     }
   },
-
+  get_guideline: {
+    async get(req, res, next) {
+      try {
+        const guideline = await models.Guideline.findOne({
+          where: {
+            title: req.params.title
+          }
+        })
+        res.status(status.OK).send({
+          status: true,
+          message: guideline,
+        })
+      } catch (error) {
+        next(error);
+      }
+    }
+  },
   // view_old: {
   //   async get(req, res, next) {
   //     try {

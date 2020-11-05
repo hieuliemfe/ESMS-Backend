@@ -73,28 +73,19 @@ export const getNegativeEmotionAction = async (sessionCount, typeCount, periodic
       if (negativeEmotionAction[j].limit != null && typeCount[i] >= parseInt(negativeEmotionAction[j].limit)) {
         action = negativeEmotionAction[j].action;
 
-      //  console.log('action' + action)
+        //  console.log('action' + action)
         return action;
       }
       //console.log(`===PER:${typeCount[i] / sessionCount}`)
       // console.log(`=====DBPRER:${negativeEmotionAction[j].percentageLimit}`)
       if ((typeCount[i] / sessionCount) >= negativeEmotionAction[j].percentageLimit) {
         action = negativeEmotionAction[j].action;
-       // console.log('PERCENTaction' + action)
+        // console.log('PERCENTaction' + action)
         return action;
       }
     }
   }
-  //find action by percentage limit
-  if (action == '') {
-    for (var i = negativeEmotionAction.length - 1; i > 0; --i) {
-      if ((typeCount[i] / sessionCount) >= negativeEmotionAction.percentageLimit) {
-        console.log("====ACTION:" + negativeEmotionAction[i].action)
-        action = negativeEmotionAction[i].action
-        return action;
-      }
-    }
-  } return null;
+  return null;
 }
 
 export const getEmployeeEmotionReport = ((employee, sessionCount, typeCount, negativeEmotionCriteria) => {
@@ -119,15 +110,26 @@ export const getEmployeeEmotionReport = ((employee, sessionCount, typeCount, neg
 
 // ===================== sterss-related functions
 export const calculateStressLevel = async (shiftSessions, periodicityId) => {
-  const stressCriteria = await models.StressCriteria.findAndCountAll();
+  const stressCriteria = await models.StressCriteria.findAndCountAll({
+    include: {
+      model: models.StressSuggestion,
+      attributes: [],
+      where: {
+        suggestion: {
+          [Op.not]: null,
+        },
+        periodicityId: periodicityId
+      }
+    }
+  });
   let criteriaArray = []
-
   stressCriteria.rows.forEach(criteria => {
-    const criteriaString = criteria.condition + criteria.operator + criteria.comparingNumber;
+    const criteriaString = criteria.condition;
     criteriaArray.push(criteriaString);
   })
+  console.log(criteriaArray)
   //array to count the number of occurence of sessions
-  let typeCount = Array.from({ length: stressCriteria.count }, () => 0)
+  let typeCount = Array.from({ length: criteriaArray.length }, () => 0)
   let sessionCount = 0;
   shiftSessions.forEach(shiftSession => {
     const sessions = shiftSession.Session;
@@ -135,8 +137,10 @@ export const calculateStressLevel = async (shiftSessions, periodicityId) => {
       if (session.info != undefined) {
         const parsedInfo = JSON.parse(session.info)
         const emotionDurations = parsedInfo.emotions_duration;
+        // console.log(`======================================================= critlen:${criteriaArray.length}`)
         for (var i = 0; i < criteriaArray.length; i++) {
           const condition = convertConditions(emotionDurations, criteriaArray[i]);
+          // console.log(`=====condEval:?${(condition)}`)
           // console.log(`MATCH?${eval(condition)}`)
           if (eval(condition)) {
             typeCount[i]++;
@@ -146,46 +150,40 @@ export const calculateStressLevel = async (shiftSessions, periodicityId) => {
       sessionCount++;
     });
   });
-  const suggestion = await getStressSuggestion(sessionCount, typeCount, periodicityId)
-  // console.log(`RESULT: ${suggestion.url}`)
-  return suggestion
+  console.log(`====typeCount:${typeCount}`)
+  const result = await getStressSuggestion(sessionCount, typeCount, periodicityId)
+  console.log(`RESULT: ${result}`)
+  return result
 }
 
 export const getStressSuggestion = async (sessionCount, typeCount, periodicityId) => {
   // console.log(`=======TYPECOUNT:${typeCount}`)
   const stressSuggestion = await models.StressSuggestion.findAll({
     where: {
-      periodicity_id: periodicityId
+      periodicity_id: periodicityId,
+      suggestion: {
+        [Op.ne]: null,
+      }
     }
   });
   let suggestion = '';
   let url = '';
-  // console.log("=====find action by NUMBER limit");
-  // for (var i = stressSuggestion.length - 1; i > 0; --i) {
-  //   // console.log(`====== LIMIT: ${stressSuggestion[i].limit}`)
-  //   if (stressSuggestion[i].limit != null && typeCount[i] >= parseInt(stressSuggestion[i].limit)) {
-  //     // console.log(`=======SUGESTTION:${suggestion}`)
-  //     url = stressSuggestion[i].link
-  //     suggestion = stressSuggestion[i].suggestion
-
-  //     return {
-  //       url: url,
-  //       suggestion: suggestion
-  //     };
-  //   }
-  // }
-  // console.log("=====find action by percentage limit");
-  for (var i = stressSuggestion.length - 1; i > 0; --i) {
-    if ((typeCount[i] / sessionCount) >= stressSuggestion.percentageLimit) {
-      url = stressSuggestion[i].link
-      suggestion = stressSuggestion[i].suggestion
-      // console.log(`=======SUGESTTION:${suggestion}`)
-      return {
-        url: url,
-        suggestion: suggestion
-      };
+  for (var i = typeCount.length - 1; i >= 0; --i) {
+    for (var j = stressSuggestion.length - 1; j >= 0; --j) {
+      //console.log(`===PER:${typeCount[i] / sessionCount}`)
+      // console.log(`=====DBPRER:${negativeEmotionAction[j].percentageLimit}`)
+      if ((typeCount[i] / sessionCount) >= stressSuggestion[j].percentageLimit) {
+        suggestion = stressSuggestion[j].suggestion;
+        url = stressSuggestion[j].link;
+        // console.log('PERCENTaction' + action)
+        return {
+          suggestion: suggestion,
+          link: url,
+        };
+      }
     }
-  } return null;
+  }
+  return null;
 }
 
 export const convertConditions = (emotions_duration, condition) => {
