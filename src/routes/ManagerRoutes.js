@@ -260,11 +260,6 @@ router.get('/negative-criterias', passport.authenticate('jwt', { session: false 
 *             properties:
 *               condition:
 *                 type: string
-*               operator:
-*                 type: string
-*                 limit: 2
-*               comparingNumber:
-*                 type: integer
 *     responses:
 *       200:
 *         description: level updated.
@@ -329,11 +324,6 @@ router.post('/negative-criterias/actions', passport.authenticate('jwt', { sessio
 *             properties:
 *               condition:
 *                 type: string
-*               operator:
-*                 type: string
-*                 limit: 2
-*               comparingNumber:
-*                 type: integer
 *     responses:
 *       200:
 *         description: level updated

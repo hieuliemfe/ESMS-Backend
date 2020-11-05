@@ -43,9 +43,7 @@ export default {
             })
         } else {
           const result = models.StressCriteria.create({
-            condition: condition,
-            operator: operator,
-            comparingNumber: comparingNumber
+            condition: condition + operator + comparingNumber,
           })
           res.status(status.CREATED)
             .send({
@@ -258,8 +256,8 @@ export default {
   create_negative_emotion_criteria: {
     async post(req, res, next) {
       try {
-        const { condition, operator, comparingNumber } = req.body
-        if (condition == undefined || condition.match("[a-zA-Z]") || operator == undefined || comparingNumber == undefined) {
+        const { condition } = req.body
+        if (condition == undefined || condition.match("[a-zA-Z]")) {
           res.status(status.EXPECTATION_FAILED)
             .send({
               success: false,
@@ -268,9 +266,6 @@ export default {
         } else {
           const result = models.NegativeEmotionCriteria.create({
             condition: condition,
-            operator: operator,
-            comparingNumber: comparingNumber
-
           })
           res.status(status.CREATED)
             .send({
@@ -324,8 +319,8 @@ export default {
             })
           return;
         }
-        const { condition, operator, comparingNumber } = req.body
-        if (condition == undefined || condition.match("[a-zA-Z]") || operator == undefined || comparingNumber == undefined) {
+        const { condition } = req.body
+        if (condition == undefined || condition.match("[a-zA-Z]")) {
           res.status(status.EXPECTATION_FAILED)
             .send({
               success: false,
@@ -333,9 +328,7 @@ export default {
             })
         } else {
           const result = models.NegativeEmotionCriteria.update({
-            condition: condition,
-            operator: operator,
-            comparingNumber: comparingNumber
+            condition: condition
           }, {
             where: {
               id: criteriaId

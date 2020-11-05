@@ -1,16 +1,28 @@
 'use strict'
 
 import models from '../db/models/index';
-
+import { Op } from 'sequelize';
 export const calculateShiftEmotionLevel = async (employee, shiftSessions, periodicityId) => {
-  const negativeEmotionCriteria = await models.NegativeEmotionCriteria.findAndCountAll();
+  const negativeEmotionCriteria = await models.NegativeEmotionCriteria.findAndCountAll({
+    include: {
+      model: models.NegativeEmotionAction,
+      attributes: [],
+      where: {
+        action: {
+          [Op.not]: null,
+        },
+        periodicityId: periodicityId
+      }
+    }
+  });
   let criteriaArray = []
   negativeEmotionCriteria.rows.forEach(criteria => {
-    const criteriaString = criteria.condition + criteria.operator + criteria.comparingNumber;
+    const criteriaString = criteria.condition;
     criteriaArray.push(criteriaString);
   })
+  console.log(criteriaArray)
   //array to count the number of occurence of sessions
-  let typeCount = Array.from({ length: negativeEmotionCriteria.count }, () => 0)
+  let typeCount = Array.from({ length: criteriaArray.length }, () => 0)
   let sessionCount = 0;
   shiftSessions.forEach(shiftSession => {
     const sessions = shiftSession.Session;
@@ -18,8 +30,10 @@ export const calculateShiftEmotionLevel = async (employee, shiftSessions, period
       if (session.info != undefined) {
         const parsedInfo = JSON.parse(session.info)
         const emotionDurations = parsedInfo.emotions_duration;
+        // console.log(`======================================================= critlen:${criteriaArray.length}`)
         for (var i = 0; i < criteriaArray.length; i++) {
           const condition = convertConditions(emotionDurations, criteriaArray[i]);
+          // console.log(`=====condEval:?${(condition)}`)
           // console.log(`MATCH?${eval(condition)}`)
           if (eval(condition)) {
             typeCount[i]++;
@@ -29,9 +43,10 @@ export const calculateShiftEmotionLevel = async (employee, shiftSessions, period
       sessionCount++;
     });
   });
+  console.log(`====typeCount:${typeCount}`)
   const action = await getNegativeEmotionAction(sessionCount, typeCount, periodicityId)
   const report = getEmployeeEmotionReport(employee, sessionCount, typeCount, negativeEmotionCriteria);
-  // console.log(`RESULT: ${result}`)
+  console.log(`RESULT: ${action}`)
   return {
     action: action,
     report: report
@@ -40,19 +55,34 @@ export const calculateShiftEmotionLevel = async (employee, shiftSessions, period
 
 export const getNegativeEmotionAction = async (sessionCount, typeCount, periodicityId) => {
   // console.log(`periodicityId:${periodicityId}`)
-  console.log(`typeCount:${typeCount}`)
+
   const negativeEmotionAction = await models.NegativeEmotionAction.findAll({
     where: {
-      periodicity_id: periodicityId
+      periodicity_id: periodicityId,
+      action: {
+        [Op.ne]: null,
+      }
     }
   });
   let action = '';
   //find action by number limit
-  for (var i = negativeEmotionAction.length - 1; i > 0; --i) {
-    if (negativeEmotionAction[i].limit != null && typeCount[i] >= parseInt(negativeEmotionAction[i].limit)) {
-      console.log("ACTION:" + negativeEmotionAction[i].action)
-      action = negativeEmotionAction[i].action
-      return action;
+  // console.log(`===== acionlen:${negativeEmotionAction.length} `)
+  // console.log(`===== typeclen:${typeCount.length} `)
+  for (var i = typeCount.length - 1; i >= 0; --i) {
+    for (var j = negativeEmotionAction.length - 1; j >= 0; --j) {
+      if (negativeEmotionAction[j].limit != null && typeCount[i] >= parseInt(negativeEmotionAction[j].limit)) {
+        action = negativeEmotionAction[j].action;
+
+      //  console.log('action' + action)
+        return action;
+      }
+      //console.log(`===PER:${typeCount[i] / sessionCount}`)
+      // console.log(`=====DBPRER:${negativeEmotionAction[j].percentageLimit}`)
+      if ((typeCount[i] / sessionCount) >= negativeEmotionAction[j].percentageLimit) {
+        action = negativeEmotionAction[j].action;
+       // console.log('PERCENTaction' + action)
+        return action;
+      }
     }
   }
   //find action by percentage limit
@@ -73,10 +103,9 @@ export const getEmployeeEmotionReport = ((employee, sessionCount, typeCount, neg
   let sessionTypes = [];
   let sessionTypeName
   let result;
-  for (var i = 0; i < negativeEmotionCriteria.count; i++) {
+  for (var i = 0; i < typeCount.length; i++) {
     let percentage = (typeCount[i] / sessionCount) * 100 + "%";
-    sessionTypeName = negativeEmotionCriteria.rows[i].operator
-      + (negativeEmotionCriteria.rows[i].comparingNumber * 100) + "%";
+    sessionTypeName = negativeEmotionCriteria.rows[i].condition
     result = {
       "condition": sessionTypeName,
       "count": typeCount[i],

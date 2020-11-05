@@ -8,15 +8,6 @@ export default function (sequelize, DataTypes) {
       allowNull: false,
       field: 'condition'
     },
-    operator: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: 'operator'
-    },
-    comparingNumber: {
-      type: DataTypes.FLOAT,
-      field: 'comparing_number'
-    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: Sequelize.fn('NOW'),
