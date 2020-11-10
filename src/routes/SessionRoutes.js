@@ -83,7 +83,7 @@ import { isBankTeller, isManager } from '../middlewares/authorization';
 *       400:
 *         description: Error.
 */
-router.get('/', passport.authenticate('jwt', { session: false }), isManager, Controller.view.get);
+router.get('/', passport.authenticate('jwt', { session: false }), Controller.view.get);
 
 /**
 * @swagger

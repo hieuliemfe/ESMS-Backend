@@ -16,12 +16,12 @@ export default function (sequelize, DataTypes) {
         },
         shiftStart: {
             type: DataTypes.TIME,
-            field: 'shiftStart'
+            field: 'shift_start'
         },
         shiftEnd: {
             type: DataTypes.TIME,
             unique: false,
-            field: 'shiftEnd'
+            field: 'shift_end'
         },
         createdAt: {
             type: DataTypes.DATE,
@@ -36,6 +36,12 @@ export default function (sequelize, DataTypes) {
     }, {
         tableName: 'shift_type',
     });
-
+    ShiftType.associate = function (models) {
+        //A shift will have many sessions
+        ShiftType.hasMany(models.Shift, {
+          foreignKey: 'shift_type_id',
+          as: 'ShiftType'
+        });
+      }
     return ShiftType;
 };

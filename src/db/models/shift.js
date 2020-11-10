@@ -19,13 +19,9 @@ export default function (sequelize, DataTypes) {
       unique: false,
       field: 'counter_id'
     },
-    shiftStart: {
-      type: DataTypes.DATE,
-      field: 'shift_start'
-    },
-    shiftEnd: {
-      type: DataTypes.DATE,
-      field: 'shift_end'
+    shiftDate: {
+      type: DataTypes.DATEONLY,
+      field: 'shift_date'
     },
     statusId: {
       type: DataTypes.INTEGER,
@@ -53,6 +49,13 @@ export default function (sequelize, DataTypes) {
     Shift.hasMany(models.Session, {
       foreignKey: 'shift_id',
       as: 'Session'
+    });
+    //A shift type can have many shifts
+    Shift.belongsTo(models.ShiftType, {
+      //shift_type_id
+      targetKey: 'id',
+      foreignKey: 'shift_type_id',
+      as: 'ShiftType'
     });
     //A counter can have many shifts
     Shift.belongsTo(models.Counter, {

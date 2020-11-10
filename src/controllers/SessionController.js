@@ -20,6 +20,7 @@ export default {
         const offset = limit * (page - 1);
         const startDate = req.query.startDate ? req.query.startDate : setEpochMillisTime(0, 0, 0, 0, 0)
         const endDate = req.query.endDate ? req.query.endDate : new Date().setHours(23, 59, 0)
+        console.log(`=========================start date:${startDate}`)
         //generate condition
         let whereEmployeeCondition = null;
         let whereShiftTypeCondition = '';
@@ -61,10 +62,10 @@ export default {
         }
         var whereCondition = {
           [Op.and]: [{
-            sessionEnd: { [Op.gte]: startDate },
+            sessionStart: { [Op.gte]: startDate },
           },
           {
-            sessionEnd: { [Op.lte]: endDate },
+            sessionEnd: { [Op.lt]: endDate },
           },
             whereEmployeeCondition,
           ]
