@@ -68,13 +68,9 @@ export default {
         const tokenDecoded = jwt.decode(token)
         const currentDate = new Date();
         const currentDateString = currentDate.toLocaleString("en-US", { timeZone: 'ASIA/Ho_Chi_Minh' })
-        console.log(`========================= ${currentDateString}`)
         const sCurrentDateString = currentDateString.substring(0, 12) + '00:00:00 AM'
-        console.log(sCurrentDateString)
         const sCurrentDate = new Date(sCurrentDateString)
         const eCurrentDate = new Date(sCurrentDate.getTime() + 24 * 60 * 60 * 1000)
-        console.log(`========================== ${sCurrentDate}`)
-        console.log(`========================== ${eCurrentDate}`)
         let activeShiftResults = await models.Shift.findAll({
           attributes: {
             exclude: ["counter_id", "employee_id", "shift_type_id", "shiftTypeId", "createdAt", "updatedAt"]
@@ -95,7 +91,6 @@ export default {
         }).then(activeShifts => {
           //if there's still active shift(s) of the last day.
           let asr = [];
-          console.log(activeShifts.length)
           activeShifts.forEach(activeShift => {
             let seDate = new Date(activeShift.shiftDate + 'T' + activeShift.ShiftType.shiftEnd + '.000Z');
             let sePassedTime = currentDate.getTime() - seDate.getTime()
@@ -237,7 +232,6 @@ export default {
     async get(req, res, next) {
       try {
         const { shiftId } = req.params
-        console.log(shiftId)
         const currentShift = await models.Shift.findAll({
           attributes: ['id'],
           where: {
