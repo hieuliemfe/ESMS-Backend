@@ -7,6 +7,7 @@ import sequelize from 'sequelize'
 import { shiftStatus } from '../db/config/statusConfig';
 import { calculateStressLevel } from '../utils/emotionUtil'
 import periodicityConfig from '../db/config/periodicityConfig';
+import { el } from 'date-fns/locale';
 export default {
 
   view_active_shift: {
@@ -68,7 +69,8 @@ export default {
         const tokenDecoded = jwt.decode(token)
         const currentDate = new Date();
         const currentDateString = currentDate.toLocaleString("en-US", { timeZone: 'ASIA/Ho_Chi_Minh' })
-        const sCurrentDateString = currentDateString.substring(0, 12) + '00:00:00 AM'
+        const dateStrings = currentDateString.substring(0, 10).split("/")
+        const sCurrentDateString = dateStrings[2] + '-' + dateStrings[0] + '-' + dateStrings[1] + 'T00:00:00.000+07:00'
         const sCurrentDate = new Date(sCurrentDateString)
         const eCurrentDate = new Date(sCurrentDate.getTime() + 24 * 60 * 60 * 1000)
         let activeShiftResults = await models.Shift.findAll({
@@ -124,27 +126,35 @@ export default {
             attributes: {
               exclude: ["createdAt", "updatedAt"]
             },
-            as: 'ShiftType',
-            order: [
-              [['shiftStart', 'asc']],
-            ],
+            as: 'ShiftType'
           }],
           where: {
             [Op.and]: [
               { employee_id: tokenDecoded.employeeId },
               {
                 statusId: shiftStatus.UPCOMING
-              },
-              // check whether the shifts are in the same date.
-              sequelize.where(sequelize.fn("concat", sequelize.col("shift_date"), ' ', sequelize.col("shift_end")), '>', currentDate),
-              sequelize.where(sequelize.fn("concat", sequelize.col("shift_date"), ' ', sequelize.col("shift_end")), '<', eCurrentDate)
+              }
             ]
           },
         })
-        // .then(ups => {
-        //   return Promise.resolve(ups);
-        //   //if there's no active shift, find inactive task that is still in the shift period
-        // });        
+          .then(ups => {
+            var tmpUps = []
+            ups.forEach(element => {
+              var tmpDate = element.shiftDate
+              var nextTmpDate = (new Date((new Date(tmpDate)).getTime() + 24 * 60 * 60 * 1000)).toISOString().substring(0, 10)
+              var sStartDate = tmpDate + "T" + element.ShiftType.shiftStart + ".000Z"
+              sStartDate = new Date(sStartDate)
+              var sEndDate = element.ShiftType.shiftStart > element.ShiftType.shiftEnd ? nextTmpDate + "T" + element.ShiftType.shiftEnd + ".000Z" : tmpDate + "T" + element.ShiftType.shiftEnd + ".000Z"
+              sEndDate = new Date(sEndDate)
+              if (sEndDate > currentDate && sEndDate <= eCurrentDate) {
+                tmpUps.push(element)
+              }
+            });
+            return Promise.resolve(tmpUps);
+          });
+        upcomingShifts.sort(function (a, b) {
+          return new Date(a.shiftDate + "T" + a.ShiftType.shiftStart + ".000Z") - new Date(b.shiftDate + "T" + b.ShiftType.shiftStart + ".000Z")
+        })
         res.status(status.OK)
           .send({
             status: true,
