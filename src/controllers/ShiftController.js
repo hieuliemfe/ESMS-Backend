@@ -158,7 +158,10 @@ export default {
         res.status(status.OK)
           .send({
             status: true,
-            message: [...activeShiftResults, ...upcomingShifts]
+            message: {
+              "activeShifts": [...activeShiftResults],
+              "upcomingShifts": [...upcomingShifts]
+            }
           });
       } catch
       (error) {

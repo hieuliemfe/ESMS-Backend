@@ -81,7 +81,7 @@ export default {
             'sessionStart',
             'sessionEnd',
             'sessionDuration',
-            'info',
+            // 'info',
             'angryWarningCount',
             'createdAt',
             'updatedAt',
@@ -161,9 +161,10 @@ export default {
               } else if (parsedInfo.emotion_level > 0) {
                 session.setDataValue('status', 'Positive')
               }
-              sessionResults.push(session);
+              // sessionResults.push(session);
             }
           }
+          sessionResults.push(session);
           angryWarningCount += session.angryWarningCount
           var sStartDate = session.sessionStart
           var dayOfWeek = new Date(sStartDate).toLocaleString("en-US", {
