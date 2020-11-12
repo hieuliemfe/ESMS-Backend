@@ -4,14 +4,16 @@ import { Sequelize } from 'sequelize';
 export default function (sequelize, DataTypes) {
   const Period = sequelize.define('Period', {
     periodStart: {
-      type: DataTypes.DATE,
+      type: DataTypes.INTEGER,
       allowNull: false,
-      field: 'period_start'
+      field: 'period_start',
+      defaultValue: 0
     },
     periodEnd: {
-      type: DataTypes.DATE,
+      type: DataTypes.INTEGER,
       allowNull: false,
-      field: 'period_end'
+      field: 'period_end',
+      defaultValue: 0
     },
     emotionId: {
       type: DataTypes.INTEGER,

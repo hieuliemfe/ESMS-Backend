@@ -30,7 +30,8 @@ export default [
         "emotionless_warning": false,
         "emotion_level": -0.5
       }
-    )
+    ),
+    angryWarningCount: 0
   },
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
@@ -52,13 +53,14 @@ export default [
         "no_face_detected_period_count": 0,
         "unidentified_period_duration": 2159,
         "no_face_detected_warning": 0,
-        "angry_warning": 0,
+        "angry_warning": 5,
         "angry_duration_warning_max": 0,
         "no_face_detected_duration_warning_max": 0,
         "emotionless_warning": true,
         "emotion_level": -1
       }
-    )
+    ),
+    angryWarningCount: 5
   },
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
@@ -80,13 +82,14 @@ export default [
         "no_face_detected_period_count": 0,
         "unidentified_period_duration": 2159,
         "no_face_detected_warning": 0,
-        "angry_warning": 0,
+        "angry_warning": 4,
         "angry_duration_warning_max": 0,
         "no_face_detected_duration_warning_max": 0,
         "emotionless_warning": true,
         "emotion_level": -0.3
       }
-    )
+    ),
+    angryWarningCount: 4
   },
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
@@ -108,19 +111,20 @@ export default [
         "no_face_detected_period_count": 0,
         "unidentified_period_duration": 2159,
         "no_face_detected_warning": 0,
-        "angry_warning": 0,
+        "angry_warning": 3,
         "angry_duration_warning_max": 0,
         "no_face_detected_duration_warning_max": 0,
         "emotionless_warning": true,
         "emotion_level": -1
       }
-    )
+    ),
+    angryWarningCount: 3
   },
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
     shift_id: 1,
-    sessionStart: updateEpochMillisTime(currentDate, 0, 10, 5, 0),
-    sessionEnd: updateEpochMillisTime(currentDate, 0, 10, 40, 0),
+    sessionStart: updateEpochMillisTime(currentDate, 0, 12, 5, 0),
+    sessionEnd: updateEpochMillisTime(currentDate, 0, 12, 40, 0),
     info: JSON.stringify(
       {
         "total_session_duration": 14801,
@@ -136,12 +140,13 @@ export default [
         "no_face_detected_period_count": 0,
         "unidentified_period_duration": 2159,
         "no_face_detected_warning": 0,
-        "angry_warning": 0,
+        "angry_warning": 2,
         "angry_duration_warning_max": 0,
         "no_face_detected_duration_warning_max": 0,
         "emotionless_warning": true,
         "emotion_level": 0.6
       }
-    )
+    ),
+    angryWarningCount: 2
   },
 ]

@@ -19,7 +19,7 @@ export default {
         const page = req.query.page ? parseInt(req.query.page) : 1
         const offset = limit * (page - 1);
         const startDate = req.query.startDate ? req.query.startDate : setEpochMillisTime(0, 0, 0, 0, 0)
-        const endDate = req.query.endDate ? req.query.endDate : new Date().setHours(23, 59, 0)
+        const endDate = req.query.endDate ? req.query.endDate : new Date()
         console.log(`=========================start date:${startDate}`)
         //generate condition
         let whereEmployeeCondition = null;
@@ -80,7 +80,9 @@ export default {
             'employeeId',
             'sessionStart',
             'sessionEnd',
+            'sessionDuration',
             'info',
+            'angryWarningCount',
             'createdAt',
             'updatedAt',
           ],
@@ -100,7 +102,17 @@ export default {
           distinct: true,
         });
         //get result by positive/negative
-        let result = [];
+        let sessionResults = [];
+        let angryWarningCount = 0
+        let angryInDayOfWeeks = {
+          'Monday': 0,
+          'Tuesday': 0,
+          'Wednesday': 0,
+          'Thursday': 0,
+          'Friday': 0,
+          'Saturday': 0,
+          'Sunday': 0
+        }
         for (const session of sessions) {
           const employee = await models.Employee.findByPk(session.employeeId);
           session.setDataValue('avatarUrl', employee.avatarUrl)
@@ -112,28 +124,28 @@ export default {
                 case 'negative': {
                   if (parsedInfo.emotion_level < 0) {
                     session.setDataValue('status', 'Negative')
-                    result.push(session);
+                    sessionResults.push(session);
                   }
                   break;
                 }
                 case 'positive': {
                   if (parsedInfo.emotion_level > 0) {
                     session.setDataValue('status', 'Positive')
-                    result.push(session);
+                    sessionResults.push(session);
                   }
                   break;
                 }
                 case 'neutral': {
                   if (parsedInfo.emotion_level == 0 && !parsedInfo.emotionless_warning) {
                     session.setDataValue('status', 'Neutral')
-                    result.push(session);
+                    sessionResults.push(session);
                   }
                   break;
                 }
                 case 'emotionless': {
                   if (parsedInfo.emotion_level == 0 && parsedInfo.emotionless_warning) {
                     session.setDataValue('status', 'Emotionless')
-                    result.push(session);
+                    sessionResults.push(session);
                   }
                   break;
                 }
@@ -149,9 +161,32 @@ export default {
               } else if (parsedInfo.emotion_level > 0) {
                 session.setDataValue('status', 'Positive')
               }
-              result.push(session);
+              sessionResults.push(session);
             }
           }
+          angryWarningCount += session.angryWarningCount
+          var sStartDate = session.sessionStart
+          var dayOfWeek = new Date(sStartDate).toLocaleString("en-US", {
+            timeZone: "Asia/Ho_Chi_Minh",
+            // timeZone: "Pacific/Fiji",
+            weekday: 'long',
+            // year: 'numeric',
+            // month: 'long',
+            // day: 'numeric',
+            // hour12: false,
+            // hour: 'numeric',
+            // minute: 'numeric',
+            // second: 'numeric'
+          })
+          angryInDayOfWeeks[dayOfWeek] += session.angryWarningCount
+        }
+        let result = {
+          "sumary": {
+            "angryWarningCount": angryWarningCount,
+            "totalSessions": sessions.length,
+            "angryInDayOfWeeks": angryInDayOfWeeks
+          },
+          "sessions": sessionResults
         }
         res.status(200)
           .send({
@@ -294,7 +329,9 @@ export default {
               {
                 sessionEnd: new Date(),
                 // info: info
-                info: info
+                info: info,
+                angryWarningCount: JSON.parse(info).angry_warning,
+                sessionDuration: JSON.parse(info).total_session_duration,
               },
               {
                 where: {

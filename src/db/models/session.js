@@ -9,7 +9,13 @@ export default function (sequelize, DataTypes) {
     },
     sessionEnd: {
       type: DataTypes.DATE,
-      field: 'session_end'
+      field: 'session_end',
+    },
+    sessionDuration:{
+      type: DataTypes.INTEGER,
+      field: 'session_duration',
+      allowNull: false,
+      defaultValue: 0,
     },
     employeeId: {
       type: DataTypes.UUID,
@@ -18,6 +24,12 @@ export default function (sequelize, DataTypes) {
     info: {
       type: DataTypes.TEXT,
       field: 'info',
+    },
+    angryWarningCount: {
+      type: DataTypes.INTEGER,
+      field: 'angry_warning_count',
+      allowNull: false,
+      defaultValue: 0,
     },
     evidenceUrl: {
       type: DataTypes.TEXT,
