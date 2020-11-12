@@ -13,9 +13,9 @@ export const updateEpochMillisTime =
   }
 export const setEpochMillisTime = (time, hours, minutes, seconds, milliseconds) => {
   let result = new Date(time);
-  result.setHours(hours);
-  result.setMinutes(minutes);
-  result.setSeconds(seconds);
-  result.setMilliseconds(milliseconds);
+  result.setUTCHours(hours);
+  result.setUTCMinutes(minutes);
+  result.setUTCSeconds(seconds);
+  result.setUTCMilliseconds(milliseconds);
   return result;
 }

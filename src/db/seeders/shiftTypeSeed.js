@@ -3,19 +3,38 @@ import { setEpochMillisTime } from '../../utils/timeUtil';
 
 export default [
     {
-        name: 'Morning',
-        shiftStart: setEpochMillisTime(0, 7, 0, 0, 0),
-        shiftEnd: setEpochMillisTime(0, 12, 0, 0, 0)
+        name: 'Shift 1',
+        shiftStart: setEpochMillisTime(0, 17, 0, 0, 0),
+        shiftEnd: setEpochMillisTime(0, 21, 0, 0, 0)
     },
     {
-        name: 'After-noon',
-        shiftStart: setEpochMillisTime(0, 13, 0, 0, 0),
-        shiftEnd: setEpochMillisTime(0, 17, 0, 0, 0)
+        name: 'Shift 2',
+        shiftStart: setEpochMillisTime(0, 21, 0, 0, 0),
+        shiftEnd: setEpochMillisTime(0, 1, 0, 0, 0)
 
     },
     {
-        name: 'Night',
-        shiftStart: setEpochMillisTime(0, 18, 0, 0, 0),
-        shiftEnd: setEpochMillisTime(0, 23, 0, 0, 0)
+        name: 'Shift 3',
+        shiftStart: setEpochMillisTime(0, 1, 0, 0, 0),
+        shiftEnd: setEpochMillisTime(0, 5, 0, 0, 0)
+
+    },
+    {
+        name: 'Shift 4',
+        shiftStart: setEpochMillisTime(0, 5, 0, 0, 0),
+        shiftEnd: setEpochMillisTime(0, 9, 0, 0, 0)
+
+    },
+    {
+        name: 'Shift 5',
+        shiftStart: setEpochMillisTime(0, 9, 0, 0, 0),
+        shiftEnd: setEpochMillisTime(0, 13, 0, 0, 0)
+
+    },
+    {
+        name: 'Shift 6',
+        shiftStart: setEpochMillisTime(0, 13, 0, 0, 0),
+        shiftEnd: setEpochMillisTime(0, 17, 0, 0, 0)
+
     },
 ]

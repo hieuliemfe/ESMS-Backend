@@ -7,6 +7,7 @@ import sequelize from 'sequelize'
 import { shiftStatus } from '../db/config/statusConfig';
 import { calculateStressLevel } from '../utils/emotionUtil'
 import periodicityConfig from '../db/config/periodicityConfig';
+import { el } from 'date-fns/locale';
 export default {
 
   view_active_shift: {
@@ -67,11 +68,22 @@ export default {
         const token = req.headers.authorization.replace('Bearer ', '')
         const tokenDecoded = jwt.decode(token)
         const currentDate = new Date();
-        let activeShiftResults = [];
-        await models.Shift.findAll({
+        const currentDateString = currentDate.toLocaleString("en-US", { timeZone: 'ASIA/Ho_Chi_Minh' })
+        const dateStrings = currentDateString.substring(0, 10).split("/")
+        const sCurrentDateString = dateStrings[2] + '-' + dateStrings[0] + '-' + dateStrings[1] + 'T00:00:00.000+07:00'
+        const sCurrentDate = new Date(sCurrentDateString)
+        const eCurrentDate = new Date(sCurrentDate.getTime() + 24 * 60 * 60 * 1000)
+        let activeShiftResults = await models.Shift.findAll({
           attributes: {
-            exclude: ["counter_id", "employee_id", "created_at", "updated_at"]
+            exclude: ["counter_id", "employee_id", "shift_type_id", "shiftTypeId", "createdAt", "updatedAt"]
           },
+          include: [{
+            model: models.ShiftType,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"]
+            },
+            as: 'ShiftType'
+          }],
           where: {
             [Op.and]: [
               { employee_id: tokenDecoded.employeeId },
@@ -80,48 +92,74 @@ export default {
           }
         }).then(activeShifts => {
           //if there's still active shift(s) of the last day.
+          let asr = [];
           activeShifts.forEach(activeShift => {
-            let seDate = new Date(activeShift.shiftEnd);
+            let seDate = new Date(activeShift.shiftDate + 'T' + activeShift.ShiftType.shiftEnd + '.000Z');
+            let sePassedTime = currentDate.getTime() - seDate.getTime()
             seDate.setDate(seDate.getDate() + 1)
-            if (seDate > currentDate) {
-              activeShiftResults.push(activeShift)
+            if (sePassedTime <= 24 * 60 * 60 * 1000) {
+              asr.push(activeShift)
+            } else {
+              models.Shift.update(
+                { statusId: shiftStatus.INACTIVE },
+                {
+                  where: {
+                    [Op.and]: [
+                      { id: activeShift.id },
+                      { employeeId: tokenDecoded.employeeId },
+                    ]
+                  }
+                }
+              );
             }
           })
+          return Promise.resolve(asr);
         })
+
         //find the nearest upcoming task
-        await models.Shift.findAll({
+        let upcomingShifts = await models.Shift.findAll({
           attributes: {
             exclude: ["counter_id", "employee_id", "created_at", "updated_at"]
           },
+          include: [{
+            model: models.ShiftType,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"]
+            },
+            as: 'ShiftType'
+          }],
           where: {
             [Op.and]: [
               { employee_id: tokenDecoded.employeeId },
               {
-                statusId: {
-                  [Op.ne]: shiftStatus.ACTIVE
-                }
-              },
-              //check whether the shifts are still available to check-in
-              {
-                shiftEnd: {
-                  [Op.gte]: currentDate
-                }
-              },
-              //check whether the shifts are in the same date.
-              sequelize.where(sequelize.fn('date', sequelize.col('shift_end')), '<=', currentDate)
+                statusId: shiftStatus.UPCOMING
+              }
             ]
           },
-          order: [
-            ['shiftStart', 'asc'],
-          ],
-        }).then(upcomingShifts => {
-          res.status(status.OK)
-            .send({
-              status: true,
-              message: [...activeShiftResults, ...upcomingShifts]
-            });
-          //if there's no active shift, find inactive task that is still in the shift period
         })
+          .then(ups => {
+            var tmpUps = []
+            ups.forEach(element => {
+              var tmpDate = element.shiftDate
+              var nextTmpDate = (new Date((new Date(tmpDate)).getTime() + 24 * 60 * 60 * 1000)).toISOString().substring(0, 10)
+              var sStartDate = tmpDate + "T" + element.ShiftType.shiftStart + ".000Z"
+              sStartDate = new Date(sStartDate)
+              var sEndDate = element.ShiftType.shiftStart > element.ShiftType.shiftEnd ? nextTmpDate + "T" + element.ShiftType.shiftEnd + ".000Z" : tmpDate + "T" + element.ShiftType.shiftEnd + ".000Z"
+              sEndDate = new Date(sEndDate)
+              if (sEndDate > currentDate && sEndDate <= eCurrentDate) {
+                tmpUps.push(element)
+              }
+            });
+            return Promise.resolve(tmpUps);
+          });
+        upcomingShifts.sort(function (a, b) {
+          return new Date(a.shiftDate + "T" + a.ShiftType.shiftStart + ".000Z") - new Date(b.shiftDate + "T" + b.ShiftType.shiftStart + ".000Z")
+        })
+        res.status(status.OK)
+          .send({
+            status: true,
+            message: [...activeShiftResults, ...upcomingShifts]
+          });
       } catch
       (error) {
         next(error);
@@ -204,7 +242,6 @@ export default {
     async get(req, res, next) {
       try {
         const { shiftId } = req.params
-        console.log(shiftId)
         const currentShift = await models.Shift.findAll({
           attributes: ['id'],
           where: {
