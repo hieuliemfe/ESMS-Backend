@@ -5,6 +5,7 @@ import status from 'http-status';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Op } from "sequelize";
+import sequelize from 'sequelize'
 import url from 'url';
 import { endOfWeek, endOfMonth, endOfYear, parseISO, set } from 'date-fns';
 import readXlsxFile from "read-excel-file/node";
@@ -121,104 +122,56 @@ export default {
     async get(req, res, next) {
       try {
         //Data from request
-        const { employeeCode, fullname, duration } = req.query
-        let startDate = req.query.startDate ? req.query.startDate : set(new Date(), { hours: 0 }).toISOString();
-        let endDate;
-        let result = [];
-        let periodicityId = 0;
-        //if query doesn't specify the time period
-        if (duration != undefined) {
-          switch (duration) {
-            case 'daily': {
-              endDate = new Date().setHours(23, 59, 0)
-              periodicityId = PeriodicityIds.DAILY;
-              break;
-            }
-            case 'weekly': {
-              endDate = endOfWeek(parseISO(startDate));
-              periodicityId = PeriodicityIds.WEEKLY;
-              break;
-            }
-            case 'monthly': {
-              endDate = endOfMonth(parseISO(startDate))
-              periodicityId = PeriodicityIds.MONTHLY;
-              break;
-            }
-            case 'yearly': {
-              endDate = endOfYear(parseISO(startDate))
-              periodicityId = PeriodicityIds.YEARLY;
-              break;
-            }
-          }
-        } else {
-          endDate = req.query.endDate ? req.query.endDate : endOfWeek(parseISO(startDate))
-          periodicityId = PeriodicityIds.WEEKLY
-        }
-        console.log(`===== STARTDATE:${startDate}`)
-        console.log(`======ENDDATE:${endDate}`);
-        const order = req.query.order ? req.query.order : 'created_at,asc'
+        const { role } = req.query
+
+        const startDate = req.query.startDate ? req.query.startDate : setEpochMillisTime(0, 0, 0, 0, 0)
+        const endDate = req.query.endDate ? req.query.endDate : new Date()
 
         let whereEmployeeCondition = '';
-
-        if (fullname || employeeCode != undefined) {
+        if (role !== undefined) {
           whereEmployeeCondition = {
-            [Op.or]: [
-              { employeeCode: { [Op.like]: '%' + employeeCode + '%' } },
-              { fullname: { [Op.like]: '%' + fullname + '%' } }
-            ],
+            roleId: role
           }
         }
-        const orderOptions = order.split(",");
         //employeeCode & fullname only
         const employees = await models.Employee.findAll({
           attributes: { exclude: ['password', 'role_id'] },
           where: whereEmployeeCondition,
-          order: [
-            [orderOptions[0], orderOptions[1]],
-          ],
         });
-        const shifts = await models.Shift.findAll({
-          attributes: ['id', 'employee_id'],
-          where: {
-            [Op.and]: [
-              {
-                shiftStart: { [Op.gte]: startDate }
+        var empResults = []
+        if (role === '3') {          
+          for (let i = 0; i < employees.length; i++) {
+            var employee = employees[i]
+            var  angryCount = 0
+            await models.Session.findAll({
+              attributes: [
+                'employee_id',
+                [sequelize.fn('COALESCE',sequelize.fn('sum', sequelize.col('angry_warning_count')), 0), 'totalAmount']
+              ],
+              group: ['employee_id'],
+              where: {
+                [Op.and]: [
+                  { sessionStart: { [Op.gte]: startDate } },
+                  { sessionStart: { [Op.lt]: endDate } },
+                  { employeeId: employee.id}
+                ]
               },
-              {
-                shiftEnd: { [Op.lte]: endDate }
-              },
-            ],
-          },
-          include: [{
-            model: models.Session,
-            attributes: ['info', 'employee_id'],
-            as: 'Session',
-          }]
-        })
-        for (const employee of employees) {
-          let employeeInactiveShifts = [];
-          for (const shift of shifts) {
-            if (shift.employee_id == employee.id) {
-              employeeInactiveShifts.push(shift);
-            }
+              plain: true
+            }).then(result => {
+              angryCount = result != null ? result.getDataValue('totalAmount') : 0
+            })
+            employee.setDataValue('angryWarningCount', parseInt(angryCount))   
+            // console.log(employee)    
+            empResults.push(employee)   
           }
-          if (employeeInactiveShifts.length > 0) {
-            try {
-              const suggestion = await calculateStressLevel(employeeInactiveShifts, periodicityId);
-              const result = await calculateShiftEmotionLevel(employee, employeeInactiveShifts, periodicityId);
-              employee.setDataValue('action', result.action);
-              employee.setDataValue('report', result.report);
-              employee.setDataValue('stressSuggestion', suggestion)
-            } catch (error) {
-              next(error);
-            }
-          }
-          result.push(employee);
         }
+        empResults.sort(function(a, b){
+          return b.getDataValue('angryWarningCount') - a.getDataValue('angryWarningCount')
+        })
         res.status(status.OK)
           .send({
             status: true,
-            message: result,
+            message: role !== 3 ? employees: empResults,
           });
       } catch
       (error) {

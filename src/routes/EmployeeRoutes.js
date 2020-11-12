@@ -25,6 +25,15 @@ import { isManager } from '../middlewares/authorization';
 *     consumes:
 *       - application/json
 *     parameters:
+*       - name: role
+*         in: query
+*         required: false
+*         description: "role 1: Admin, 2: Manager, 3: Bank teller"
+*         schema:
+*           type : integer
+*           format: integer
+*           minimum: 1
+*           maximum: 3
 *       - name: startDate
 *         in: query
 *         required: false
@@ -39,34 +48,6 @@ import { isManager } from '../middlewares/authorization';
 *         schema:
 *           type : string
 *           format: date-time
-*       - name: fullname
-*         in: query
-*         required: false
-*         description: Employee's fullname to filter
-*         schema:
-*           type : string
-*           format: string
-*       - name: employeeCode
-*         in: query
-*         required: false
-*         description: Employee's code to filter
-*         schema:
-*           type : string
-*           format: string
-*       - name: emotionStatus
-*         in: query
-*         required: false
-*         description: Emotion status to filter (positive || negative)
-*         schema:
-*           type : string
-*           format: string
-*       - name: duration
-*         in: query
-*         required: false
-*         description: Duration limit for the search result (daily, weekly, monthly, yearly)
-*         schema:
-*           type : string
-*           format: string
 *     responses:
 *       200:
 *         description: Displays employee details
