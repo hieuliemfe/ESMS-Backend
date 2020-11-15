@@ -36,10 +36,13 @@ export default {
     async get(req, res, next) {
       try {
         //get all counters
-        const counter = await models.Counter.findByPk(req.params.id)
+        const counter = await models.Counter.findOne({
+          attributes: {exclude: ["createdAt", "updatedAt"]},
+          where: {id: req.params.id}
+        })
         const categoriesResult = await models.CounterCategory.findAll({
           include: [
-            { model: models.Category, include: [ {model: models.Task } ], as: "Category"}
+            { model: models.Category, attributes: {exclude: ["createdAt", "updatedAt"]}, include: [ {model: models.Task, attributes: {exclude: ["createdAt", "updatedAt", "categoryId", "category_id"]}} ], as: "Category"}
           ],
           where: {
             counterId: req.params.id

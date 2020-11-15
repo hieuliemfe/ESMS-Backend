@@ -11,6 +11,9 @@ export default {
 
             try {
                 const shiftTypes = await models.ShiftType.findAll({
+                    attributes: {
+                        exclude: ["createdAt", "updatedAt"]
+                    }
                 });
                 for (let i = 0; i < shiftTypes.length; i++) {
                     var shiftStart = shiftTypes[i].getDataValue('shiftStart')

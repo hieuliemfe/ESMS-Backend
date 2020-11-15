@@ -33,7 +33,7 @@ export default {
             model: models.Role, as: "Role",
           },
           {
-            model: models.Counter, as: "Counter",
+            model: models.Counter, attributes: {exclude: ["createdAt", "updatedAt"]}, as: "Counter",
           }
           ],
           attributes: ['id', 'employeeCode', 'password', 'roleId'],
