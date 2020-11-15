@@ -48,7 +48,7 @@ export default {
           message: {
             "employeeCode": employee.employeeCode,
             "roleName": employee.Role.roleName,
-            "Counter:": employee.Counter
+            "Counter": employee.Counter
           },
           token
         });

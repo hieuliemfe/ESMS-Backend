@@ -182,7 +182,7 @@ export default {
           angryInDayOfWeeks[dayOfWeek] += session.angryWarningCount
         }
         let result = {
-          "sumary": {
+          "summary": {
             "angryWarningCount": angryWarningCount,
             "totalSessions": sessions.length,
             "angryInDayOfWeeks": angryInDayOfWeeks
