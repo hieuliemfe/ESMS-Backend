@@ -33,7 +33,8 @@ export default {
             include: [
               {
                 model: models.Category,
-                as: "Category"
+                as: "Category",
+                attributes: {exclude: ["createdAt", "updatedAt"]}
               },
               {
                 model: models.Counter,
@@ -49,7 +50,7 @@ export default {
             order: [
               ['number', 'asc'],
             ],
-            attributes: ["id", "number", "createdAt", "updatedAt"]
+            attributes: ["id", "number", "customerName", "createdAt", "updatedAt"]
           }).then(queues => {
             res.status(status.OK)
               .send({
@@ -68,6 +69,7 @@ export default {
         models.Queue.count().then(count => {
           models.Queue.create({
             categoryId: req.body.categoryId,
+            customerName: req.body.customerName,
             number: count + 1,
           },
           ).then(queue => {

@@ -22,6 +22,10 @@ export default function (sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       field: 'counter_id'
     },
+    customerName: {
+      type: DataTypes.STRING,
+      field: 'customer_name'
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: Sequelize.fn('NOW'),
