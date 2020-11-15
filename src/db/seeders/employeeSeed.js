@@ -10,7 +10,8 @@ export default [
     phoneNumber: '0123456789',
     isSubscribed: true,
     avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_mitsuki.jpg?alt=media&token=136252c1-b7fb-45ea-bf88-fc08923ede81',
-    roleId: 1
+    roleId: 1,
+    counterId: 2
 
   },
   {
@@ -23,7 +24,6 @@ export default [
     isSubscribed: true,
     avatarUrl: 'https://avatars1.githubusercontent.com/u/64410838?s=400&u=6634d5bf03b3a155b6be5e26c3db3fbdb316e597&v=4',
     roleId: 1
-
   },
   {
     id: 'bfad3537-875c-4bf2-bb97-41c00b912d76',
@@ -58,7 +58,8 @@ export default [
     email: 'khangle@email.com',
     is_subscribed: true,
     avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_none.png?alt=media&token=99b44006-6136-4c11-8f8c-3f82d65483e6',
-    roleId: 3
+    roleId: 3,
+    counterId: 1
 
   },
 ]

@@ -30,8 +30,12 @@ export default {
             employeeCode: req.body.employeeCode,
           },
           include: [{
-            model: models.Role, as: "Role"
-          }],
+            model: models.Role, as: "Role",
+          },
+          {
+            model: models.Counter, as: "Counter",
+          }
+          ],
           attributes: ['id', 'employeeCode', 'password', 'roleId'],
         });
         if (!employee) throw new DefaultError(status.BAD_REQUEST, 'Invalid employeeCode or password');
@@ -44,6 +48,7 @@ export default {
           message: {
             "employeeCode": employee.employeeCode,
             "roleName": employee.Role.roleName,
+            "Counter:": employee.Counter
           },
           token
         });

@@ -26,6 +26,9 @@ export default function (sequelize, DataTypes) {
     Category.hasMany(models.Queue, {
       foreignKey: "category_id"
     });
+    Category.hasMany(models.Task, {
+      foreignKey: "category_id"
+    });
   }
   return Category;
 };

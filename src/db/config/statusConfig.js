@@ -7,7 +7,6 @@ export const sessionTaskStatus = {
 }
 
 export const shiftStatus = {
-  UPCOMING: 1,
-  ACTIVE: 2,
-  INACTIVE: 3
+  ACTIVE: 1,
+  INACTIVE: 0
 }

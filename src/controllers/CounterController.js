@@ -14,20 +14,16 @@ export default {
         const tokenDecoded = jwt.decode(token)
         const currentDate = Date.now();
         let day = new Date(currentDate);
-        const shift = await models.Shift.findOne({
+        const employee = await models.Employee.findOne({
           where:
           {
-            [Op.and]: [
-              { shiftStart: { [Op.lte]: currentDate } },
-              { shiftEnd: { [Op.gte]: currentDate } },
-              { employee_id: tokenDecoded.employeeId }
-            ]
+            id: tokenDecoded.employeeId 
           }
         })
         res.status(status.OK)
           .send({
             status: true,
-            message: shift,
+            message: employee,
           });
 
       } catch
@@ -40,31 +36,26 @@ export default {
     async get(req, res, next) {
       try {
         //get all counters
-        const counters = await models.Counter.findOne({
-          include: [{
-            //get all categories that counter is assigned.
-            model: models.Category,
-            attributes: {
-              include: ["categoryName"],
-              exclude: ["counter_category"]
-            },
-            as: "Category",
-            include: {
-              //get all queues that have the selected category.
-              model: models.Queue,
-              attributes: {
-                include: ["id", "number", "statusId", "categoryId", "createdAt", "updatedAt"],
-              },
-            }
-          }],
+        const counter = await models.Counter.findByPk(req.params.id)
+        const categoriesResult = await models.CounterCategory.findAll({
+          include: [
+            { model: models.Category, include: [ {model: models.Task } ], as: "Category"}
+          ],
           where: {
-            counterNumber: req.params.counterNumber
+            counterId: req.params.id
           }
+        }).then(results => {
+          let categories = []
+          results.forEach(element => {
+            categories.push(element.Category)
+          });
+          return categories
         });
+        counter.setDataValue('Category', categoriesResult)
         res.status(status.OK)
           .send({
             status: true,
-            message: counters,
+            message: {"counter": counter},
           });
       } catch (error) {
         next(error);

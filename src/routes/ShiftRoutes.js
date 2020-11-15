@@ -31,6 +31,29 @@ router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 
 /**
 * @swagger
+* /shifts:
+*    post:
+*     tags:
+*       - Shifts
+*     name: Create new shift
+*     summary: Creates a shift.
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               shiftTypeId:
+*                 type: integer
+*     responses:
+*       201:
+*         description: Create successful.
+*/
+router.post('/', passport.authenticate('jwt', {session: false}), isBankTeller, Controller.create.post);
+
+/**
+* @swagger
 * /shifts/active-shift:
 *   get:
 *     tags:

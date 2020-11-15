@@ -54,6 +54,11 @@ export default function (sequelize, DataTypes) {
       allowNull: false,
       field: 'role_id'
     },
+    counterId: {
+      type: DataTypes.INTEGER,
+      unique: false,
+      field: 'counter_id'
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: Sequelize.fn('NOW'),
@@ -96,6 +101,13 @@ export default function (sequelize, DataTypes) {
     //An employee will have many shifts with customers.
     Employee.hasMany(models.Shift, {
       foreignKey: 'employee_id'
+    });
+    //A counter can have many shifts
+    Employee.belongsTo(models.Counter, {
+      //counter_id
+      targetKey: 'id',
+      foreignKey: 'counter_id',
+      as: 'Counter'
     });
   }
   return Employee;

@@ -14,27 +14,27 @@ import { isAuthorized,isBankTeller } from '../middlewares/authorization';
 
 /**
 * @swagger
-* /counters:
+* /counters/current:
 *   get:
 *     tags:
 *       - Counters
-*     name: Get counters.
-*     summary: get a list of counters filtered by jwt token
+*     name: Get counter.
+*     summary: get a current counter of emoloyee by jwt
 *     consumes:
 *       - application/json
 *     responses:
 *       200:
-*         description: A list of counters is displayed.
+*         description: A counter is displayed.
 *       400:
 *         description: Error.
 */
 
-router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_by_employee.get);
+router.get('/current', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_by_employee.get);
 
 
 /**
 * @swagger
-* /counters/{counterNumber}:
+* /counters/{id}:
 *   get:
 *     tags:
 *       - Counters
@@ -44,10 +44,10 @@ router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 *       - application/json
 *     parameters:
 *       - in: path
-*         name: counterNumber
+*         name: id
 *         schema:
 *           type: string
-*         description: counter number to filter counters.
+*         description: counter id to filter counters.
 *     responses:
 *       200:
 *         description: A list of sessions is displayed.
@@ -55,7 +55,7 @@ router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 *         description: Error.
 */
 
-router.get('/:counterNumber', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.view.get);
+router.get('/:id', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.view.get);
 
 
 export default router;

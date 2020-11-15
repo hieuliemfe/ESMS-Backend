@@ -97,7 +97,7 @@ export default {
             let seDate = new Date(activeShift.shiftDate + 'T' + activeShift.ShiftType.shiftEnd + '.000Z');
             let sePassedTime = currentDate.getTime() - seDate.getTime()
             seDate.setDate(seDate.getDate() + 1)
-            if (sePassedTime <= 24 * 60 * 60 * 1000) {
+            if (sePassedTime <= 30 * 60 * 1000) {
               asr.push(activeShift)
             } else {
               models.Shift.update(
@@ -115,52 +115,11 @@ export default {
           })
           return Promise.resolve(asr);
         })
-
-        //find the nearest upcoming task
-        let upcomingShifts = await models.Shift.findAll({
-          attributes: {
-            exclude: ["counter_id", "employee_id", "created_at", "updated_at"]
-          },
-          include: [{
-            model: models.ShiftType,
-            attributes: {
-              exclude: ["createdAt", "updatedAt"]
-            },
-            as: 'ShiftType'
-          }],
-          where: {
-            [Op.and]: [
-              { employee_id: tokenDecoded.employeeId },
-              {
-                statusId: shiftStatus.UPCOMING
-              }
-            ]
-          },
-        })
-          .then(ups => {
-            var tmpUps = []
-            ups.forEach(element => {
-              var tmpDate = element.shiftDate
-              var nextTmpDate = (new Date((new Date(tmpDate)).getTime() + 24 * 60 * 60 * 1000)).toISOString().substring(0, 10)
-              var sStartDate = tmpDate + "T" + element.ShiftType.shiftStart + ".000Z"
-              sStartDate = new Date(sStartDate)
-              var sEndDate = element.ShiftType.shiftStart > element.ShiftType.shiftEnd ? nextTmpDate + "T" + element.ShiftType.shiftEnd + ".000Z" : tmpDate + "T" + element.ShiftType.shiftEnd + ".000Z"
-              sEndDate = new Date(sEndDate)
-              if (sEndDate > currentDate && sEndDate <= eCurrentDate) {
-                tmpUps.push(element)
-              }
-            });
-            return Promise.resolve(tmpUps);
-          });
-        upcomingShifts.sort(function (a, b) {
-          return new Date(a.shiftDate + "T" + a.ShiftType.shiftStart + ".000Z") - new Date(b.shiftDate + "T" + b.ShiftType.shiftStart + ".000Z")
-        })
         res.status(status.OK)
           .send({
             status: true,
             message: {
-              "activeShifts": [...activeShiftResults],
-              "upcomingShifts": [...upcomingShifts]
+              "activeShifts": [...activeShiftResults]
             }
           });
       } catch
@@ -329,5 +288,36 @@ export default {
         next(error)
       }
     }
-  }
+  },
+  create: {
+    async post(req, res, next) {
+      const { employeeCode, counterId, shiftTypeId } = req.body;
+      try {
+        const token = req.headers.authorization.replace('Bearer ', '')
+        const tokenDecoded = jwt.decode(token)
+        const employee = await models.Employee.findOne({
+          where:
+          {
+            id: tokenDecoded.employeeId 
+          }
+        })
+        const shift = await models.Shift.create(
+          {
+            employeeId: employee.id,
+            shiftDate: new Date(),
+            statusId: shiftStatus.ACTIVE,
+            shiftTypeId: shiftTypeId,
+            counterId: employee.counterId
+          }
+        )
+        res.status(status.OK)
+            .send({
+              success: true,
+              message: {"shiftId": shift.id}
+            });
+      } catch (error) {
+        next(error);
+      }
+    }
+  },
 };
