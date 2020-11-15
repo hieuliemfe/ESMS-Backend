@@ -51,6 +51,8 @@ router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 *             properties:
 *               categoryId:
 *                 type: integer
+*               customerName:
+*                 type: string
 *     responses:
 *       200:
 *         description: Queue is created.
