@@ -32,8 +32,7 @@ export default {
           //there are active shifts that are a day late
           //from the upcoming shift
           activeShifts.forEach(activeShift => {
-            let seDate = new Date(activeShift.shiftEnd);
-            seDate.setDate(seDate.getDate() + 1)
+            let seDate = new Date(new Date(activeShift.shiftEnd).getTime() + 30*60*1000);
             if (seDate < currentDate) {
               models.Shift.update(
                 {
