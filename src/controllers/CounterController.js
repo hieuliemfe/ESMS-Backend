@@ -54,7 +54,7 @@ export default {
           });
           return categories
         });
-        counter.setDataValue('Category', categoriesResult)
+        counter.setDataValue('Categories', categoriesResult)
         res.status(status.OK)
           .send({
             status: true,
