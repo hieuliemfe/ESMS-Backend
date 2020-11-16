@@ -9,58 +9,58 @@ import { calculateStressLevel } from "../utils/emotionUtil";
 import periodicityConfig from "../db/config/periodicityConfig";
 import { el } from "date-fns/locale";
 export default {
-  view_active_shift: {
-    async get(req, res, next) {
-      try {
-        let result = [];
-        const token = req.headers.authorization.replace("Bearer ", "");
-        const tokenDecoded = jwt.decode(token);
-        const currentDate = new Date();
-        //find an active shift
-        await models.Shift.findAll({
-          attributes: {
-            exclude: ["counter_id", "employee_id"],
-          },
-          where: {
-            [Op.and]: [
-              { employee_id: tokenDecoded.employeeId },
-              { statusId: shiftStatus.ACTIVE },
-            ],
-          },
-        }).then((activeShifts) => {
-          //there are active shifts that are a day late
-          //from the upcoming shift
-          activeShifts.forEach((activeShift) => {
-            let seDate = new Date(
-              new Date(activeShift.shiftEnd).getTime() + 30 * 60 * 1000
-            );
-            if (seDate < currentDate) {
-              models.Shift.update(
-                {
-                  statusId: shiftStatus.INACTIVE,
-                },
-                {
-                  where: {
-                    id: activeShift.id,
-                  },
-                }
-              );
-            } else {
-              if (activeShift.shiftEnd.getDate() == currentDate.getDate()) {
-                result.push(activeShift);
-              }
-            }
-          });
-          res.status(status.OK).send({
-            success: true,
-            message: result,
-          });
-        });
-      } catch (error) {
-        next(error);
-      }
-    },
-  },
+  // view_active_shift: {
+  //   async get(req, res, next) {
+  //     try {
+  //       let result = [];
+  //       const token = req.headers.authorization.replace("Bearer ", "");
+  //       const tokenDecoded = jwt.decode(token);
+  //       const currentDate = new Date();
+  //       //find an active shift
+  //       await models.Shift.findAll({
+  //         attributes: {
+  //           exclude: ["counter_id", "employee_id"],
+  //         },
+  //         where: {
+  //           [Op.and]: [
+  //             { employee_id: tokenDecoded.employeeId },
+  //             { statusId: shiftStatus.ACTIVE },
+  //           ],
+  //         },
+  //       }).then((activeShifts) => {
+  //         //there are active shifts that are a day late
+  //         //from the upcoming shift
+  //         activeShifts.forEach((activeShift) => {
+  //           let seDate = new Date(
+  //             new Date(activeShift.shiftEnd).getTime() + 30 * 60 * 1000
+  //           );
+  //           if (seDate < currentDate) {
+  //             models.Shift.update(
+  //               {
+  //                 statusId: shiftStatus.INACTIVE,
+  //               },
+  //               {
+  //                 where: {
+  //                   id: activeShift.id,
+  //                 },
+  //               }
+  //             );
+  //           } else {
+  //             if (activeShift.shiftEnd.getDate() == currentDate.getDate()) {
+  //               result.push(activeShift);
+  //             }
+  //           }
+  //         });
+  //         res.status(status.OK).send({
+  //           success: true,
+  //           message: result,
+  //         });
+  //       });
+  //     } catch (error) {
+  //       next(error);
+  //     }
+  //   },
+  // },
 
   view_shift_list: {
     async get(req, res, next) {
@@ -120,7 +120,6 @@ export default {
                 ".000Z"
             );
             let sePassedTime = currentDate.getTime() - seDate.getTime();
-            seDate.setDate(seDate.getDate() + 1);
             if (sePassedTime <= 30 * 60 * 1000) {
               asr.push(activeShift);
             } else {
@@ -165,40 +164,6 @@ export default {
         } else {
           const result = await models.Shift.update(
             { statusId: shiftStatus.INACTIVE },
-            {
-              where: {
-                [Op.and]: [
-                  { id: shiftId },
-                  { employeeId: tokenDecoded.employeeId },
-                ],
-              },
-            }
-          );
-          res.status(status.OK).send({
-            success: true,
-            message: result,
-          });
-        }
-      } catch (error) {
-        next(error);
-      }
-    },
-  },
-
-  checkin: {
-    async put(req, res, next) {
-      try {
-        const token = req.headers.authorization.replace("Bearer ", "");
-        const tokenDecoded = jwt.decode(token);
-        const { shiftId } = req.params;
-        if (!shiftId) {
-          res.status(status.INTERNAL_SERVER_ERROR).send({
-            success: false,
-            message: "Please input shiftId",
-          });
-        } else {
-          const result = await models.Shift.update(
-            { statusId: shiftStatus.ACTIVE },
             {
               where: {
                 [Op.and]: [

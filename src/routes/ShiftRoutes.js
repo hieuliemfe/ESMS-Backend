@@ -52,23 +52,6 @@ router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 */
 router.post('/', passport.authenticate('jwt', {session: false}), isBankTeller, Controller.create.post);
 
-/**
-* @swagger
-* /shifts/active-shift:
-*   get:
-*     tags:
-*       - Shifts
-*     name: Get an active shift by employee id.
-*     summary: Get an active shift by employee using current session's jwt token.
-*     consumes:
-*       - application/json
-*     responses:
-*       200:
-*         description: An active shift is displayed.
-*       400:
-*         description: Error.
-*/
-router.get('/active-shift', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_active_shift.get);
 
 /**
 * @swagger
@@ -123,32 +106,5 @@ router.get('/:shiftId/summary', passport.authenticate('jwt', { session: false })
 *         description: Error.
 */
 router.put('/:shiftId/checkout', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.checkout.put);
-
-/**
-* @swagger
-* /shifts/{shiftId}/checkin:
-*   put:
-*     tags:
-*       - Shifts
-*     name: Checkin for a shift.
-*     summary: Checkin for a shift with shiftId.
-*     consumes:
-*       - application/json
-*     parameters:
-*       - name: shiftId
-*         in: path
-*         required: true
-*         description: Select an shift with matching shiftId.
-*         schema:
-*           type : integer
-*           format: integer
-*           minimum: 1
-*     responses:
-*       200:
-*         description: Shift is checked out.
-*       400:
-*         description: Error.
-*/
-router.put('/:shiftId/checkin', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.checkin.put);
 
 export default router;

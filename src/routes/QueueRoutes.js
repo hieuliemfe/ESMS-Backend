@@ -109,6 +109,28 @@ router.post('/assign', passport.authenticate('jwt', { session: false }), isBankT
 */
 router.delete('/:queueId', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.delete.delete);
 
+/**
+* @swagger
+* /queues/{queueId}:
+*   put:
+*     tags:
+*       - Queues
+*     name: send back a queue
+*     summary: send to back a queue based on queueId
+*     consumes:
+*       - application/json
+*     parameters:
+*       - in: path
+*         name: queueId
+*         schema:
+*          type: integer
+*         description: Queue ID to send to the back
+*     responses:
+*       200:
+*         description: All queues sent back.
+*/
+router.put('/:queueId', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.sendBack.put);
+
 
 /**
 * @swagger

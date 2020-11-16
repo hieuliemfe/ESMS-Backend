@@ -38,7 +38,17 @@ const seed = async () => {
           .then(() => models.Counter.bulkCreate(counterSeed))
           .then(() => models.Employee.bulkCreate(employeeSeed))
           .then(() => models.Customer.bulkCreate(customerSeed))
-          .then(() => models.Queue.bulkCreate(queueSeed))
+          .then(() => {
+            const timer = ms => new Promise(res => setTimeout(res, ms))
+
+            async function load () { // We need to wrap the loop into an async function for this to work
+              for (var i = 0; i < queueSeed.length; i++) {
+                models.Queue.create(queueSeed[i])
+                await timer(1500); // then the created Promise can be awaited
+              }
+            }
+            load();          
+          })
           .then(() => models.Task.bulkCreate(taskSeed))
           //junction seeds
           .then(() => models.CounterCategory.bulkCreate(counterCategorySeed))

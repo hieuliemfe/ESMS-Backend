@@ -5,6 +5,7 @@ import models from "../db/models/index";
 import status from "http-status";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
+import Sequelize from "sequelize";
 import counterCategory from "../db/models/counterCategory";
 
 export default {
@@ -12,15 +13,15 @@ export default {
     async get(req, res, next) {
       const token = req.headers.authorization.replace("Bearer ", "");
       const tokenDecoded = jwt.decode(token);
-      await models.Shift.findOne({
+      await models.Employee.findOne({
         where: {
-          employeeId: tokenDecoded.employeeId,
+          id: tokenDecoded.employeeId,
         },
-      }).then((shift) => {
-        console.log(`COUNTERID : ${shift.counterId}`);
+      }).then((employee) => {
+        console.log(`COUNTERID : ${employee.counterId}`);
         models.CounterCategory.findAll({
           where: {
-            counter_id: shift.counterId,
+            counter_id: employee.counterId,
           },
         }).then((counterCategories) => {
           let categoryIds = [];
@@ -43,7 +44,7 @@ export default {
             where: {
               [Op.and]: [{ categoryId: categoryIds }, { counter_id: null }],
             },
-            order: [["number", "asc"]],
+            order: [["updatedAt", "asc"]],
             attributes: [
               "id",
               "number",
@@ -119,6 +120,32 @@ export default {
             message: result,
           });
         });
+      } catch (error) {
+        next(error);
+      }
+    },
+  },
+  sendBack: {
+    async put(req, res, next) {
+      try {
+        models.Queue.findByPk(req.params.queueId).then(instance => {
+          if(instance == null){
+            res.status(status.OK).send({
+              success: false,
+              message: 'Id not found!',
+            });
+            return
+          }
+          instance.set('updatedAt', new Date())
+          instance.changed('updatedAt', true)
+          instance.save().then((result) => {
+            console.log(result)
+            res.status(status.OK).send({
+              success: true,
+              message: 1,
+            });
+          });
+        });      
       } catch (error) {
         next(error);
       }
