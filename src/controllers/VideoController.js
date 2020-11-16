@@ -3,6 +3,7 @@
 import models from '../db/models/index';
 import status from 'http-status';
 import { uploadEvidence } from '../services/evidence-stream/service';
+import { getSignedURL } from '../services/evidence-stream/service';
 
 export default {
   upload_evidence: {
@@ -35,6 +36,20 @@ export default {
             })
           }
         }
+      } catch (error) {
+        next(error);
+      }
+    }
+  },
+  get_evidence: {
+    async get(req, res, next) {
+      try {  
+        const { gcpath } = req.query
+        const url = await getSignedURL(gcpath)
+        res.send({
+          success: true,
+          message: url
+        })
       } catch (error) {
         next(error);
       }
