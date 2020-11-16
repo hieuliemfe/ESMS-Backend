@@ -12,6 +12,13 @@ export default {
   view: {
     async get(req, res, next) {
       try {
+        const token = req.headers.authorization.replace("Bearer ", "");
+        const tokenDecoded = jwt.decode(token);
+        const user = await models.Employee.findOne({
+          where: {
+            id: tokenDecoded.employeeId,
+          },
+        });
         //Data from request
         const { order, employeeCode, fullname, status, shiftType } = req.query;
         const limit = req.query.limit ? parseInt(req.query.limit) : 10;
@@ -25,28 +32,6 @@ export default {
         //generate condition
         let whereEmployeeCondition = null;
         let whereShiftTypeCondition = "";
-        if (shiftType) {
-          switch (shiftType.toString().toLowerCase()) {
-            case "morning": {
-              whereShiftTypeCondition = {
-                shiftTypeId: shiftTypes.MORNING,
-              };
-              break;
-            }
-            case "afternoon": {
-              whereShiftTypeCondition = {
-                shiftTypeId: shiftTypes.AFTERNOON,
-              };
-              break;
-            }
-            case "night": {
-              whereShiftTypeCondition = {
-                shiftTypeId: shiftTypes.NIGHT,
-              };
-              break;
-            }
-          }
-        }
         let employee;
         if (fullname || employeeCode != undefined) {
           employee = await models.Employee.findOne({
@@ -61,17 +46,36 @@ export default {
             employee_id: employee.id,
           };
         }
-        var whereCondition = {
-          [Op.and]: [
-            {
-              sessionStart: { [Op.gte]: startDate },
-            },
-            {
-              sessionEnd: { [Op.lt]: endDate },
-            },
-            whereEmployeeCondition,
-          ],
-        };
+        var whereCondition = ""
+        if(user.roleId === 3){
+          whereCondition = {
+            [Op.and]: [
+              {
+                sessionStart: { [Op.gte]: startDate },
+              },
+              {
+                sessionEnd: { [Op.lt]: endDate },
+              },
+              whereEmployeeCondition,
+            ],
+          };
+        }
+        else {
+          whereCondition = {
+            [Op.and]: [
+              {
+                sessionStart: { [Op.gte]: startDate },
+              },
+              {
+                sessionEnd: { [Op.lt]: endDate },
+              },
+              {
+                angryWarningCount: { [Op.gt]: 0 }
+              },
+              whereEmployeeCondition,
+            ],
+          };
+        }
         //order the result
         var orderQuery = order ? order : "id,desc";
         const orderOptions = orderQuery.split(",");
@@ -84,9 +88,7 @@ export default {
             "sessionEnd",
             "sessionDuration",
             // 'info',
-            "angryWarningCount",
-            "createdAt",
-            "updatedAt",
+            "angryWarningCount"
           ],
           where: whereCondition,
           include: [
@@ -121,56 +123,6 @@ export default {
           session.setDataValue("employeeFullname", employee.fullname);
           if (session.info != undefined) {
             const parsedInfo = JSON.parse(session.info);
-            if (status != undefined) {
-              switch (status.toLowerCase()) {
-                case "negative": {
-                  if (parsedInfo.emotion_level < 0) {
-                    session.setDataValue("status", "Negative");
-                    sessionResults.push(session);
-                  }
-                  break;
-                }
-                case "positive": {
-                  if (parsedInfo.emotion_level > 0) {
-                    session.setDataValue("status", "Positive");
-                    sessionResults.push(session);
-                  }
-                  break;
-                }
-                case "neutral": {
-                  if (
-                    parsedInfo.emotion_level == 0 &&
-                    !parsedInfo.emotionless_warning
-                  ) {
-                    session.setDataValue("status", "Neutral");
-                    sessionResults.push(session);
-                  }
-                  break;
-                }
-                case "emotionless": {
-                  if (
-                    parsedInfo.emotion_level == 0 &&
-                    parsedInfo.emotionless_warning
-                  ) {
-                    session.setDataValue("status", "Emotionless");
-                    sessionResults.push(session);
-                  }
-                  break;
-                }
-              }
-            } else {
-              if (parsedInfo.emotion_level < 0) {
-                session.setDataValue("status", "Negative");
-              } else if (parsedInfo.emotion_level == 0) {
-                session.setDataValue("status", "Neutral");
-                if (parsedInfo.emotionless_warning) {
-                  session.setDataValue("status", "Emotionless");
-                }
-              } else if (parsedInfo.emotion_level > 0) {
-                session.setDataValue("status", "Positive");
-              }
-              // sessionResults.push(session);
-            }
           }
           sessionResults.push(session);
           angryWarningCount += session.angryWarningCount;

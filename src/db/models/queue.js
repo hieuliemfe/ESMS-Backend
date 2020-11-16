@@ -28,12 +28,12 @@ export default function (sequelize, DataTypes) {
     },
     createdAt: {
       type: DataTypes.DATE,
-      defaultValue: Sequelize.fn('NOW'),
+      defaultValue: DataTypes.NOW,
       field: 'created_at'
     },
     updatedAt: {
       type: DataTypes.DATE,
-      defaultValue: Sequelize.fn('NOW'),
+      defaultValue: DataTypes.NOW,
       field: 'updated_at'
     }
   }, {

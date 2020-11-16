@@ -205,8 +205,9 @@ export default {
                 result != null ? result.getDataValue("totalAmount") : 0;
             });
             employee.setDataValue("angryWarningCount", parseInt(angryCount));
-            // console.log(employee)
-            empResults.push(employee);
+            if(angryCount > 0){              
+              empResults.push(employee);
+            }
           }
         }
         empResults.sort(function (a, b) {
@@ -215,9 +216,10 @@ export default {
             a.getDataValue("angryWarningCount")
           );
         });
+        console.log(`================================${role === '3'}`)
         res.status(status.OK).send({
           success: true,
-          message: role !== 3 ? employees : empResults,
+          message: parseInt(role) !== 3 ? employees : empResults,
         });
       } catch (error) {
         next(error);
