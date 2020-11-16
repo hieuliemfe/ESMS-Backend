@@ -8,11 +8,15 @@ export class DefaultError extends Error {
 }
 
 export const handleError = (err, res) => {
-  const { statusCode = 400, message = 'You did something wrong, honey', errors } = err;
+  const {
+    statusCode = 400,
+    message = "You did something wrong, honey",
+    errors,
+  } = err;
   res.status(statusCode).json({
-    status: false,
+    success: false,
     statusCode,
     message,
-    errors
+    errors,
   });
 };
