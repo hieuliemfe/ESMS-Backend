@@ -48,7 +48,7 @@ export default {
         if (!employee)
           throw new DefaultError(
             status.BAD_REQUEST,
-            "Invalid employeeCode or password"
+            "Invalid Employee Code or Password"
           );
         const isValidPassword = bcrypt.compareSync(
           req.body.password,
@@ -57,7 +57,7 @@ export default {
         if (!isValidPassword)
           throw new DefaultError(
             status.BAD_REQUEST,
-            "Invalid employeeCode or password"
+            "Invalid Employee Code or Password"
           );
         const {
           id: employeeId,
