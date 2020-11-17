@@ -119,6 +119,9 @@ export default {
                 activeShift.ShiftType.shiftEnd +
                 ".000Z"
             );
+            if(activeShift.ShiftType.shiftEnd < activeShift.ShiftType.shiftStart){
+              seDate = new Date(seDate.getTime() + 24 * 60 * 60 * 1000)
+            }
             let sePassedTime = currentDate.getTime() - seDate.getTime();
             if (sePassedTime <= 30 * 60 * 1000) {
               asr.push(activeShift);
