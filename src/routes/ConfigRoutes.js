@@ -30,7 +30,7 @@ import { isAuthorized, isBankTeller, isAdmin } from '../middlewares/authorizatio
 *       401:
 *         description: Forbidden.
 */
-router.get('/', passport.authenticate('jwt', { session: false }), isAdmin, Controller.get_config.get);
+router.get('/', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.get_config.get);
 
 /**
 * @swagger
