@@ -286,17 +286,42 @@ export default {
             id: tokenDecoded.employeeId,
           },
         });
-        const shift = await models.Shift.create({
-          employeeId: employee.id,
-          shiftDate: new Date(),
-          statusId: shiftStatus.ACTIVE,
-          shiftTypeId: shiftTypeId,
-          counterId: employee.counterId,
-        });
-        res.status(status.OK).send({
-          success: true,
-          message: { shiftId: shift.id },
-        });
+        const activeShift = await models.Shift.findOne({
+          where: {
+            employeeId: employee.id,
+            shiftDate: new Date(),
+            shiftTypeId: shiftTypeId,
+            counterId: employee.counterId,
+          }
+        })
+        if (activeShift) {
+          await models.Shift.update(
+            { statusId: shiftStatus.ACTIVE },
+            {
+              where: {
+                id: activeShift.id
+              },
+            }
+          );
+          res.status(status.OK).send({
+            success: true,
+            message: { shiftId: activeShift.id },
+          });
+        } else
+        {
+          const shift = await models.Shift.create({
+            employeeId: employee.id,
+            shiftDate: new Date(),
+            statusId: shiftStatus.ACTIVE,
+            shiftTypeId: shiftTypeId,
+            counterId: employee.counterId,
+          });
+          res.status(status.OK).send({
+            success: true,
+            message: { shiftId: shift.id },
+          });
+        }
+        
       } catch (error) {
         next(error);
       }
