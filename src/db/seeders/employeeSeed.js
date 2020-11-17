@@ -2,21 +2,8 @@
 
 export default [
   {
-    id: '468ab892-7518-4520-8243-db1c1b9607dd',
-    employeeCode: 'AD0001',
-    fullname: 'Bui Nguyen Phuong Anh',
-    password: 'password',
-    email: 'anhbui@gmail.com',
-    phoneNumber: '0123456789',
-    isSubscribed: true,
-    avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/facefood-41e90.appspot.com/o/avatars%2Favatar_mitsuki.jpg?alt=media&token=136252c1-b7fb-45ea-bf88-fc08923ede81',
-    roleId: 1,
-    counterId: 2
-
-  },
-  {
     id: '9903c282-06ed-48fe-9607-76e7903f6b72',
-    employeeCode: 'AD0002',
+    employeeCode: 'AD0000',
     fullname: 'Nguyen Van Admin',
     password: 'password',
     email: 'admin@gmail.com',
@@ -35,31 +22,28 @@ export default [
     isSubscribed: true,
     avatarUrl: 'https://storage.googleapis.com/evidence_stream/avatar2.jpg',
     roleId: 2
-
   },
   {
     id: 'ef71e125-37b5-4a5f-87e1-fdda43a4ccb2',
     employeeCode: 'BT0001',
     fullname: 'Nguyen Tuan Anh',
     password: 'password',
-    email: 'nguyentuananh@gmail.com',
+    email: 'bankteller01@esms-team.site',
     phoneNumber: '0456123789',
     isSubscribed: true,
     avatarUrl: 'https://storage.googleapis.com/evidence_stream/avatar3.jpg',
     roleId: 3
-
   },
   {
     id: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
     employeeCode: 'BT0002',
-    password: 'password',
     fullname: 'Le Nguyen An Khang',
+    password: 'password',
     phoneNumber: '0456123789',
-    email: 'khangle@email.com',
-    is_subscribed: true,
+    email: 'bankteller02@esms-team.site',
+    isSubscribed: true,
     avatarUrl: 'https://storage.googleapis.com/evidence_stream/avatar1.jpg',
     roleId: 3,
     counterId: 1
-
   },
 ]
