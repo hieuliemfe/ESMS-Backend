@@ -108,6 +108,7 @@ export default {
         //get result by positive/negative
         let sessionResults = [];
         let angryWarningCount = 0;
+        let totalWarningSession = 0;
         let angryInDayOfWeeks = {
           Monday: 0,
           Tuesday: 0,
@@ -125,6 +126,9 @@ export default {
             const parsedInfo = JSON.parse(session.info);
           }
           sessionResults.push(session);
+          if(session.angryWarningCount > 0){
+            totalWarningSession += 1
+          }
           angryWarningCount += session.angryWarningCount;
           var sStartDate = session.sessionStart;
           var dayOfWeek = new Date(sStartDate).toLocaleString("en-US", {
@@ -145,6 +149,7 @@ export default {
           summary: {
             angryWarningCount: angryWarningCount,
             totalSessions: sessions.length,
+            totalWarningSession: totalWarningSession,
             angryInDayOfWeeks: angryInDayOfWeeks,
           },
           sessions: sessionResults,

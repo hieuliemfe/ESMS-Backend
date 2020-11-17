@@ -179,6 +179,20 @@ export default {
           for (let i = 0; i < employees.length; i++) {
             var employee = employees[i];
             var angryCount = 0;
+            var totalWarningSessions = 0
+            await models.Session.findAndCountAll({
+              where: {
+                [Op.and]: [
+                  { sessionStart: { [Op.gte]: startDate } },
+                  { sessionStart: { [Op.lt]: endDate } },
+                  { employeeId: employee.id },
+                  { angryWarningCount: { [Op.gt]: 0 } }
+                ]
+              }
+            }).then(result => {
+              totalWarningSessions = result.count
+            })
+            employee.setDataValue("totalWarningSessions", parseInt(totalWarningSessions));
             await models.Session.findAll({
               attributes: [
                 "employee_id",
@@ -211,10 +225,13 @@ export default {
           }
         }
         empResults.sort(function (a, b) {
-          return (
-            b.getDataValue("angryWarningCount") -
-            a.getDataValue("angryWarningCount")
-          );
+          if ((a.getDataValue("totalWarningSessions") - b.getDataValue("totalWarningSessions")) === 0){
+            return (
+              b.getDataValue("angryWarningCount") -
+              a.getDataValue("angryWarningCount")
+            );
+          }
+          return (b.getDataValue("totalWarningSessions") - a.getDataValue("totalWarningSessions"))
         });
         console.log(`================================${role === '3'}`)
         res.status(status.OK).send({
