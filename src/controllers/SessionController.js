@@ -83,7 +83,7 @@ export default {
         const sessions = await models.Session.findAll({
           attributes: [
             "id",
-            "employeeId",
+            // "employeeId",
             "sessionStart",
             "sessionEnd",
             "sessionDuration",
@@ -122,8 +122,8 @@ export default {
         };
         for (const session of sessions) {
           const employee = await models.Employee.findByPk(session.employeeId);
-          session.setDataValue("avatarUrl", employee.avatarUrl);
-          session.setDataValue("employeeFullname", employee.fullname);
+          // session.setDataValue("avatarUrl", employee.avatarUrl);
+          // session.setDataValue("employeeFullname", employee.fullname);
           if (session.info != undefined) {
             const parsedInfo = JSON.parse(session.info);
           }

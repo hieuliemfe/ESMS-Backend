@@ -183,7 +183,7 @@ export default {
         }
         //employeeCode & fullname only
         const employees = await models.Employee.findAll({
-          attributes: { exclude: ["password", "role_id"] },
+          attributes: { exclude: ["password", "role_id", "createdAt", "updatedAt", "counter_id", "counterId", "isSubscribed", "isDeleted"] },
           // include: {
           //   model: models.Suspension,
           //   attributes: {
