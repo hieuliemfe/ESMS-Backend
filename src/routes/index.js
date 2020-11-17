@@ -12,6 +12,7 @@ import ShiftRoutes from './ShiftRoutes';
 import ManagerRoutes from './ManagerRoutes';
 import VideoRoutes from './VideoRoutes';
 import ShiftTypeRoutes from './ShiftTypeRoutes';
+import ConfigRoutes from './ConfigRoutes';
 
 const Router = [
   {
@@ -69,6 +70,10 @@ const Router = [
   {
     path: '/videos',
     handler: VideoRoutes
+  },
+  {
+    path: '/configs',
+    handler: ConfigRoutes
   },
 ];
 
