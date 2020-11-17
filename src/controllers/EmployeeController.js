@@ -42,6 +42,17 @@ export default {
               attributes: { exclude: ["createdAt", "updatedAt"] },
               as: "Counter",
             },
+            {
+              model: models.Suspension,
+              attributes: {
+                exclude: ["createdAt", "updatedAt", "employeeId", "employee_id"]
+              },
+              where: {
+                expiredOn: { [Op.gt]: new Date() }
+              },
+              as: "Suspensions",
+              required:false
+            },
           ],
           attributes: ["id", "employeeCode", "password", "roleId"],
         });
@@ -74,6 +85,7 @@ export default {
             employeeCode: employee.employeeCode,
             roleName: employee.Role.roleName,
             Counter: employee.Counter,
+            Suspensions: employee.Suspensions
           },
           token,
         });
@@ -172,6 +184,17 @@ export default {
         //employeeCode & fullname only
         const employees = await models.Employee.findAll({
           attributes: { exclude: ["password", "role_id"] },
+          // include: {
+          //   model: models.Suspension,
+          //   attributes: {
+          //     exclude: ["createdAt", "updatedAt", "employeeId", "employee_id"]
+          //   },
+          //   where: {
+          //     expiredOn: { [Op.gt]: new Date() }
+          //   },
+          //   as: "Suspensions",
+          //   required:false
+          // },
           where: whereEmployeeCondition,
         });
         var empResults = [];
@@ -381,6 +404,38 @@ export default {
           } else {
             throw new DefaultError(status.NOT_FOUND, "Employee not found.");
           }
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  },
+  suspend: {
+    async put(req, res, next) {
+      try {
+        const employeeCode = req.params.employeeCode
+        const { reason, expiration } = req.body
+        const employee = await models.Employee.findOne({
+          where: {
+            employeeCode: employeeCode
+          }
+        })
+        if(!employee){
+          res.status(status.OK).send({
+            success: false,
+            message: "Employee Code is not found!",
+          });
+          return
+        }
+        let result = await models.Suspension.create(
+          {
+            employeeId: employee.id,
+            reason: reason,
+            expiredOn: expiration
+          })
+        res.status(status.OK).send({
+          success: true,
+          message: result ? 1 : 0,
         });
       } catch (error) {
         next(error);

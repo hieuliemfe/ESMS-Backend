@@ -148,6 +148,45 @@ router.put('/:employeeCode/subscription', passport.authenticate('jwt', { session
 
 /**
 * @swagger
+* /employees/{employeeCode}/suspend:
+*   put:
+*     tags:
+*       - Employees
+*     name: Suspend bank teller
+*     summary: Suspend a bank teller for a temporary period of time.
+*     consumes:
+*       - application/json
+*     parameters:
+*       - name: employeeCode
+*         in: path
+*         required: true
+*         description: Select an employee with matching employeeCode.
+*         schema:
+*           type : string
+*           format: string
+*           minimum: 1
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               reason:
+*                 type: string
+*               expiration:
+*                 type: string
+*     responses:
+*       200:
+*         description: Updated employee's subscription status.
+*       401:
+*         description: Employee not found.
+*/
+router.put('/:employeeCode/suspend', passport.authenticate('jwt', { session: false }), isManager, Controller.suspend.put);
+
+
+/**
+* @swagger
 * /employees/{employeeCode}:
 *   delete:
 *     tags:

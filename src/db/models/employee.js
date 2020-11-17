@@ -102,6 +102,10 @@ export default function (sequelize, DataTypes) {
     Employee.hasMany(models.Shift, {
       foreignKey: 'employee_id'
     });
+    //An employee may have many suspensions.
+    Employee.hasMany(models.Suspension, {
+      foreignKey: 'employee_id'
+    });
     //A counter can have many shifts
     Employee.belongsTo(models.Counter, {
       //counter_id
