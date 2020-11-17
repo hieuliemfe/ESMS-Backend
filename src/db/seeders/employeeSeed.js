@@ -3,7 +3,7 @@
 export default [
   {
     id: '9903c282-06ed-48fe-9607-76e7903f6b72',
-    employeeCode: 'AD0000',
+    employeeCode: 'AD0001',
     fullname: 'Nguyen Van Admin',
     password: 'password',
     email: 'admin@gmail.com',
