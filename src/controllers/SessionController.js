@@ -77,8 +77,8 @@ export default {
           };
         }
         //order the result
-        var orderQuery = order ? order : "id,desc";
-        const orderOptions = orderQuery.split(",");
+        // var orderQuery = order ? order : "id,desc";
+        // const orderOptions = orderQuery.split(",");
         //query starts here.
         const sessions = await models.Session.findAll({
           attributes: [
@@ -99,7 +99,9 @@ export default {
               as: "Shift",
             },
           ],
-          order: [[orderOptions[0], orderOptions[1]]],
+          order: [
+            ['sessionStart', 'DESC']
+          ],
           raw: false,
           limit: limit,
           offset: offset,
