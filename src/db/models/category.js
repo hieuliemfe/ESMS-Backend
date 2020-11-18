@@ -8,6 +8,10 @@ export default function (sequelize, DataTypes) {
       allowNull: false,
       field: 'category_name'
     },
+    subtitle : {
+      type: DataTypes.STRING,
+      field: 'subtitle'
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: Sequelize.fn('NOW'),
