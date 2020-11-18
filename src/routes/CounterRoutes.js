@@ -10,27 +10,7 @@ import Controller from '../controllers/CounterController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
-import { isAuthorized,isBankTeller } from '../middlewares/authorization';
-
-/**
-* @swagger
-* /counters/current:
-*   get:
-*     tags:
-*       - Counters
-*     name: Get counter.
-*     summary: get a current counter of emoloyee by jwt
-*     consumes:
-*       - application/json
-*     responses:
-*       200:
-*         description: A counter is displayed.
-*       400:
-*         description: Error.
-*/
-
-router.get('/current', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_by_employee.get);
-
+import { isAdmin, isAuthorized,isBankTeller, isManager, isManagerOrAdmin } from '../middlewares/authorization';
 
 /**
 * @swagger
@@ -46,7 +26,8 @@ router.get('/current', passport.authenticate('jwt', { session: false }), isBankT
 *       - in: path
 *         name: id
 *         schema:
-*           type: string
+*           type: integer
+*           nullable: true
 *         description: counter id to filter counters.
 *     responses:
 *       200:
@@ -56,6 +37,111 @@ router.get('/current', passport.authenticate('jwt', { session: false }), isBankT
 */
 
 router.get('/:id', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.view.get);
+
+/**
+* @swagger
+* /counters:
+*   post:
+*     tags:
+*       - Counters
+*     name: Create counter(s).
+*     summary: Create new counter(s)
+*     consumes:
+*       - application/json
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               counters:
+*                 type: array
+*                 items:
+*                   type: object
+*                   properties:
+*                     name:
+*                       type: string
+*                     number:
+*                       type: integer
+*     responses:
+*       201:
+*         description: A list of counters added is displayed.
+*       400:
+*         description: Error.
+*       401:
+*         description: Forbidden.
+*/
+router.post('/', passport.authenticate('jwt', { session: false }), isManagerOrAdmin, Controller.create_bulk.post);
+
+/**
+* @swagger
+* /counters:
+*   put:
+*     tags:
+*       - Counters
+*     name: Update counter(s).
+*     summary: Update new counter(s)
+*     consumes:
+*       - application/json
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               counters:
+*                 type: array
+*                 items:
+*                   type: object
+*                   properties:
+*                     id:
+*                       type: integer
+*                     name:
+*                       type: string
+*                     number:
+*                       type: integer
+*     responses:
+*       201:
+*         description: A list of counters added is displayed.
+*       400:
+*         description: Error.
+*       401:
+*         description: Forbidden.
+*/
+router.put('/', passport.authenticate('jwt', { session: false }), isManagerOrAdmin, Controller.update_bulk.put);
+
+/**
+* @swagger
+* /counters:
+*   delete:
+*     tags:
+*       - Counters
+*     name: Delete counter(s).
+*     summary: Delete new counter(s)
+*     consumes:
+*       - application/json
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               ids:
+*                 type: array
+*                 items:
+*                   type: integer
+*     responses:
+*       201:
+*         description: A list of counters added is displayed.
+*       400:
+*         description: Error.
+*       401:
+*         description: Forbidden.
+*/
+router.delete('/', passport.authenticate('jwt', { session: false }), isManagerOrAdmin, Controller.delete_bulk.delete);
 
 
 export default router;
