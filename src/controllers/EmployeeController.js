@@ -20,6 +20,8 @@ import {
 } from "../utils/emotionUtil";
 import { setEpochMillisTime } from "../utils/timeUtil";
 import { Readable } from "stream";
+import { id } from "date-fns/locale";
+import { SuspensionStatus } from "../db/config/statusConfig";
 
 const JWT_SECRET = publicRuntimeConfig.JWT_SECRET;
 
@@ -48,7 +50,10 @@ export default {
                 exclude: ["createdAt", "updatedAt", "employeeId", "employee_id"]
               },
               where: {
-                expiredOn: { [Op.gt]: new Date() }
+                [Op.and]:[
+                  {expiredOn: { [Op.gt]: new Date() }},
+                  {isDeleted: SuspensionStatus.NOT_DELETED}
+                ]
               },
               as: "Suspensions",
               required:false
@@ -184,17 +189,20 @@ export default {
         //employeeCode & fullname only
         const employees = await models.Employee.findAll({
           attributes: { exclude: ["password", "role_id", "createdAt", "updatedAt", "counter_id", "counterId", "isSubscribed", "isDeleted"] },
-          // include: {
-          //   model: models.Suspension,
-          //   attributes: {
-          //     exclude: ["createdAt", "updatedAt", "employeeId", "employee_id"]
-          //   },
-          //   where: {
-          //     expiredOn: { [Op.gt]: new Date() }
-          //   },
-          //   as: "Suspensions",
-          //   required:false
-          // },
+         include:{
+          model: models.Suspension,
+          attributes: {
+            exclude: ["createdAt", "updatedAt", "employeeId", "employee_id"]
+          },
+          where: {
+            [Op.and]:[
+              {expiredOn: { [Op.gt]: new Date() }},
+              {isDeleted: SuspensionStatus.NOT_DELETED}
+            ]
+          },
+          as: "Suspensions",
+          required:false
+          },
           where: whereEmployeeCondition,
         });
         var empResults = [];
@@ -424,7 +432,7 @@ export default {
     },
   },
   suspend: {
-    async put(req, res, next) {
+    async post(req, res, next) {
       try {
         const employeeCode = req.params.employeeCode
         const { reason, expiration } = req.body
@@ -446,7 +454,87 @@ export default {
             reason: reason,
             expiredOn: expiration
           })
-        res.status(status.OK).send({
+        res.status(status.CREATED).send({
+          success: true,
+          message: result ? 1 : 0,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  },
+  update_suspension: {
+    async put(req, res, next) {
+      try {
+        const { reason, expiration, id } = req.body
+        const employeeCode = req.params.employeeCode
+        const employee = await models.Employee.findOne({
+          where: {
+            employeeCode: employeeCode
+          }
+        })
+        if(!employee){
+          res.status(status.OK).send({
+            success: false,
+            message: "Employee Code is not found!",
+          });
+          return
+        }
+        let result = await models.Suspension.bulkCreate([
+          {
+            id: id,
+            employeeId: employee.id,
+            reason: reason,
+            expiredOn: expiration
+          }],
+          { updateOnDuplicate: ["reason", "expiration", "employeeId", "updatedAt"] })
+        res.status(status.ACCEPTED).send({
+          success: true,
+          message: result ? 1 : 0,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  },
+  delete_suspension: {
+    async delete(req, res, next) {
+      try {
+        const suspensionId = req.params.suspensionId
+        const employeeCode = req.params.employeeCode
+        const employee = await models.Employee.findOne({
+          where: {
+            employeeCode: employeeCode
+          }
+        })
+        const suspension = await models.Suspension.findOne({
+          where: {
+            id: suspensionId
+          }
+        })
+        if(! suspension){
+          res.status(status.BAD_REQUEST).send({
+            success: false,
+            message: "Suspension is not found!",
+          });
+          return
+        }
+        if(!employee){
+          res.status(status.BAD_REQUEST).send({
+            success: false,
+            message: "Employee Code is not found!",
+          });
+          return
+        }
+        let result = await models.Suspension.bulkCreate([
+          {
+            id: suspensionId,
+            employeeId: employee.id,
+            expiredOn: suspension.expiredOn,
+            isDeleted: SuspensionStatus.DELETED
+          }],
+          { updateOnDuplicate: ["isDeleted", "employeeId", "updatedAt"] })
+        res.status(status.ACCEPTED).send({
           success: true,
           message: result ? 1 : 0,
         });

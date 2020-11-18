@@ -10,3 +10,8 @@ export const shiftStatus = {
   ACTIVE: 1,
   INACTIVE: 0
 }
+
+export const SuspensionStatus = {
+  DELETED: 1,
+  NOT_DELETED: 0,
+}

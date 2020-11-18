@@ -41,7 +41,7 @@ export default {
     async put(req, res, next) {
       try {
         const { categories } = req.body
-        let result = await models.Category.bulkCreate(categories, { updateOnDuplicate: ["categoryName", "subtitle", "createdAt", "updatedAt"] })
+        let result = await models.Category.bulkCreate(categories, { updateOnDuplicate: ["categoryName", "subtitle", "updatedAt"] })
         if(result.length > 0){
           result.forEach(element => {
             element.setDataValue("createdAt", undefined)

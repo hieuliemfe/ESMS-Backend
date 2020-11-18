@@ -1,5 +1,6 @@
 /* jshint indent: 1 */
 import { Sequelize } from 'sequelize';
+import { SuspensionStatus } from '../config/statusConfig';
 
 export default function (sequelize, DataTypes) {
   const Suspension = sequelize.define('Suspension', {
@@ -17,6 +18,11 @@ export default function (sequelize, DataTypes) {
     reason: {
       type: DataTypes.TEXT,
       field: 'reason',
+    },
+    isDeleted: {
+      type: DataTypes.INTEGER,
+      field: 'is_deleted',
+      defaultValue: SuspensionStatus.NOT_DELETED,
     },
     employeeId: {
       type: DataTypes.UUID,

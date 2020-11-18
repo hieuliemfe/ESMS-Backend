@@ -149,7 +149,7 @@ router.put('/:employeeCode/subscription', passport.authenticate('jwt', { session
 /**
 * @swagger
 * /employees/{employeeCode}/suspend:
-*   put:
+*   post:
 *     tags:
 *       - Employees
 *     name: Suspend bank teller
@@ -182,7 +182,80 @@ router.put('/:employeeCode/subscription', passport.authenticate('jwt', { session
 *       401:
 *         description: Employee not found.
 */
-router.put('/:employeeCode/suspend', passport.authenticate('jwt', { session: false }), isManager, Controller.suspend.put);
+router.post('/:employeeCode/suspend', passport.authenticate('jwt', { session: false }), isManager, Controller.suspend.post);
+
+/**
+* @swagger
+* /employees/{employeeCode}/suspend:
+*   put:
+*     tags:
+*       - Employees
+*     name: Update suspension of bank teller
+*     summary: Update suspension information of a bank teller.
+*     consumes:
+*       - application/json
+*     parameters:
+*       - name: employeeCode
+*         in: path
+*         required: true
+*         description: Select an employee with matching employeeCode.
+*         schema:
+*           type : string
+*           format: string
+*           minimum: 1
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               id:
+*                 type: integer
+*               reason:
+*                 type: string
+*               expiration:
+*                 type: string
+*     responses:
+*       200:
+*         description: Updated employee's subscription status.
+*       401:
+*         description: Employee not found.
+*/
+router.put('/:employeeCode/suspend', passport.authenticate('jwt', { session: false }), isManager, Controller.update_suspension.put);
+
+/**
+* @swagger
+* /employees/{employeeCode}/suspend/{suspensionId}:
+*   delete:
+*     tags:
+*       - Employees
+*     name: Delete suspension of bank teller
+*     summary: Delete suspension information of a bank teller.
+*     consumes:
+*       - application/json
+*     parameters:
+*       - name: employeeCode
+*         in: path
+*         required: true
+*         description: Select an employee with matching employeeCode.
+*         schema:
+*           type : string
+*           format: string
+*           minimum: 1
+*       - name: suspensionId
+*         in: path
+*         required: true
+*         description: Select a suspension with matching suspensionId.
+*         schema:
+*           type : integer
+*     responses:
+*       201:
+*         description: Suspension is deleted.
+*       401:
+*         description: Employee not found.
+*/
+router.delete('/:employeeCode/suspend/:suspensionId', passport.authenticate('jwt', { session: false }), isManager, Controller.delete_suspension.delete);
 
 
 /**
