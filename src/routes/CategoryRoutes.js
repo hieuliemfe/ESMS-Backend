@@ -10,7 +10,7 @@ import Controller from '../controllers/CategoryController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
-import { isBankTeller } from '../middlewares/authorization';
+import { isAdmin, isBankTeller } from '../middlewares/authorization';
 
 /**
 * @swagger
@@ -84,5 +84,79 @@ router.get('/counters/:counterId', passport.authenticate('jwt', { session: false
 *         description: Forbidden.
 */
 router.get('/:categoryId/tasks', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_tasks_by_category_id.get);
+
+/**
+* @swagger
+* /categories:
+*   post:
+*     tags:
+*       - Categories
+*     name: create categories.
+*     summary: create new categories
+*     consumes:
+*       - application/json
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               categories:
+*                 type: array
+*                 items:
+*                   type: object
+*                   properties:
+*                     categoryName:
+*                       type: string
+*                     subtitle:
+*                       type: string
+*     responses:
+*       201:
+*         description: A list of categories added is displayed.
+*       400:
+*         description: Error.
+*       401:
+*         description: Forbidden.
+*/
+router.post('/', passport.authenticate('jwt', { session: false }), isAdmin, Controller.bulk_create.post);
+
+/**
+* @swagger
+* /categories:
+*   put:
+*     tags:
+*       - Categories
+*     name: Update categories.
+*     summary: Update categories
+*     consumes:
+*       - application/json
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               categories:
+*                 type: array
+*                 items:
+*                   type: object
+*                   properties:
+*                     id:
+*                       type: integer
+*                     categoryName:
+*                       type: string
+*                     subtitle:
+*                       type: string
+*     responses:
+*       201:
+*         description: A list of categories updated is displayed.
+*       400:
+*         description: Error.
+*       401:
+*         description: Forbidden.
+*/
+router.put('/', passport.authenticate('jwt', { session: false }), isAdmin, Controller.bulk_update.put);
 
 export default router;

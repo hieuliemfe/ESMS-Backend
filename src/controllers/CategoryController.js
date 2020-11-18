@@ -17,7 +17,46 @@ export default {
       }
     },
   },
-
+  bulk_create: {
+    async post(req, res, next) {
+      try {
+        const { categories } = req.body
+        let result = await models.Category.bulkCreate(categories)
+        if(result.length > 0){
+          result.forEach(element => {
+            element.setDataValue("createdAt", undefined)
+            element.setDataValue("updatedAt", undefined)
+          });
+        }
+        res.status(status.CREATED).send({
+          success: true,
+          message: result,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  },
+  bulk_update: {
+    async put(req, res, next) {
+      try {
+        const { categories } = req.body
+        let result = await models.Category.bulkCreate(categories, { updateOnDuplicate: ["categoryName", "subtitle", "createdAt", "updatedAt"] })
+        if(result.length > 0){
+          result.forEach(element => {
+            element.setDataValue("createdAt", undefined)
+            element.setDataValue("updatedAt", undefined)
+          });
+        }
+        res.status(status.CREATED).send({
+          success: true,
+          message: result,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  },
   view_by_counter_id: {
     async get(req, res, next) {
       try {
