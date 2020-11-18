@@ -1,7 +1,8 @@
 'use strict'
 import { setEpochMillisTime, updateEpochMillisTime } from '../../utils/timeUtil';
-
-let currentDate = new Date().toLocaleString("en-US", { timeZone: "UTC" });
+const date = new Date();
+date.setDate(date.getDate() - 8 * 24 * 60 * 60 * 1000);
+let currentDate = date.toLocaleString("en-US", { timeZone: "UTC" });
 currentDate = setEpochMillisTime(currentDate, 0, 0, 0, 0);
 export default [
   {
