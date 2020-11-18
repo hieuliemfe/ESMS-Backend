@@ -119,7 +119,7 @@ router.put('/', passport.authenticate('jwt', { session: false }), isManagerOrAdm
 *     tags:
 *       - Counters
 *     name: Delete counter(s).
-*     summary: Delete new counter(s)
+*     summary: Delete counter(s)
 *     consumes:
 *       - application/json
 *     requestBody:

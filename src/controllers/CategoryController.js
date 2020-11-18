@@ -2,6 +2,8 @@
 
 import models from "../db/models/index";
 import status from "http-status";
+import db from "../db/models/index";
+import { Op } from "sequelize";
 
 export default {
   view_all: {
@@ -53,6 +55,22 @@ export default {
           message: result,
         });
       } catch (error) {
+        next(error);
+      }
+    },
+  },
+  bulk_delete: {
+    async delete(req, res, next) {
+      const queryInterface = db.sequelize.getQueryInterface();
+      const ids = req.body.ids
+      try {
+          let result = await queryInterface.bulkDelete('category', {id: {[Op.in]: ids}})
+          res.status(status.OK).send({
+            success: true,
+            message: result[0].affectedRows,
+          });
+      } catch (error) {
+        console.log(`----------------${error}`)
         next(error);
       }
     },

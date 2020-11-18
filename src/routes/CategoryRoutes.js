@@ -10,7 +10,7 @@ import Controller from '../controllers/CategoryController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
-import { isAdmin, isBankTeller } from '../middlewares/authorization';
+import { isAdmin, isBankTeller, isManagerOrAdmin } from '../middlewares/authorization';
 
 /**
 * @swagger
@@ -158,5 +158,36 @@ router.post('/', passport.authenticate('jwt', { session: false }), isAdmin, Cont
 *         description: Forbidden.
 */
 router.put('/', passport.authenticate('jwt', { session: false }), isAdmin, Controller.bulk_update.put);
+
+/**
+* @swagger
+* /categories:
+*   delete:
+*     tags:
+*       - Categories
+*     name: Delete Category(s).
+*     summary: Delete Category(s)
+*     consumes:
+*       - application/json
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               ids:
+*                 type: array
+*                 items:
+*                   type: integer
+*     responses:
+*       201:
+*         description: Number of categories deleted is displayed.
+*       400:
+*         description: Error.
+*       401:
+*         description: Forbidden.
+*/
+router.delete('/', passport.authenticate('jwt', { session: false }), isManagerOrAdmin, Controller.bulk_delete.delete);
 
 export default router;

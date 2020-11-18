@@ -28,10 +28,16 @@ export default function (sequelize, DataTypes) {
 
   Category.associate = function (models) {
     Category.hasMany(models.Queue, {
-      foreignKey: "category_id"
+      foreignKey: "category_id",
+      onDelete: 'cascade'
     });
     Category.hasMany(models.Task, {
-      foreignKey: "category_id"
+      foreignKey: "category_id",
+      onDelete: 'cascade'
+    });
+    Category.hasMany(models.CounterCategory, {
+      foreignKey: "category_id",
+      onDelete: 'cascade'
     });
   }
   return Category;

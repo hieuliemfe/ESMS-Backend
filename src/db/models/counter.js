@@ -32,6 +32,11 @@ export default function (sequelize, DataTypes) {
     Counter.hasMany(models.Queue, {
       as: 'Queue',
       foreignKey: 'counter_id',
+      onDelete: 'cascade',
+    });
+    Counter.hasMany(models.CounterCategory, {
+      foreignKey: "counter_id",
+      onDelete: 'cascade',
     });
   }
   return Counter;
