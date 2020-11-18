@@ -3,7 +3,7 @@
 import { setEpochMillisTime, updateEpochMillisTime } from '../../utils/timeUtil';
 import { shiftStatus } from '../config/statusConfig'
 
-let currentDate = new Date((new Date().getTime() - 7*24*60*60*1000)).toLocaleString("en-US", {timeZone: "UTC"})
+let currentDate = new Date((new Date().getTime() - 8*24*60*60*1000)).toLocaleString("en-US", {timeZone: "UTC"})
 console.log(`======== Date : ${currentDate}`)
 currentDate = setEpochMillisTime(currentDate, 0, 0, 0, 0);
 console.log(`======== Date Epoch: ${currentDate}`)
