@@ -17,6 +17,6 @@ export default [
 
   {
     categoryName: "Make a transfer",
-    categoryName: "Transfer money to another account",
+    subtitle: "Transfer money to another account",
   },
 ]
