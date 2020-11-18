@@ -13,6 +13,7 @@ import ManagerRoutes from './ManagerRoutes';
 import VideoRoutes from './VideoRoutes';
 import ShiftTypeRoutes from './ShiftTypeRoutes';
 import ConfigRoutes from './ConfigRoutes';
+import TaskRoutes from './TaskRoutes';
 
 const Router = [
   {
@@ -74,6 +75,10 @@ const Router = [
   {
     path: '/configs',
     handler: ConfigRoutes
+  },
+  {
+    path: '/Tasks',
+    handler: TaskRoutes
   },
 ];
 
