@@ -9,7 +9,11 @@ export default {
   view_all: {
     async get(req, res, next) {
       try {
-        const result = await models.Category.findAll();
+        const result = await models.Category.findAll({
+          attributes: {
+            exclude: ["createdAt", "updatedAt"]
+          }
+        });
         res.status(status.OK).send({
           success: true,
           message: result,

@@ -106,18 +106,26 @@ export default {
           return res.status(400).send("Please upload an excel file!");
         }
         const stream = Readable.from(req.file.buffer);
-        await readXlsxFile(stream).then((rows) => {
+        await readXlsxFile(stream).then(async (rows) => {
           // skip header
+          let employees = []
           rows.shift();
-          rows.forEach(async (row) => {
-            //create employee
-            let employee = await generateEmployeeInfo(row[1], row[3], row[2]);
-            await models.Employee.create(employee);
+          for (let index = 0; index < rows.length; index++) {
+            let row = rows[index]   
+            let employee = await generateEmployeeInfo(row[1], row[3], row[2], row[4], row[5]);
+            let created = await models.Employee.create(employee);
+            created.setDataValue("password", employee.password)
+            created.setDataValue("createdAt", undefined)
+            created.setDataValue("updatedAt", undefined)
+            created.setDataValue("isSubscribed", undefined)
+            created.setDataValue("isDeleted", undefined)
+            created.setDataValue("createdAt", undefined) 
+            employees.push(created)         
+          }
+          res.status(status.CREATED).send({
+            success: true,
+            message: employees,
           });
-        });
-        res.status(status.CREATED).send({
-          success: true,
-          message: 1,
         });
       } catch (error) {
         next(error);

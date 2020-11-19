@@ -4,7 +4,7 @@ import models from '../db/models/index';
 function minFourDigits(number) {
     return (number < 1000 ? '000' : '') + number;
 }
-export const generateEmployeeInfo = async (fullname, roleId, phoneNumber, avatarUrl) => {
+export const generateEmployeeInfo = async (fullname, roleId, phoneNumber, avatarUrl, counterId) => {
     const currentDate = Date.now();
     let day = new Date(currentDate);
     //Generate fullname:
@@ -46,6 +46,7 @@ export const generateEmployeeInfo = async (fullname, roleId, phoneNumber, avatar
         password: password,
         email: email,
         roleId: roleId,
+        counterId: counterId,
         phoneNumber: phoneNumber,
         avatarUrl: avatarUrl
     }
