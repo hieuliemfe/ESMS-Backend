@@ -18,6 +18,8 @@ const publicRuntimeConfig = {
   GCS_EVIDENCE_PROJECT_ID: process.env.GCS_EVIDENCE_PROJECT_ID,
   GCS_EVIDENCE_CREDENTIAL: process.env.GCS_EVIDENCE_CREDENTIAL,
   GCS_EVIDENCE_BUCKET_NAME: process.env.GCS_EVIDENCE_BUCKET_NAME,
+  //Action configs
+  ACTION_CONFIG_PATH: process.env.ACTION_CONFIG_PATH,
   //Email service Configs
   EMAIL_SERVICE_DKIM_KEY: process.env.EMAIL_SERVICE_DKIM_KEY,
   

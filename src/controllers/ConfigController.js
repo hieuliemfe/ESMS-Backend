@@ -2,11 +2,13 @@
 
 // import models from '../db/models/index';
 import status from 'http-status';
+import path from 'path'
 const fs = require('fs');
 export default {
   get_config: {
     async get(req, res, next) {
-        let config = JSON.parse(fs.readFileSync(process.env.ACTION_CONFIG_PATH))
+        console.log(`=============${process.env.ACTION_CONFIG_PATH}`)
+        let config = JSON.parse(fs.readFileSync(path.join(__dirname + '/../' + process.env.ACTION_CONFIG_PATH)))
         try {  
         res.status(status.OK).send({
             success: true,
