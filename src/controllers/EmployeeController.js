@@ -84,13 +84,24 @@ export default {
           { employeeId, employeeCode, roleName },
           JWT_SECRET
         );
+        if(employee.Suspensions.length > 0){
+          return res.status(status.BAD_REQUEST).send({
+            success: true,
+            message: {
+              employeeCode: employee.employeeCode,
+              roleName: employee.Role.roleName,
+              Counter: employee.Counter,
+              suspensions: employee.Suspensions
+            },
+            token,
+          });
+        }
         return res.status(status.OK).send({
           success: true,
           message: {
             employeeCode: employee.employeeCode,
             roleName: employee.Role.roleName,
-            Counter: employee.Counter,
-            Suspensions: employee.Suspensions
+            Counter: employee.Counter
           },
           token,
         });
