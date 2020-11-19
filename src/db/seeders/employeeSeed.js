@@ -32,7 +32,8 @@ export default [
     phoneNumber: '0456123789',
     isSubscribed: true,
     avatarUrl: 'https://storage.googleapis.com/evidence_stream/avatar3.jpg',
-    roleId: 3
+    roleId: 3,
+    counterId: 2
   },
   {
     id: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
@@ -45,5 +46,29 @@ export default [
     avatarUrl: 'https://storage.googleapis.com/evidence_stream/avatar1.jpg',
     roleId: 3,
     counterId: 1
+  },
+  {
+    id: '513a3d36-ff0d-45cb-99ce-a554502fe6a0',
+    employeeCode: 'BT0003',
+    fullname: 'Tran Thien Loc',
+    password: 'password',
+    phoneNumber: '0316153667',
+    email: 'bankteller03@esms-team.site',
+    isSubscribed: true,
+    avatarUrl: 'https://storage.googleapis.com/evidence_stream/avatar6.jpg',
+    roleId: 3,
+    counterId: 3
+  },
+  {
+    id: '513a3d47-dd0d-65cb-99ce-a554502fe6a0',
+    employeeCode: 'BT0004',
+    fullname: 'Phi Do Hong Duc',
+    password: 'password',
+    phoneNumber: '0366153449',
+    email: 'bankteller04@esms-team.site',
+    isSubscribed: true,
+    avatarUrl: 'https://storage.googleapis.com/evidence_stream/avatar5.jpg',
+    roleId: 3,
+    counterId: 4
   },
 ]
