@@ -242,7 +242,7 @@ export default {
                         res.writeHead(200, {
                             'Content-Length': Buffer.byteLength(pdfData),
                             'Content-Type': 'application/pdf',
-                            'Content-disposition': 'attachment;filename=report.pdf',
+                            'Content-disposition': 'attachment;filename=ESMSReport.pdf',
                         })
                             .end(pdfData);
 
