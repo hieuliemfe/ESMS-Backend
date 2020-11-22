@@ -79,7 +79,7 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
         .font("Helvetica-Bold")
         .text(`Time created: `, 50, invoiceTableTop - 60)
         .font("Helvetica")
-        .text(moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY at HH:mm:ss"), 130, invoiceTableTop - 60)
+        .text(moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY [at] HH:mm:ss"), 130, invoiceTableTop - 60)
         .font("Helvetica-Bold")
         .text(`From date: `, 50, invoiceTableTop - 40)
         .font("Helvetica")
@@ -116,7 +116,7 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
             data[i].fullname,
             data[i].getDataValue("totalSession"),
             data[i].getDataValue("totalWarningSessions"),
-            !isNaN(data[i].getDataValue("angrySessionPercent")) ? (parseFloat(data[i].getDataValue("angrySessionPercent"))*100).toFixed(2) +'%' : "-",
+            !isNaN(data[i].getDataValue("angrySessionPercent")) ? (parseFloat(data[i].getDataValue("angrySessionPercent"))*100).toFixed(3) +'%' : "-",
             data[i].getDataValue("angrySessionPercent") > config.angry_percent_max ? "Need for action" : "-"
         );
         generateHr(doc, position + 20);
