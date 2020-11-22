@@ -77,19 +77,19 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
     doc
         .fontSize(11)
         .font("Helvetica-Bold")
-        .text(`Created at: `, 50, invoiceTableTop - 60)
+        .text(`Time created: `, 50, invoiceTableTop - 60)
         .font("Helvetica")
-        .text(moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY, HH:mm:ss"), 130, invoiceTableTop - 60)
+        .text(moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY at HH:mm:ss"), 130, invoiceTableTop - 60)
         .font("Helvetica-Bold")
-        .text(`From Date: `, 50, invoiceTableTop - 40)
+        .text(`From date: `, 50, invoiceTableTop - 40)
         .font("Helvetica")
         .text(startDate, 130, invoiceTableTop - 40)
         .font("Helvetica-Bold")
-        .text(`To Date: `, 250, invoiceTableTop - 40)
+        .text(`To date: `, 250, invoiceTableTop - 40)
         .font("Helvetica")
         .text(endDate, 330, invoiceTableTop - 40)
         .font("Helvetica-Bold")
-        .text(`Acceptable percentage of warning session: `, 50, invoiceTableTop - 5)
+        .text(`Acceptable Percentage of Warning session: `, 50, invoiceTableTop - 5)
         .font("Helvetica")
         .text(parseFloat(config.angry_percent_max)*100+'%', 300, invoiceTableTop - 5)
 
@@ -98,7 +98,7 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
     generateTableRow(
         doc,
         invoiceTableTop + 30,
-        "Employee Code",
+        "Employee code",
         "Full name",
         "Total session",
         "Warning session",
