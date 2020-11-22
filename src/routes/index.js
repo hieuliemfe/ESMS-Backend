@@ -14,6 +14,7 @@ import VideoRoutes from './VideoRoutes';
 import ShiftTypeRoutes from './ShiftTypeRoutes';
 import ConfigRoutes from './ConfigRoutes';
 import TaskRoutes from './TaskRoutes';
+import ReportRoutes from './ReportRoutes';
 
 const Router = [
   {
@@ -77,8 +78,12 @@ const Router = [
     handler: ConfigRoutes
   },
   {
-    path: '/Tasks',
+    path: '/tasks',
     handler: TaskRoutes
+  },
+  {
+    path: '/reports',
+    handler: ReportRoutes
   },
 ];
 
