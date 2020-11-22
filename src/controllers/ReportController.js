@@ -9,12 +9,13 @@ import { SuspensionStatus } from "../db/config/statusConfig";
 import path from 'path'
 import { da } from "date-fns/locale";
 const fs = require('fs');
+const moment = require('moment-timezone');
 function generateHr(doc, y) {
     doc
       .strokeColor("#aaaaaa")
       .lineWidth(1)
-      .moveTo(50, y)
-      .lineTo(790, y)
+      .moveTo(50-10, y)
+      .lineTo(760, y)
       .stroke();
   }
 function generateTableRow( doc, y, c1, c2, c3, c4, c5, c6) {
@@ -26,22 +27,73 @@ function generateTableRow( doc, y, c1, c2, c3, c4, c5, c6) {
         .text(c4, 370, y)
         .text(c5, 480, y)
         .text(c6, 660, y)
+    doc
+        .strokeColor("#aaaaaa")
+        .lineWidth(1)
+        .moveTo(50-10, y-10)
+        .lineTo(50-10, y+20)
+        .stroke();
+    doc
+        .strokeColor("#aaaaaa")
+        .lineWidth(1)
+        .moveTo(150-10, y-10)
+        .lineTo(150-10, y+20)
+        .stroke();
+    doc
+        .strokeColor("#aaaaaa")
+        .lineWidth(1)
+        .moveTo(280-10, y-10)
+        .lineTo(280-10, y+20)
+        .stroke();
+    doc
+        .strokeColor("#aaaaaa")
+        .lineWidth(1)
+        .moveTo(370-10, y-10)
+        .lineTo(370-10, y+20)
+        .stroke();
+    doc
+        .strokeColor("#aaaaaa")
+        .lineWidth(1)
+        .moveTo(480-10, y-10)
+        .lineTo(480-10, y+20)
+        .stroke();
+    doc
+        .strokeColor("#aaaaaa")
+        .lineWidth(1)
+        .moveTo(660-10, y-10)
+        .lineTo(660-10, y+20)
+        .stroke();
+    doc
+        .strokeColor("#aaaaaa")
+        .lineWidth(1)
+        .moveTo(760, y-10)
+        .lineTo(760, y+20)
+        .stroke();
 }
 function generateInvoiceTable(doc, data, startDate, endDate) {
     let config = JSON.parse(fs.readFileSync(path.join(__dirname + '/../' + process.env.ACTION_CONFIG_PATH)))
     let i,
         invoiceTableTop = 180;
-    doc.font("Helvetica-Bold");
-    generateTableRow(
-        doc,
-        invoiceTableTop,
-        "From",
-        startDate,
-        "To",
-        endDate,
-        "Acceptable percent",
-        parseFloat(config.angry_percent_max)*100 + '%'
-    );
+    doc
+        .fontSize(11)
+        .font("Helvetica-Bold")
+        .text(`Created at: `, 50, invoiceTableTop - 60)
+        .font("Helvetica")
+        .text(moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY, HH:mm:ss"), 130, invoiceTableTop - 60)
+        .font("Helvetica-Bold")
+        .text(`From Date: `, 50, invoiceTableTop - 40)
+        .font("Helvetica")
+        .text(startDate, 130, invoiceTableTop - 40)
+        .font("Helvetica-Bold")
+        .text(`To Date: `, 250, invoiceTableTop - 40)
+        .font("Helvetica")
+        .text(endDate, 330, invoiceTableTop - 40)
+        .font("Helvetica-Bold")
+        .text(`Acceptable percentage of warning session: `, 50, invoiceTableTop - 5)
+        .font("Helvetica")
+        .text(parseFloat(config.angry_percent_max)*100+'%', 300, invoiceTableTop - 5)
+
+    doc.font("Helvetica-Bold")
     generateHr(doc, invoiceTableTop + 20);
     generateTableRow(
         doc,
@@ -52,13 +104,11 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
         "Warning session",
         "Percentage of Warning session",
         "Note"
-
     );
     doc.font("Helvetica");
     generateHr(doc, invoiceTableTop + 50);
     for (i = 0; i < data.length; i++) {
         const position = invoiceTableTop + (i + 2) * 30;
-        console.log(isNaN(data[i].getDataValue("angrySessionPercent")))
         generateTableRow(
             doc,
             position,
@@ -66,7 +116,7 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
             data[i].fullname,
             data[i].getDataValue("totalSession"),
             data[i].getDataValue("totalWarningSessions"),
-            !isNaN(data[i].getDataValue("angrySessionPercent")) ? data[i].getDataValue("angrySessionPercent") : "-",
+            !isNaN(data[i].getDataValue("angrySessionPercent")) ? parseFloat(data[i].getDataValue("angrySessionPercent"))*100 +'%' : "-",
             data[i].getDataValue("angrySessionPercent") > config.angry_percent_max ? "Need for action" : "-"
         );
         generateHr(doc, position + 20);
@@ -79,7 +129,8 @@ export default {
                 const type = req.query.type
                 const startDate = req.query.startDate
                     ? req.query.startDate
-                    : setEpochMillisTime(0, 0, 0, 0, 0);
+                    // : setEpochMillisTime(0, 0, 0, 0, 0);
+                    : new Date((new Date()).getTime() - (13*24*60*60*1000))
                 const endDate = req.query.endDate ? req.query.endDate : new Date();
                 const employees = await models.Employee.findAll({
                     attributes: { exclude: ["password", "role_id", "createdAt", "updatedAt", "counter_id", "counterId", "isSubscribed", "isDeleted"] },
@@ -179,7 +230,7 @@ export default {
                 }
                 if (type === 'pdf') {
                     const PDFDocument = require('pdfkit');
-                    var myDoc = new PDFDocument({ bufferPages: true, size: [860, 842] });
+                    var myDoc = new PDFDocument({ bufferPages: true, size: [800, 842] });
                     let buffers = [];
                     myDoc.on('data', buffers.push.bind(buffers));
                     myDoc.on('end', () => {
@@ -197,8 +248,7 @@ export default {
                     myDoc.font('Times-Roman')
                         .fontSize(24)
                         .text(`Employee Status Report`, { align: 'center' });
-                        
-                    generateInvoiceTable(myDoc, empResults, startDate.toLocaleDateString("en-TT",{timezone: "Asia/Ho_Chi_Minh"}), endDate.toLocaleDateString("en-TT",{timezone: "Asia/Ho_Chi_Minh"}));
+                    generateInvoiceTable(myDoc, empResults, moment(startDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"), moment(endDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"));
                     myDoc.end();
                 }
 
