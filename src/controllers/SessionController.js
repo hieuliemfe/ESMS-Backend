@@ -34,16 +34,16 @@ export default {
         }
         let date = new Map()
         let tempDate = moment(startDate)
-        while(tempDate.format("DD-MM-YYYY") <= moment(endDate).tz("Asia/Ho_Chi_Minh").format("DD-MM-YYYY")){
+        while(tempDate.tz("Asia/Ho_Chi_Minh").format("DD-MM-YYYY") <= moment(endDate).tz("Asia/Ho_Chi_Minh").format("DD-MM-YYYY")){
           let temp = tempDate.tz("Asia/Ho_Chi_Minh").format("DD-MM-YYYY")
           await models.Session.findAndCountAll({
             where: {
               [Op.and]: [
                 {
-                  sessionStart: { [Op.gte]: new Date(tempDate.tz("UTC").format("YYYY-MM-DD") + "T00:00:00.000Z")},
+                  sessionStart: { [Op.gte]: new Date(tempDate.tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD") + "T00:00:00.000+07:00")},
                 },
                 {
-                  sessionEnd: { [Op.lt]: new Date(moment(tempDate).tz("UTC").add(1, 'days').format("YYYY-MM-DD") + "T00:00:00.000Z") },
+                  sessionEnd: { [Op.lt]: new Date(moment(tempDate).tz("Asia/Ho_Chi_Minh").add(1, 'days').format("YYYY-MM-DD") + "T00:00:00.000+07:00") },
                 },
                 whereEmployeeCondition,
               ],
