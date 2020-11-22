@@ -116,7 +116,7 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
             data[i].fullname,
             data[i].getDataValue("totalSession"),
             data[i].getDataValue("totalWarningSessions"),
-            !isNaN(data[i].getDataValue("angrySessionPercent")) ? (parseFloat(data[i].getDataValue("angrySessionPercent"))*100).toFixed(3) +'%' : "-",
+            !isNaN(data[i].getDataValue("angrySessionPercent")) ? (parseFloat(data[i].getDataValue("angrySessionPercent"))*100).toFixed(1) +'%' : "-",
             data[i].getDataValue("angrySessionPercent") > config.angry_percent_max ? "Need for action" : "-"
         );
         generateHr(doc, position + 20);
