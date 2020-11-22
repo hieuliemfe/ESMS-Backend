@@ -8,7 +8,60 @@ import { DefaultError } from "../utils/errorHandler";
 import { shiftStatus } from "../db/config/statusConfig";
 import { shiftTypes } from "../db/config/shiftTypeConfig";
 import { setEpochMillisTime } from "../utils/timeUtil";
+const moment = require('moment-timezone');
 export default {
+  available:{
+    async get(req, res, next) {
+      const { employeeCode } = req.query;
+      const startDate = req.query.startDate
+          ? req.query.startDate
+          : setEpochMillisTime(0, 0, 0, 0, 0);
+      const endDate = req.query.endDate ? req.query.endDate : new Date();
+      try {
+        let employee
+        if(employeeCode !== undefined){
+          employee = await models.Employee.findOne({
+            where: {
+              employeeCode: employeeCode
+            }
+          })
+        }
+        let whereEmployeeCondition = ""
+        if(employee){
+          whereEmployeeCondition = {
+            employeeId: employee.id
+          }
+        }
+        let date = new Map()
+        let tempDate = moment(startDate)
+        while(tempDate.format("DD-MM-YYYY") <= moment(endDate).tz("Asia/Ho_Chi_Minh").format("DD-MM-YYYY")){
+          let temp = tempDate.tz("Asia/Ho_Chi_Minh").format("DD-MM-YYYY")
+          await models.Session.findAndCountAll({
+            where: {
+              [Op.and]: [
+                {
+                  sessionStart: { [Op.gte]: new Date(tempDate.tz("UTC").format("YYYY-MM-DD") + "T00:00:00.000Z")},
+                },
+                {
+                  sessionEnd: { [Op.lt]: new Date(moment(tempDate).tz("UTC").add(1, 'days').format("YYYY-MM-DD") + "T00:00:00.000Z") },
+                },
+                whereEmployeeCondition,
+              ],
+            }
+          }).then(result =>{
+            date[temp] = result.count
+          })
+          tempDate = tempDate.add(1, 'days')
+        }
+        res.status(200).send({
+          success: true,
+          message: date,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  },
   view: {
     async get(req, res, next) {
       try {

@@ -87,6 +87,46 @@ router.get('/', passport.authenticate('jwt', { session: false }), isAuthorized, 
 
 /**
 * @swagger
+* /sessions/available:
+*   get:
+*     tags:
+*       - Sessions
+*     name: Get session(s)'s details by shiftId .
+*     summary: get a employee's details based on an [employee code] or a [fullname].
+*     consumes:
+*       - application/json
+*     parameters:
+*       - name: startDate
+*         in: query
+*         required: false
+*         description: (yyyy-mm-ddThh:mm:ss) Selected date that is used as a starting point for the period.
+*         schema:
+*           type : string
+*           format: date-time
+*       - name: endDate
+*         in: query
+*         required: false
+*         description: (yyyy-mm-ddThh:mm:ss) Selected date that is used as a ending point for the period.
+*         schema:
+*           type : string
+*           format: date-time
+*       - name: employeeCode
+*         in: query
+*         required: false
+*         description: Employee's code to filter
+*         schema:
+*           type : string
+*           format: string
+*     responses:
+*       200:
+*         description: A list of sessions is displayed.
+*       400:
+*         description: Error.
+*/
+router.get('/available', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.available.get);
+
+/**
+* @swagger
 * /sessions:
 *   post:
 *     tags:
