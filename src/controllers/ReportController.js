@@ -214,13 +214,16 @@ export default {
 
                 }
                 empResults.sort(function (a, b) {
-                    if ((a.getDataValue("totalWarningSessions") - b.getDataValue("totalWarningSessions")) === 0) {
-                        return (
-                            b.getDataValue("angryWarningCount") -
-                            a.getDataValue("angryWarningCount")
-                        );
+                    if((a.getDataValue("angrySessionPercent")- b.getDataValue("angrySessionPercent"))===0) {
+                        if ((a.getDataValue("totalWarningSessions") - b.getDataValue("totalWarningSessions")) === 0) {
+                            return (
+                                b.getDataValue("angryWarningCount") -
+                                a.getDataValue("angryWarningCount")
+                            );
+                        }
+                        return (b.getDataValue("totalWarningSessions") - a.getDataValue("totalWarningSessions"))
                     }
-                    return (b.getDataValue("totalWarningSessions") - a.getDataValue("totalWarningSessions"))
+                    return (b.getDataValue("angrySessionPercent") - a.getDataValue("angrySessionPercent"))
                 });
                 if (type === 'json') {
                     res.status(status.OK).send({
