@@ -16,10 +16,10 @@ function generateHr(doc, y) {
         .strokeColor("#aaaaaa")
         .lineWidth(1)
         .moveTo(50 - 10, y)
-        .lineTo(760, y)
+        .lineTo(900, y)
         .stroke();
 }
-function generateTableRow(doc, y, c1, c2, c3, c4, c5, c6) {
+function generateTableRow(doc, y, c1, c2, c3, c4, c5, c6, c7) {
     doc
         .fontSize(10)
         .text(c1, 50, y)
@@ -28,6 +28,7 @@ function generateTableRow(doc, y, c1, c2, c3, c4, c5, c6) {
         .text(c4, 370, y)
         .text(c5, 480, y)
         .text(c6, 660, y)
+        .text(c7, 770, y)
     doc
         .strokeColor("#aaaaaa")
         .lineWidth(1)
@@ -70,6 +71,12 @@ function generateTableRow(doc, y, c1, c2, c3, c4, c5, c6) {
         .moveTo(760, y - 10)
         .lineTo(760, y + 20)
         .stroke();
+    doc
+        .strokeColor("#aaaaaa")
+        .lineWidth(1)
+        .moveTo(900, y - 10)
+        .lineTo(900, y + 20)
+        .stroke();
 }
 function generateInvoiceTable(doc, data, startDate, endDate) {
     let config = JSON.parse(fs.readFileSync(path.join(__dirname + '/../' + process.env.ACTION_CONFIG_PATH)))
@@ -104,7 +111,8 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
         "Total session",
         "Warning session",
         "Percentage of Warning session",
-        "Note"
+        "Note",
+        "Suspension times"
     );
     doc.font("Helvetica");
     generateHr(doc, invoiceTableTop + 50);
@@ -118,7 +126,8 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
             data[i].getDataValue("totalSession"),
             data[i].getDataValue("totalWarningSessions"),
             !isNaN(data[i].getDataValue("angrySessionPercent")) ? (parseFloat(data[i].getDataValue("angrySessionPercent")) * 100).toFixed(1) + '%' : "-",
-            data[i].getDataValue("angrySessionPercent") > config.angry_percent_max ? "Need for action" : "-"
+            data[i].getDataValue("angrySessionPercent") > config.angry_percent_max ? "Need for action" : "-",
+            data[i].Suspensions.length
         );
         generateHr(doc, position + 20);
     }
@@ -132,23 +141,28 @@ export default {
                     ? req.query.startDate
                     // : setEpochMillisTime(0, 0, 0, 0, 0);
                     : new Date((new Date()).getTime() - (13 * 24 * 60 * 60 * 1000))
+                let endDateStat = false
+                if(req.query.endDate) {
+                    endDateStat = true
+                }
                 const endDate = req.query.endDate ? req.query.endDate : new Date();
                 const employees = await models.Employee.findAll({
                     attributes: { exclude: ["password", "role_id", "createdAt", "updatedAt", "counter_id", "counterId", "isSubscribed", "isDeleted"] },
-                    // include: {
-                    //     model: models.Suspension,
-                    //     attributes: {
-                    //         exclude: ["createdAt", "updatedAt", "employeeId", "employee_id"]
-                    //     },
-                    //     where: {
-                    //         [Op.and]: [
-                    //             { expiredOn: { [Op.gt]: new Date() } },
-                    //             { isDeleted: SuspensionStatus.NOT_DELETED }
-                    //         ]
-                    //     },
-                    //     as: "Suspensions",
-                    //     required: false
-                    // },
+                    include: {
+                        model: models.Suspension,
+                        attributes: {
+                            exclude: ["createdAt", "updatedAt", "employeeId", "employee_id"]
+                        },
+                        where: {
+                            [Op.and]: [
+                                { isDeleted: SuspensionStatus.NOT_DELETED },
+                                { createdAt: { [Op.gte]: startDate }},
+                                { createdAt: { [Op.lte]: endDate }},
+                            ]
+                        },
+                        as: "Suspensions",
+                        required: false
+                    },
                     where: {
                         roleId: 3
                     },
@@ -241,7 +255,7 @@ export default {
                 }
                 if (type === 'pdf') {
                     const PDFDocument = require('pdfkit');
-                    var myDoc = new PDFDocument({ bufferPages: true, size: [800, 842] });
+                    var myDoc = new PDFDocument({ bufferPages: true, size: [950, 842] });
                     let buffers = [];
                     myDoc.on('data', buffers.push.bind(buffers));
                     myDoc.on('end', () => {
@@ -275,6 +289,7 @@ export default {
                             empResults[index].getDataValue("totalWarningSessions"),
                             empResults[index].getDataValue("angrySessionPercent"),
                             empResults[index].getDataValue("note"),
+                            empResults[index].getDataValue("Suspensions").length
                         ])
                     }
                     let wb = new excel.Workbook();
@@ -287,21 +302,22 @@ export default {
                         { width: 15 },
                         { width: 30 },
                         { width: 20 },
+                        { width: 20 },
                     ];
                     ws.insertRow(1, ["Employee Status Report"])
                     ws.insertRow(2, ["Time created:", moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY [at] HH:mm:ss")])
                     ws.insertRow(3, ["From date:", moment(startDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"), "Start date:", moment(endDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY")])
                     ws.insertRow(4, ["Acceptable Percentage of warning session:", parseFloat(config.angry_percent_max) * 100 + '%'])
-                    ws.insertRow(5, ["Employee code", "Full name", "Total session", "Warning session", "Percentage of warning session", "Note"], 'n')
+                    ws.insertRow(5, ["Employee code", "Full name", "Total session", "Warning session", "Percentage of warning session", "Note", "Suspensions times"], 'n')
                     ws.insertRows(6, empResultsXlsx, 'n');
-                    ws.mergeCells('A1:F1');
+                    ws.mergeCells('A1:G1');
                     ws.getCell('A1').alignment = { horizontal: 'center' };
                     ws.getCell('A1').font = { bold: true, size: 16 };
                     let boldCells = ['A2', 'A3', 'A4', 'C3']
                     boldCells.forEach(cell => {
                         ws.getCell(cell).font = { bold: true }
                     });
-                    let columns = ['A', 'B', 'C', 'D', 'E', 'F']
+                    let columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
                     for (let index = 0; index < (empResultsXlsx.length + 1); index++) {
                         columns.forEach(column => {
                             if(index === 0){
