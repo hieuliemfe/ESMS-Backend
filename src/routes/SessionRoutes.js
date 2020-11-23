@@ -127,6 +127,24 @@ router.get('/available', passport.authenticate('jwt', { session: false }), isAut
 
 /**
 * @swagger
+* /sessions/mindate:
+*   get:
+*     tags:
+*       - Sessions
+*     name: Get session(s)'s details by shiftId .
+*     summary: get a employee's details based on an [employee code] or a [fullname].
+*     consumes:
+*       - application/json
+*     responses:
+*       200:
+*         description: A list of sessions is displayed.
+*       400:
+*         description: Error.
+*/
+router.get('/mindate', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.min_date.get);
+
+/**
+* @swagger
 * /sessions:
 *   post:
 *     tags:

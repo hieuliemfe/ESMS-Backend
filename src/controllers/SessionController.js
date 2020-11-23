@@ -10,6 +10,19 @@ import { shiftTypes } from "../db/config/shiftTypeConfig";
 import { setEpochMillisTime } from "../utils/timeUtil";
 const moment = require('moment-timezone');
 export default {
+  min_date:{
+    async get(req, res, next) {
+      try {
+        const minDate = await models.Session.min('sessionStart')
+        res.status(200).send({
+          success: true,
+          message: minDate,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  },
   available:{
     async get(req, res, next) {
       const { employeeCode } = req.query;
