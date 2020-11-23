@@ -151,7 +151,7 @@ export default {
                     include: {
                         model: models.Suspension,
                         attributes: {
-                            exclude: ["createdAt", "updatedAt", "employeeId", "employee_id"]
+                            exclude: ["updatedAt", "employeeId", "employee_id"]
                         },
                         where: {
                             [Op.and]: [
