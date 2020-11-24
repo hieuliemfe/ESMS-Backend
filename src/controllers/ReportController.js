@@ -273,7 +273,7 @@ export default {
                     myDoc.font('Times-Roman')
                         .fontSize(24)
                         .text(`Employee Status Report`, { align: 'center' });
-                    generateInvoiceTable(myDoc, empResults, moment(startDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"), moment(endDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"));
+                    generateInvoiceTable(myDoc, empResults, moment(startDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"), moment(new Date(endDate.getTime() - 24*60*60*1000).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"));
                     myDoc.end();
                 }
                 if (type === 'xlsx') {
@@ -306,7 +306,7 @@ export default {
                     ];
                     ws.insertRow(1, ["Employee Status Report"])
                     ws.insertRow(2, ["Time created:", moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY [at] HH:mm:ss")])
-                    ws.insertRow(3, ["From date:", moment(startDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"), "Start date:", moment(endDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY")])
+                    ws.insertRow(3, ["From date:", moment(startDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"), "To date:", moment(new Date(endDate.getTime() - 24*60*60*1000)).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY")])
                     ws.insertRow(4, ["Acceptable Percentage of warning session:", parseFloat(config.angry_percent_max) * 100 + '%'])
                     ws.insertRow(5, ["Employee code", "Full name", "Total session", "Warning session", "Percentage of warning session", "Note", "Suspensions times"], 'n')
                     ws.insertRows(6, empResultsXlsx, 'n');
