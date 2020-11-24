@@ -506,7 +506,7 @@ export default {
             reason: reason,
             expiredOn: expiration
           }],
-          { updateOnDuplicate: ["reason", "expiration", "employeeId", "updatedAt"] })
+          { updateOnDuplicate: ["reason", "expiredOn", "employeeId", "updatedAt"] })
         res.status(status.ACCEPTED).send({
           success: true,
           message: result ? 1 : 0,
