@@ -273,7 +273,7 @@ export default {
                     myDoc.font('Times-Roman')
                         .fontSize(24)
                         .text(`Employee Status Report`, { align: 'center' });
-                    generateInvoiceTable(myDoc, empResults, moment(startDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"), moment(new Date(endDate.getTime() - 24*60*60*1000).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"));
+                    generateInvoiceTable(myDoc, empResults, moment(startDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"), moment(new Date(endDate.getTime() - 24*60*60*1000)).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"));
                     myDoc.end();
                 }
                 if (type === 'xlsx') {
