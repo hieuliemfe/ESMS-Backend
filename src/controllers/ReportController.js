@@ -97,7 +97,7 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
         .font("Helvetica")
         .text(endDate, 330, invoiceTableTop - 40)
         .font("Helvetica-Bold")
-        .text(`Acceptable Percentage of Warning session: `, 50, invoiceTableTop - 5)
+        .text(`Acceptable percentage of warning session: `, 50, invoiceTableTop - 5)
         .font("Helvetica")
         .text(parseFloat(config.angry_percent_max) * 100 + '%', 300, invoiceTableTop - 5)
 
@@ -110,7 +110,7 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
         "Full name",
         "Total session",
         "Warning session",
-        "Percentage of Warning session",
+        "Percentage of warning session",
         "Note",
         "Suspension times"
     );
@@ -307,8 +307,8 @@ export default {
                     ws.insertRow(1, ["Employee Status Report"])
                     ws.insertRow(2, ["Time created:", moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY [at] HH:mm:ss")])
                     ws.insertRow(3, ["From date:", moment(startDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"), "To date:", moment(new Date(endDate.getTime() - 24*60*60*1000)).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY")])
-                    ws.insertRow(4, ["Acceptable Percentage of Warning session:", parseFloat(config.angry_percent_max) * 100 + '%'])
-                    ws.insertRow(5, ["Employee code", "Full name", "Total session", "Warning session", "Percentage of Warning session", "Note", "Suspensions times"], 'n')
+                    ws.insertRow(4, ["Acceptable percentage of warning session:", parseFloat(config.angry_percent_max) * 100 + '%'])
+                    ws.insertRow(5, ["Employee code", "Full name", "Total session", "Warning session", "Percentage of warning session", "Note", "Suspensions times"], 'n')
                     ws.insertRows(6, empResultsXlsx, 'n');
                     ws.mergeCells('A1:G1');
                     ws.getCell('A1').alignment = { horizontal: 'center' };
