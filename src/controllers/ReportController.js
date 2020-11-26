@@ -116,8 +116,14 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
     );
     doc.font("Helvetica");
     generateHr(doc, invoiceTableTop + 50);
+    let j = 0
     for (i = 0; i < data.length; i++) {
-        const position = invoiceTableTop + (i + 2) * 30;
+        if(j > 17){
+            doc.addPage()
+            j = -6
+            generateHr(doc, invoiceTableTop + (j + 2) * 30 - 10);
+        }
+        const position = invoiceTableTop + (j + 2) * 30;
         generateTableRow(
             doc,
             position,
@@ -130,6 +136,7 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
             data[i].Suspensions.length
         );
         generateHr(doc, position + 20);
+        j++
     }
 }
 export default {
