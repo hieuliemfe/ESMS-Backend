@@ -110,9 +110,9 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
         "Full name",
         "Total session",
         "Warning session",
-        "Percentage of warning session",
-        "Note",
-        "Suspension times"
+        "Warning session (%)",
+        "Face-absences",
+        "Suspensions"
     );
     doc.font("Helvetica");
     generateHr(doc, invoiceTableTop + 50);
@@ -126,7 +126,7 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
             data[i].getDataValue("totalSession"),
             data[i].getDataValue("totalWarningSessions"),
             !isNaN(data[i].getDataValue("angrySessionPercent")) ? (parseFloat(data[i].getDataValue("angrySessionPercent")) * 100).toFixed(1) + '%' : "-",
-            data[i].getDataValue("angrySessionPercent") > config.angry_percent_max ? "Need for action" : "-",
+            data[i].getDataValue("totalFaceAbscences"),
             data[i].Suspensions.length
         );
         generateHr(doc, position + 20);
@@ -136,13 +136,14 @@ export default {
     view: {
         async get(req, res, next) {
             try {
+                let config = JSON.parse(fs.readFileSync(path.join(__dirname + '/../' + process.env.ACTION_CONFIG_PATH)))
                 const type = req.query.type
                 const startDate = req.query.startDate
                     ? req.query.startDate
                     // : setEpochMillisTime(0, 0, 0, 0, 0);
                     : new Date((new Date()).getTime() - (13 * 24 * 60 * 60 * 1000))
                 let endDateStat = false
-                if(req.query.endDate) {
+                if (req.query.endDate) {
                     endDateStat = true
                 }
                 const endDate = req.query.endDate ? req.query.endDate : new Date();
@@ -156,8 +157,8 @@ export default {
                         where: {
                             [Op.and]: [
                                 { isDeleted: SuspensionStatus.NOT_DELETED },
-                                { createdAt: { [Op.gte]: startDate }},
-                                { createdAt: { [Op.lte]: endDate }},
+                                { createdAt: { [Op.gte]: startDate } },
+                                { createdAt: { [Op.lte]: endDate } },
                             ]
                         },
                         as: "Suspensions",
@@ -172,8 +173,11 @@ export default {
                     var employee = employees[i];
                     var angryCount = 0;
                     var totalWarningSessions = 0
+                    var totalFaceAbscences = 0
                     var totalSession = 0
-                    await models.Session.findAndCountAll({
+                    var sessIds = []
+                    await models.Session.findAll({
+                        attributes: ["id"],
                         where: {
                             [Op.and]: [
                                 { sessionStart: { [Op.gte]: startDate } },
@@ -182,8 +186,23 @@ export default {
                             ]
                         }
                     }).then(result => {
-                        totalSession = result.count
+                        totalSession = result.length
+                        for (let index = 0; index < result.length; index++) {
+                            sessIds.push(result[index].id)
+                        }
                     })
+                    await models.Period.findAndCountAll({
+                        where: {
+                            [Op.and]: [
+                                { sessionId: { [Op.in]: sessIds } },
+                                { emotionId: 8 },
+                                { duration: { [Op.gte]: 60000 } }
+                            ]
+                        }
+                    }).then(result => {
+                        totalFaceAbscences = result.count
+                    }
+                    )
                     await models.Session.findAndCountAll({
                         where: {
                             [Op.and]: [
@@ -196,6 +215,7 @@ export default {
                     }).then(result => {
                         totalWarningSessions = result.count
                     })
+                    employee.setDataValue("totalFaceAbscences", parseInt(totalFaceAbscences))
                     employee.setDataValue("totalWarningSessions", parseInt(totalWarningSessions));
                     employee.setDataValue("totalSession", parseInt(totalSession));
                     employee.setDataValue("angrySessionPercent", parseFloat(totalWarningSessions / totalSession))
@@ -273,14 +293,13 @@ export default {
                     myDoc.font('Times-Roman')
                         .fontSize(24)
                         .text(`Employee Status Report`, { align: 'center' });
-                    generateInvoiceTable(myDoc, empResults, moment(startDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"), moment(new Date(new Date(endDate).getTime() - 24*60*60*1000)).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"));
+                    generateInvoiceTable(myDoc, empResults, moment(startDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"), moment(new Date(new Date(endDate).getTime() - 24 * 60 * 60 * 1000)).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"));
                     myDoc.end();
                 }
                 if (type === 'xlsx') {
-                    let config = JSON.parse(fs.readFileSync(path.join(__dirname + '/../' + process.env.ACTION_CONFIG_PATH)))
+
                     let empResultsXlsx = []
                     for (let index = 0; index < empResults.length; index++) {
-                        empResults[index].setDataValue("note", empResults[index].getDataValue("angrySessionPercent") > config.angry_percent_max ? "Need for action" : "-")
                         empResults[index].setDataValue("angrySessionPercent", !isNaN(empResults[index].getDataValue("angrySessionPercent")) ? (parseFloat(empResults[index].getDataValue("angrySessionPercent")) * 100).toFixed(1) + '%' : "-")
                         empResultsXlsx.push([
                             empResults[index].getDataValue("employeeCode"),
@@ -288,7 +307,7 @@ export default {
                             empResults[index].getDataValue("totalSession"),
                             empResults[index].getDataValue("totalWarningSessions"),
                             empResults[index].getDataValue("angrySessionPercent"),
-                            empResults[index].getDataValue("note"),
+                            empResults[index].getDataValue("totalFaceAbscences"),
                             empResults[index].getDataValue("Suspensions").length
                         ])
                     }
@@ -306,9 +325,9 @@ export default {
                     ];
                     ws.insertRow(1, ["Employee Status Report"])
                     ws.insertRow(2, ["Time created:", moment().tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY [at] HH:mm:ss")])
-                    ws.insertRow(3, ["From date:", moment(startDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"), "To date:", moment(new Date(new Date(endDate).getTime() - 24*60*60*1000)).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY")])
+                    ws.insertRow(3, ["From date:", moment(startDate).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY"), "To date:", moment(new Date(new Date(endDate).getTime() - 24 * 60 * 60 * 1000)).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY")])
                     ws.insertRow(4, ["Acceptable percentage of warning session:", parseFloat(config.angry_percent_max) * 100 + '%'])
-                    ws.insertRow(5, ["Employee code", "Full name", "Total session", "Warning session", "Percentage of warning session", "Note", "Suspensions times"], 'n')
+                    ws.insertRow(5, ["Employee code", "Full name", "Total session", "Warning session", "Warning session (%)", "Face-absences", "Suspensions"], 'n')
                     ws.insertRows(6, empResultsXlsx, 'n');
                     ws.mergeCells('A1:G1');
                     ws.getCell('A1').alignment = { horizontal: 'center' };
@@ -320,7 +339,7 @@ export default {
                     let columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
                     for (let index = 0; index < (empResultsXlsx.length + 1); index++) {
                         columns.forEach(column => {
-                            if(index === 0){
+                            if (index === 0) {
                                 ws.getCell(column + (index + 5)).font = { bold: true };
                             }
                             ws.getCell(column + (index + 5)).border = {
