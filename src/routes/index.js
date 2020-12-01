@@ -9,7 +9,7 @@ import CounterRoutes from './CounterRoutes';
 import QueueRoutes from './QueueRoutes'
 import CategoryRoutes from './CategoryRoutes';
 import ShiftRoutes from './ShiftRoutes';
-import ManagerRoutes from './ManagerRoutes';
+// import ManagerRoutes from './ManagerRoutes';
 import VideoRoutes from './VideoRoutes';
 import ShiftTypeRoutes from './ShiftTypeRoutes';
 import ConfigRoutes from './ConfigRoutes';
@@ -65,10 +65,10 @@ const Router = [
     path: '/shifttypes',
     handler: ShiftTypeRoutes
   },
-  {
-    path: '/managers',
-    handler: ManagerRoutes
-  },
+  // {
+  //   path: '/managers',
+  //   handler: ManagerRoutes
+  // },
   {
     path: '/videos',
     handler: VideoRoutes

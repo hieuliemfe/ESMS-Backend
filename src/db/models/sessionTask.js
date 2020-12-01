@@ -13,10 +13,6 @@ export default function (sequelize, DataTypes) {
       allowNull: false,
       field: 'session_id',
     },
-    statusId: {
-      type: DataTypes.INTEGER,
-      field: 'status_id',
-    },
     taskId: {
       type: DataTypes.INTEGER,
       allowNull: false,
