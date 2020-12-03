@@ -8,10 +8,10 @@ import RoleRoutes from './RoleRoutes';
 import CounterRoutes from './CounterRoutes';
 import QueueRoutes from './QueueRoutes'
 import CategoryRoutes from './CategoryRoutes';
-import ShiftRoutes from './ShiftRoutes';
+import EmployeeShiftRoutes from './EmployeeShiftRoutes';
 // import ManagerRoutes from './ManagerRoutes';
 import VideoRoutes from './VideoRoutes';
-import ShiftTypeRoutes from './ShiftTypeRoutes';
+import ShiftRoutes from './ShiftRoutes';
 import ConfigRoutes from './ConfigRoutes';
 import TaskRoutes from './TaskRoutes';
 import ReportRoutes from './ReportRoutes';
@@ -58,12 +58,12 @@ const Router = [
     handler: CategoryRoutes
   },
   {
-    path: '/shifts',
-    handler: ShiftRoutes
+    path: '/employee-shifts',
+    handler: EmployeeShiftRoutes
   },
   {
-    path: '/shifttypes',
-    handler: ShiftTypeRoutes
+    path: '/shifts',
+    handler: ShiftRoutes
   },
   // {
   //   path: '/managers',

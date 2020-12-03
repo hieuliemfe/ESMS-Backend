@@ -99,7 +99,7 @@ export default function (sequelize, DataTypes) {
       as: 'Role'
     });
     //An employee will have many shifts with customers.
-    Employee.hasMany(models.Shift, {
+    Employee.hasMany(models.EmployeeShift, {
       foreignKey: 'employee_id'
     });
     //An employee may have many suspensions.

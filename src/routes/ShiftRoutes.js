@@ -1,15 +1,16 @@
 'use strict'
 
 /**
- * Shifts Route
+ * Task Route
  * path: /shifts
  */
 
 import express from 'express';
 import Controller from '../controllers/ShiftController';
 let router = express.Router();
-import { isAuthorized, isBankTeller } from '../middlewares/authorization';
+//auth imports
 import passport from 'passport';
+import { isAuthorized } from '../middlewares/authorization';
 
 /**
 * @swagger
@@ -17,8 +18,8 @@ import passport from 'passport';
 *   get:
 *     tags:
 *       - Shifts
-*     name: Get shifts by employee.
-*     summary: Get shifts by employee using current session's jwt token.
+*     name: Get shift types.
+*     summary: get a list of shifts
 *     consumes:
 *       - application/json
 *     responses:
@@ -26,85 +27,8 @@ import passport from 'passport';
 *         description: A list of shifts is displayed.
 *       400:
 *         description: Error.
+*       401:
+*         description: Forbidden.
 */
-router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_shift_list.get);
-
-/**
-* @swagger
-* /shifts:
-*    post:
-*     tags:
-*       - Shifts
-*     name: Create new shift
-*     summary: Creates a shift.
-*     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             type: object
-*             properties:
-*               shiftTypeId:
-*                 type: integer
-*     responses:
-*       201:
-*         description: Create successful.
-*/
-router.post('/', passport.authenticate('jwt', {session: false}), isBankTeller, Controller.create.post);
-
-
-/**
-* @swagger
-* /shifts/{shiftId}/summary:
-*   get:
-*     tags:
-*       - Shifts
-*     name: Get summary of current shift.
-*     summary: Get summary of current shift by employee using current session's jwt token.
-*     consumes:
-*       - application/json
-*     parameters:
-*       - name: shiftId
-*         in: path
-*         required: true
-*         description: Select an shift with matching shiftId.
-*         schema:
-*           type : integer
-*           format: integer
-*           minimum: 1
-*     responses:
-*       200:
-*         description: A summary of current shift is displayed.
-*       400:
-*         description: Error.
-*/
-router.get('/:shiftId/summary', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.sum_up.get);
-
-/**
-* @swagger
-* /shifts/{shiftId}/checkout:
-*   put:
-*     tags:
-*       - Shifts
-*     name: Checkout for a shift.
-*     summary: Checkout for a shift with shiftId.
-*     consumes:
-*       - application/json
-*     parameters:
-*       - name: shiftId
-*         in: path
-*         required: true
-*         description: Select an shift with matching shiftId.
-*         schema:
-*           type : string
-*           format: string
-*           minimum: 1
-*     responses:
-*       200:
-*         description: Shift is checked out.
-*       400:
-*         description: Error.
-*/
-router.put('/:shiftId/checkout', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.checkout.put);
-
+router.get('/', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.view.get);
 export default router;

@@ -183,28 +183,6 @@ router.get('/:sessionId', passport.authenticate('jwt', { session: false }), isMa
 
 /**
 * @swagger
-* /sessions/{sessionId}/start:
-*   put:
-*     tags:
-*       - Sessions
-*     name: Update a session
-*     summary: Update a session with periods & emotions.
-*     consumes:
-*       - application/json
-*     parameters:
-*       - in: path
-*         name: sessionId
-*         schema:
-*           type: string
-*         description: Get session based on sessionId.
-*     responses:
-*       201:
-*         description: Session's added.
-*/
-router.put('/:sessionId/start', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.start_session.put);
-
-/**
-* @swagger
 * /sessions/{sessionId}/end:
 *   put:
 *     tags:

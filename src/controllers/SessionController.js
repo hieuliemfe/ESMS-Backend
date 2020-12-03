@@ -97,7 +97,7 @@ export default {
         console.log(`=========================start date:${startDate}`);
         //generate condition
         let whereEmployeeCondition = null;
-        let whereShiftTypeCondition = "";
+        let whereShiftCondition = "";
         let employee;
         if (fullname || employeeCode != undefined) {
           employee = await models.Employee.findOne({
@@ -159,10 +159,10 @@ export default {
           where: whereCondition,
           include: [
             {
-              model: models.Shift,
+              model: models.EmployeeShift,
               attributes: [],
-              where: whereShiftTypeCondition,
-              as: "Shift",
+              where: whereShiftCondition,
+              as: "EmployeeShift",
             },
           ],
           order: [
@@ -268,7 +268,7 @@ export default {
         const token = req.headers.authorization.replace("Bearer ", "");
         const tokenDecoded = jwt.decode(token);
         //create null session
-        const currentShift = await models.Shift.findOne({
+        const currentEmployeeShift = await models.EmployeeShift.findOne({
           where: {
             employee_id: tokenDecoded.employeeId,
             status_id: shiftStatus.ACTIVE,
@@ -276,7 +276,7 @@ export default {
         });
         const createdSession = await models.Session.create({
           employeeId: tokenDecoded.employeeId,
-          shift_id: currentShift.id,
+          shift_id: currentEmployeeShift.id,
         });
         res.status(status.CREATED).send({
           success: true,
@@ -287,30 +287,6 @@ export default {
       }
     },
   },
-  start_session: {
-    async put(req, res, next) {
-      try {
-        const { sessionId } = req.params;
-        const result = await models.Session.update(
-          {
-            sessionStart: new Date(),
-          },
-          {
-            where: {
-              id: sessionId,
-            },
-          }
-        );
-        res.status(status.OK).send({
-          success: true,
-          message: result,
-        });
-      } catch (error) {
-        next(error);
-      }
-    },
-  },
-
   end_session: {
     async put(req, res, next) {
       try {

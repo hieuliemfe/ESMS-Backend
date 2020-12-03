@@ -13,8 +13,8 @@ import taskSeed from './taskSeed';
 //junction seeds
 import sessionTaskSeed from './sessionTaskSeed';
 import counterCategorySeed from './counterCategorySeed';
-import shiftTypeSeed from './shiftTypeSeed'
-import shiftSeed from './shiftSeed';
+import shiftSeed from './shiftSeed'
+import employeeShiftSeed from './employeeShiftSeed';
 import negativeEmotionCriteriaSeed from './negativeEmotionCriteriaSeed';
 import negativeEmotionActionSeed from './negativeEmotionActionSeed';
 import stressCriteriaSeed from './stressCriteriaSeed';
@@ -29,7 +29,7 @@ const seed = async () => {
           //library seeds
           .then(() => models.Emotion.bulkCreate(emotionSeed))
           .then(() => models.Category.bulkCreate(categorySeed))
-          .then(() => models.ShiftType.bulkCreate(shiftTypeSeed))
+          .then(() => models.Shift.bulkCreate(shiftSeed))
           .then(() => models.NegativeEmotionCriteria.bulkCreate(negativeEmotionCriteriaSeed))
           .then(() => models.NegativeEmotionAction.bulkCreate(negativeEmotionActionSeed))
           .then(() => models.StressCriteria.bulkCreate(stressCriteriaSeed))
@@ -52,7 +52,7 @@ const seed = async () => {
           .then(() => models.Task.bulkCreate(taskSeed))
           //junction seeds
           .then(() => models.CounterCategory.bulkCreate(counterCategorySeed))
-          .then(() => models.Shift.bulkCreate(shiftSeed))
+          .then(() => models.EmployeeShift.bulkCreate(employeeShiftSeed))
           .then(() => models.Session.bulkCreate(sessionSeed))
           .then(() => models.SessionTask.bulkCreate(sessionTaskSeed))
           .then((res, err) => {

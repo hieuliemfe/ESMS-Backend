@@ -58,9 +58,9 @@ export default function (sequelize, DataTypes) {
       as: 'Customer'
     });
     //A session can be only in a shift
-    Session.belongsTo(models.Shift, {
-      foreignKey: 'shift_id',
-      as: 'Shift'
+    Session.belongsTo(models.EmployeeShift, {
+      foreignKey: 'employee_shift_id',
+      as: 'EmployeeShift'
     });
   }
   return Session;

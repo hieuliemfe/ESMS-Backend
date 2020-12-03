@@ -1,17 +1,40 @@
 'use strict'
+import { setEpochMillisTime } from '../../utils/timeUtil';
 
-import { setEpochMillisTime, updateEpochMillisTime } from '../../utils/timeUtil';
-import { shiftStatus } from '../config/statusConfig'
+export default [
+    {
+        name: 'Shift 1',
+        shiftStart: setEpochMillisTime(0, 17, 0, 0, 0),
+        shiftEnd: setEpochMillisTime(0, 21, 0, 0, 0)
+    },
+    {
+        name: 'Shift 2',
+        shiftStart: setEpochMillisTime(0, 21, 0, 0, 0),
+        shiftEnd: setEpochMillisTime(0, 1, 0, 0, 0)
 
-let currentDate = new Date((new Date().getTime() - 8*24*60*60*1000)).toLocaleString("en-US", {timeZone: "UTC"})
-console.log(`======== Date : ${currentDate}`)
-currentDate = setEpochMillisTime(currentDate, 0, 0, 0, 0);
-console.log(`======== Date Epoch: ${currentDate}`)
+    },
+    {
+        name: 'Shift 3',
+        shiftStart: setEpochMillisTime(0, 1, 0, 0, 0),
+        shiftEnd: setEpochMillisTime(0, 5, 0, 0, 0)
 
-export default new Array(7).fill(0).map((e, day) => new Array(6).fill(0).map((hours, index) => ({
-  employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
-  counterId: 1,
-  statusId: shiftStatus.INACTIVE,
-  shiftTypeId: index + 1,
-  shiftDate: updateEpochMillisTime(currentDate, day, 0, 0, 0)
-}))).reduce((r, n) => { r.push(...n); return r; }, [])
+    },
+    {
+        name: 'Shift 4',
+        shiftStart: setEpochMillisTime(0, 5, 0, 0, 0),
+        shiftEnd: setEpochMillisTime(0, 9, 0, 0, 0)
+
+    },
+    {
+        name: 'Shift 5',
+        shiftStart: setEpochMillisTime(0, 9, 0, 0, 0),
+        shiftEnd: setEpochMillisTime(0, 13, 0, 0, 0)
+
+    },
+    {
+        name: 'Shift 6',
+        shiftStart: setEpochMillisTime(0, 13, 0, 0, 0),
+        shiftEnd: setEpochMillisTime(0, 17, 0, 0, 0)
+
+    },
+]

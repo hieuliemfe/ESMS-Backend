@@ -6,7 +6,7 @@ currentDate = setEpochMillisTime(currentDate, 0, 0, 0, 0);
 export default [
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
-    shift_id: 1,
+    employee_shift_id: 1,
     sessionStart: updateEpochMillisTime(currentDate, 0, 7, 5, 0),
     sessionEnd: updateEpochMillisTime(currentDate, 0, 7, 40, 0),
     info: JSON.stringify(
@@ -35,7 +35,7 @@ export default [
   },
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
-    shift_id: 1,
+    employee_shift_id: 1,
     sessionStart: updateEpochMillisTime(currentDate, 0, 7, 50, 0),
     sessionEnd: updateEpochMillisTime(currentDate, 0, 8, 0, 0),
     info: JSON.stringify(
@@ -64,7 +64,7 @@ export default [
   },
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
-    shift_id: 1,
+    employee_shift_id: 1,
     sessionStart: updateEpochMillisTime(currentDate, 0, 8, 5, 0),
     sessionEnd: updateEpochMillisTime(currentDate, 0, 8, 40, 0),
     info: JSON.stringify(
@@ -93,7 +93,7 @@ export default [
   },
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
-    shift_id: 1,
+    employee_shift_id: 1,
     sessionStart: updateEpochMillisTime(currentDate, 0, 8, 55, 0),
     sessionEnd: updateEpochMillisTime(currentDate, 0, 9, 40, 0),
     info: JSON.stringify(
@@ -122,7 +122,7 @@ export default [
   },
   {
     employeeId: '513a3d36-ff0d-45cb-a052-a554602fe5a0',
-    shift_id: 1,
+    employee_shift_id: 1,
     sessionStart: updateEpochMillisTime(currentDate, 0, 12, 5, 0),
     sessionEnd: updateEpochMillisTime(currentDate, 0, 12, 40, 0),
     info: JSON.stringify(
