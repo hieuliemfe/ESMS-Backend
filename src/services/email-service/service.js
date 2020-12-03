@@ -27,6 +27,15 @@ export const createEmail = async (employee, type, appoinmentDate, videoUrl) => {
       });
       break;
     }
+    case 'suspension': {
+      email = await ejs.renderFile(emailTemplate, {
+        fullname: employee.fullname,
+        content: mailContentsConfig.SUSPENSION + setAppointmentDate(appoinmentDate),
+        closing: mailClosingsConfig.SUSPENSION,
+        regard: mailContentsConfig.REGARD,
+      });
+      break;
+    }
     case 'day_off': {
       email = await ejs.renderFile(emailTemplate, {
         fullname: employee.fullname,

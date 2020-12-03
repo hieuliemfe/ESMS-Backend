@@ -17,7 +17,8 @@ export default {
         } else if (
           type != mailTypes.CHEERING &&
           type != mailTypes.DAY_OFF &&
-          type != mailTypes.MAKE_APPOINTMENT
+          type != mailTypes.MAKE_APPOINTMENT &&
+          type != mailTypes.SUSPENSION
         ) {
           res.status(status.EXPECTATION_FAILED).send({
             success: false,
@@ -38,6 +39,14 @@ export default {
           res.status(status.EXPECTATION_FAILED).send({
             success: false,
             message: "Must input appointment date for appoiment email type.",
+          });
+        } else if (
+          type.toLowerCase() == mailTypes.SUSPENSION &&
+          date == undefined
+        ) {
+          res.status(status.EXPECTATION_FAILED).send({
+            success: false,
+            message: "Must input suspension expiration date.",
           });
         } else {
           const employee = await models.Employee.findOne({
