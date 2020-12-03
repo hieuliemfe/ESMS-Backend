@@ -38,8 +38,8 @@ router.get('/', Controller.view_all.get);
 *   get:
 *     tags:
 *       - Categories
-*     name: Get task types details by categoryId.
-*     summary: Get task types details by categoryId.
+*     name: Get services details by categoryId.
+*     summary: Get services details by categoryId.
 *     consumes:
 *       - application/json
 *     parameters:
@@ -50,7 +50,7 @@ router.get('/', Controller.view_all.get);
 *         description: Numeric ID of the user to get
 *     responses:
 *       200:
-*         description: A list of task types is displayed.
+*         description: A list of services is displayed.
 *       400:
 *         description: Error.
 *       401:
@@ -61,12 +61,12 @@ router.get('/counters/:counterId', passport.authenticate('jwt', { session: false
 
 /**
 * @swagger
-* /categories/{categoryId}/tasks:
+* /categories/{categoryId}/services:
 *   get:
 *     tags:
 *       - Categories
-*     name: Get tasks with the corresponding category.
-*     summary: Get tasks with the corresponding category.
+*     name: Get services with the corresponding category.
+*     summary: Get services with the corresponding category.
 *     consumes:
 *       - application/json
 *     parameters:
@@ -77,13 +77,13 @@ router.get('/counters/:counterId', passport.authenticate('jwt', { session: false
 *         description: categoryId to filter
 *     responses:
 *       200:
-*         description: A list of tasks is displayed.
+*         description: A list of services is displayed.
 *       400:
 *         description: Error.
 *       401:
 *         description: Forbidden.
 */
-router.get('/:categoryId/tasks', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_tasks_by_category_id.get);
+router.get('/:categoryId/services', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_services_by_category_id.get);
 
 /**
 * @swagger

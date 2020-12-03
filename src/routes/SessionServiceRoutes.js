@@ -1,12 +1,12 @@
 'use strict'
 
 /**
- * SessionTask Route
- * path: /session-tasks
+ * SessionService Route
+ * path: /session-services
  */
 
 import express from 'express';
-import Controller from '../controllers/SessionTaskController';
+import Controller from '../controllers/SessionServiceController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
@@ -14,12 +14,12 @@ import { isBankTeller, isAuthorized } from '../middlewares/authorization';
 
 /**
 * @swagger
-* /session-tasks:
+* /session-services:
 *   get:
 *     tags:
-*       - Session Tasks
-*     name: Get task(s)'s details.
-*     summary: get a employee's task details based on an [employee code] or a [fullname].
+*       - Session Services
+*     name: Get service(s)'s details.
+*     summary: get a employee's service details based on an [employee code] or a [fullname].
 *     consumes:
 *       - application/json
 *     parameters:
@@ -27,10 +27,10 @@ import { isBankTeller, isAuthorized } from '../middlewares/authorization';
 *         name: query
 *         schema:
 *           type: string
-*         description: sessionID to filter tasks
+*         description: sessionID to filter services
 *     responses:
 *       200:
-*         description: A list of tasks is displayed.
+*         description: A list of services is displayed.
 *       400:
 *         description: Error.
 *       401:
@@ -40,12 +40,12 @@ router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 
 /**
 * @swagger
-* /session-tasks/assign:
+* /session-services/assign:
 *   post:
 *     tags:
-*       - Session Tasks
-*     name: Assign a task to an employee
-*     summary: Assign a task to an employee
+*       - Session Services
+*     name: Assign a service to an employee
+*     summary: Assign a service to an employee
 *     consumes:
 *       - application/json
 *     requestBody:
@@ -57,29 +57,29 @@ router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 *             properties:
 *               sessionId:
 *                 type: integer
-*               taskId:
+*               serviceId:
 *                 type: integer
 *     responses:
 *       200:
 *         description: Email sent to employee.
 */
-router.post('/assign', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.assign_task.post);
+router.post('/assign', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.assign_service.post);
 
 /**
 * @swagger
-* /session-tasks/{sessionTaskId}/status:
+* /session-services/{sessionServiceId}/status:
 *   put:
 *     tags:
-*       - Session Tasks
-*     name: Update task status
-*     summary: Update task status
+*       - Session Services
+*     name: Update service status
+*     summary: Update service status
 *     consumes:
 *       - application/json
 *     parameters:
-*       - name: sessionTaskId
+*       - name: sessionServiceId
 *         in: path
 *         required: true
-*         description: Select a task with matching taskId.
+*         description: Select a service with matching serviceId.
 *         schema:
 *           type : integer
 *           format: string
@@ -97,23 +97,23 @@ router.post('/assign', passport.authenticate('jwt', { session: false }), isBankT
 *       200:
 *         description: Status is updated.
 */
-router.put('/:sessionTaskId/status', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.update_status.put);
+router.put('/:sessionServiceId/status', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.update_status.put);
 
 /**
 * @swagger
-* /session-tasks/{sessionTaskId}:
+* /session-services/{sessionServiceId}:
 *   delete:
 *     tags:
-*       - Session Tasks
-*     name: Delete a task.
-*     summary: Delete a employee based on a [taskId].
+*       - Session Services
+*     name: Delete a service.
+*     summary: Delete a employee based on a [serviceId].
 *     consumes:
 *       - application/json
 *     parameters:
-*       - name: sessionTaskId
+*       - name: sessionServiceId
 *         in: path
 *         required: true
-*         description: Select a task with matching taskId.
+*         description: Select a service with matching serviceId.
 *         schema:
 *           type : integer
 *           format: string
@@ -124,6 +124,6 @@ router.put('/:sessionTaskId/status', passport.authenticate('jwt', { session: fal
 *       404:
 *         description: Employee not found.
 */
-router.delete('/:sessionTaskId', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.delete.delete);
+router.delete('/:sessionServiceId', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.delete.delete);
 
 export default router;

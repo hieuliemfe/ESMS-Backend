@@ -3,7 +3,7 @@ import EmployeeRoutes from './EmployeeRoutes';
 import EmailRoutes from './EmailRoutes';
 import SessionRoutes from './SessionRoutes';
 import CustomerRoutes from './CustomerRoutes';
-import SessionTaskRoutes from './SessionTaskRoutes';
+import SessionServiceRoutes from './SessionServiceRoutes';
 import RoleRoutes from './RoleRoutes';
 import CounterRoutes from './CounterRoutes';
 import QueueRoutes from './QueueRoutes'
@@ -13,7 +13,7 @@ import EmployeeShiftRoutes from './EmployeeShiftRoutes';
 import VideoRoutes from './VideoRoutes';
 import ShiftRoutes from './ShiftRoutes';
 import ConfigRoutes from './ConfigRoutes';
-import TaskRoutes from './TaskRoutes';
+import ServiceRoutes from './ServiceRoutes';
 import ReportRoutes from './ReportRoutes';
 
 const Router = [
@@ -38,8 +38,8 @@ const Router = [
     handler: SessionRoutes,
   },
   {
-    path: '/session-tasks',
-    handler: SessionTaskRoutes,
+    path: '/session-services',
+    handler: SessionServiceRoutes,
   },
   {
     path: '/roles',
@@ -78,8 +78,8 @@ const Router = [
     handler: ConfigRoutes
   },
   {
-    path: '/tasks',
-    handler: TaskRoutes
+    path: '/services',
+    handler: ServiceRoutes
   },
   {
     path: '/reports',

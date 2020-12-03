@@ -6,9 +6,9 @@ import db from "../db/models/index";
 import { Op } from "sequelize";
 export default {
     view_all:{
-        async get(req, res, next) {
+        async get(req, res, next) {           
             try {
-                let result = await models.Task.findAll({
+                let result = await models.Service.findAll({
                     attributes: {
                         exclude: ["createdAt", "updatedAt", "category_id"]
                     }
@@ -34,8 +34,8 @@ export default {
                     });
                     return
                 }
-                const tasks = req.body.tasks
-                let result = await models.Task.bulkCreate(tasks)
+                const services = req.body.services
+                let result = await models.Service.bulkCreate(services)
                 if(result.length > 0){
                     result.forEach(element => {
                     element.setDataValue("createdAt", undefined)
@@ -54,8 +54,8 @@ export default {
     bulk_update: {
         async put(req, res, next) {
             try {
-                const { tasks } = req.body
-                let result = await models.Task.bulkCreate(tasks, { updateOnDuplicate: ["categoryName", "subtitle", "updatedAt"] })
+                const { services } = req.body
+                let result = await models.Service.bulkCreate(services, { updateOnDuplicate: ["categoryName", "subtitle", "updatedAt"] })
                 if(result.length > 0){
                     result.forEach(element => {
                     element.setDataValue("createdAt", undefined)
@@ -76,7 +76,7 @@ export default {
             const queryInterface = db.sequelize.getQueryInterface();
             const ids = req.body.ids
             try {
-                let result = await queryInterface.bulkDelete('task', {id: {[Op.in]: ids}})
+                let result = await queryInterface.bulkDelete('service', {id: {[Op.in]: ids}})
                 res.status(status.OK).send({
                 success: true,
                 message: result[0].affectedRows,

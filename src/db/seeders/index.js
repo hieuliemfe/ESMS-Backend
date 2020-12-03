@@ -9,9 +9,9 @@ import categorySeed from './categorySeed';
 import queueSeed from './queueSeed';
 import counterSeed from './counterSeed';
 // import sessionSeed from './sessionSeed';
-import taskSeed from './taskSeed';
+import serviceSeed from './serviceSeed';
 //junction seeds
-// import sessionTaskSeed from './sessionTaskSeed';
+// import sessionServiceSeed from './sessionServiceSeed';
 import counterCategorySeed from './counterCategorySeed';
 import shiftSeed from './shiftSeed'
 // import employeeShiftSeed from './employeeShiftSeed';
@@ -49,12 +49,12 @@ const seed = async () => {
             }
             load();          
           })
-          .then(() => models.Task.bulkCreate(taskSeed))
+          .then(() => models.Service.bulkCreate(serviceSeed))
           //junction seeds
           .then(() => models.CounterCategory.bulkCreate(counterCategorySeed))
           // .then(() => models.EmployeeShift.bulkCreate(employeeShiftSeed))
           // .then(() => models.Session.bulkCreate(sessionSeed))
-          // .then(() => models.SessionTask.bulkCreate(sessionTaskSeed))
+          // .then(() => models.SessionService.bulkCreate(sessionServiceSeed))
           .then((res, err) => {
             if (err) {
               console.log(`ERROR at seeding data: ${err}`);

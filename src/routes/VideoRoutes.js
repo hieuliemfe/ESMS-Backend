@@ -14,7 +14,6 @@ import { isAuthorized, isBankTeller } from '../middlewares/authorization';
 import fileUpload from "../middlewares/fileUpload.js";
 
 /**
-* @swagger
 * /videos/evidences:
 *   post:
 *     tags:
@@ -43,7 +42,7 @@ import fileUpload from "../middlewares/fileUpload.js";
 *       401:
 *         description: Forbidden.
 */
-router.post('/evidences', passport.authenticate('jwt', { session: false }), isBankTeller, fileUpload.single("file"), Controller.upload_evidence.post);
+// router.post('/evidences', passport.authenticate('jwt', { session: false }), isBankTeller, fileUpload.single("file"), Controller.upload_evidence.post);
 
 /**
 * @swagger

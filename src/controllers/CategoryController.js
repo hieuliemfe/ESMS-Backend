@@ -92,7 +92,7 @@ export default {
           };
         }
         await models.CounterCategory.findAll({
-          attributes: ["id", "counterId", "createdAt", "updatedAt"],
+          attributes: ["id", "counterId"],
           include: [
             {
               model: models.Counter,
@@ -118,11 +118,11 @@ export default {
     },
   },
 
-  view_tasks_by_category_id: {
+  view_services_by_category_id: {
     async get(req, res, next) {
       try {
         const { categoryId } = req.params;
-        const result = await models.Task.findAll({
+        const result = await models.Service.findAll({
           where: {
             categoryId: categoryId,
           },

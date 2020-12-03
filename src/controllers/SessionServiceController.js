@@ -4,7 +4,7 @@ import models from "../db/models/index";
 import status from "http-status";
 import url from "url";
 import { DefaultError } from "../utils/errorHandler";
-import { sessionTaskStatus } from "../db/config/statusConfig";
+import { sessionServiceStatus } from "../db/config/statusConfig";
 export default {
   view: {
     async get(req, res, next) {
@@ -26,15 +26,15 @@ export default {
           queryData.order = "created_at,asc";
         }
         const orderOptions = queryData.order.split(",");
-        const tasks = await models.SessionTask.findOne({
+        const services = await models.SessionService.findOne({
           include: [
             {
               model: models.Session,
               as: "Session",
             },
             {
-              model: models.Task,
-              as: "Task",
+              model: models.Service,
+              as: "Service",
             },
           ],
           where: whereCondition,
@@ -42,7 +42,7 @@ export default {
         });
         res.status(status.OK).send({
           success: true,
-          message: tasks,
+          message: services,
         });
       } catch (error) {
         next(error);
@@ -50,17 +50,17 @@ export default {
     },
   },
 
-  assign_task: {
+  assign_service: {
     async post(req, res, next) {
       try {
-        models.SessionTask.create({
-          statusId: sessionTaskStatus.ASSIGNED,
+        models.SessionService.create({
+          statusId: sessionServiceStatus.ASSIGNED,
           sessionId: req.body.sessionId,
-          taskId: req.body.taskId,
-        }).then((sessionTask, err) => {
+          serviceId: req.body.serviceId,
+        }).then((sessionService, err) => {
           res.send({
             success: true,
-            message: { id: sessionTask.id },
+            message: { id: sessionService.id },
           });
         });
       } catch (error) {
@@ -72,13 +72,13 @@ export default {
   update_status: {
     async put(req, res, next) {
       try {
-        models.SessionTask.update(
+        models.SessionService.update(
           {
             statusId: req.body.statusId,
           },
           {
             where: {
-              id: req.params.sessionTaskId,
+              id: req.params.sessionServiceId,
             },
           }
         ).then((result, err) => {
@@ -98,9 +98,9 @@ export default {
   delete: {
     async delete(req, res, next) {
       try {
-        models.SessionTask.destroy({
+        models.SessionService.destroy({
           where: {
-            id: req.params.sessionTaskId,
+            id: req.params.sessionServiceId,
           },
         }).then((result, err) => {
           if (!err) {

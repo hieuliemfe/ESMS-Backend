@@ -120,7 +120,6 @@ router.get('/:employeeCode', passport.authenticate('jwt', { session: false }), i
 router.put('/:id/avatar', passport.authenticate('jwt', { session: false }), isManager, Controller.update_avatar_url.put);
 
 /**
-* @swagger
 * /employees/{employeeCode}/subscription:
 *   put:
 *     tags:
@@ -144,7 +143,7 @@ router.put('/:id/avatar', passport.authenticate('jwt', { session: false }), isMa
 *       401:
 *         description: Employee not found.
 */
-router.put('/:employeeCode/subscription', passport.authenticate('jwt', { session: false }), isManager, Controller.set_subscription_status.put);
+// router.put('/:employeeCode/subscription', passport.authenticate('jwt', { session: false }), isManager, Controller.set_subscription_status.put);
 
 /**
 * @swagger

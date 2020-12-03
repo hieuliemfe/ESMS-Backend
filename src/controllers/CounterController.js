@@ -24,7 +24,7 @@ export default {
                 attributes: { exclude: ["createdAt", "updatedAt"] },
                 include: [
                   {
-                    model: models.Task,
+                    model: models.Service,
                     attributes: {
                       exclude: [
                         "createdAt",

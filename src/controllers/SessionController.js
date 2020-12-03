@@ -276,7 +276,7 @@ export default {
         });
         const createdSession = await models.Session.create({
           employeeId: tokenDecoded.employeeId,
-          shift_id: currentEmployeeShift.id,
+          employee_shift_id: currentEmployeeShift.id,
         });
         res.status(status.CREATED).send({
           success: true,

@@ -31,7 +31,7 @@ export default function (sequelize, DataTypes) {
       foreignKey: "category_id",
       onDelete: 'cascade'
     });
-    Category.hasMany(models.Task, {
+    Category.hasMany(models.Service, {
       foreignKey: "category_id",
       onDelete: 'cascade'
     });

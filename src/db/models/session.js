@@ -5,7 +5,8 @@ export default function (sequelize, DataTypes) {
   const Session = sequelize.define('Session', {
     sessionStart: {
       type: DataTypes.DATE,
-      field: 'session_start'
+      field: 'session_start',
+      defaultValue: Sequelize.fn('NOW'),
     },
     sessionEnd: {
       type: DataTypes.DATE,

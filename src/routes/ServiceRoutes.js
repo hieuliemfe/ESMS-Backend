@@ -2,23 +2,23 @@
 
 /**
  * Category Routes
- * path: /categories
+ * path: /services
  */
 
 import express from 'express';
-import Controller from '../controllers/TaskController';
+import Controller from '../controllers/ServiceController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
 
 /**
 * @swagger
-* /Tasks:
+* /services:
 *   get:
 *     tags:
-*       - Tasks
-*     name: Get Tasks.
-*     summary: Get Tasks.
+*       - Services
+*     name: Get Services.
+*     summary: Get Services.
 *     consumes:
 *       - application/json
 *     responses:

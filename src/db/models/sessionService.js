@@ -2,7 +2,7 @@
 import { Sequelize } from 'sequelize';
 
 export default function (sequelize, DataTypes) {
-  const SessionTask = sequelize.define('SessionTask', {
+  const SessionService = sequelize.define('SessionService', {
     statusId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -13,10 +13,10 @@ export default function (sequelize, DataTypes) {
       allowNull: false,
       field: 'session_id',
     },
-    taskId: {
+    serviceId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      field: 'task_id',
+      field: 'service_id',
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -29,20 +29,20 @@ export default function (sequelize, DataTypes) {
       field: 'updated_at'
     }
   }, {
-    tableName: 'session_task',
+    tableName: 'session_service',
   });
 
-  SessionTask.associate = function (models) {
-    SessionTask.belongsTo(models.Session, {
+  SessionService.associate = function (models) {
+    SessionService.belongsTo(models.Session, {
       targetKey: 'id',
       foreignKey: 'session_id',
       as: 'Session'
     });
-    SessionTask.belongsTo(models.Task, {
+    SessionService.belongsTo(models.Service, {
       targetKey: 'id',
-      foreignKey: 'task_id',
-      as: 'Task'
+      foreignKey: 'service_id',
+      as: 'Service'
     });
   };
-  return SessionTask;
+  return SessionService;
 };

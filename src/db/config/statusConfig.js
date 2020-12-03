@@ -1,6 +1,6 @@
 'use strict'
 
-export const sessionTaskStatus = {
+export const sessionServiceStatus = {
   ASSIGNED: 1,
   IN_PROGRESS: 2,
   COMPLETED: 3

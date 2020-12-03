@@ -2,7 +2,7 @@
 import { Sequelize } from 'sequelize';
 
 export default function (sequelize, DataTypes) {
-  const Task = sequelize.define('Task', {
+  const Service = sequelize.define('Service', {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -28,14 +28,14 @@ export default function (sequelize, DataTypes) {
       field: 'updated_at'
     }
   }, {
-    tableName: 'task',
+    tableName: 'service',
   });
 
-  Task.associate = function (models) {
-    Task.belongsTo(models.Category, {
+  Service.associate = function (models) {
+    Service.belongsTo(models.Category, {
       foreignKey: "category_id",
       as: 'Category'
     });
   }
-  return Task;
+  return Service;
 };

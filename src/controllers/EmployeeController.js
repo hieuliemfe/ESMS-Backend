@@ -343,33 +343,33 @@ export default {
     },
   },
 
-  set_subscription_status: {
-    async put(req, res, next) {
-      try {
-        const employee = await models.Employee.findOne({
-          attributes: ["is_subscribed"],
-          where: {
-            employeeCode: req.params.employeeCode,
-          },
-        });
-        const newStatus = !employee.dataValues.is_subscribed;
-        const result = await models.Employee.update(
-          { isSubscribed: newStatus },
-          {
-            where: {
-              employeeCode: req.params.employeeCode,
-            },
-          }
-        );
-        res.status(status.OK).send({
-          success: true,
-          message: result,
-        });
-      } catch (error) {
-        next(error);
-      }
-    },
-  },
+  // set_subscription_status: {
+  //   async put(req, res, next) {
+  //     try {
+  //       const employee = await models.Employee.findOne({
+  //         attributes: ["is_subscribed"],
+  //         where: {
+  //           employeeCode: req.params.employeeCode,
+  //         },
+  //       });
+  //       const newStatus = !employee.dataValues.is_subscribed;
+  //       const result = await models.Employee.update(
+  //         { isSubscribed: newStatus },
+  //         {
+  //           where: {
+  //             employeeCode: req.params.employeeCode,
+  //           },
+  //         }
+  //       );
+  //       res.status(status.OK).send({
+  //         success: true,
+  //         message: result,
+  //       });
+  //     } catch (error) {
+  //       next(error);
+  //     }
+  //   },
+  // },
 
   set_avail_status: {
     async delete(req, res, next) {
