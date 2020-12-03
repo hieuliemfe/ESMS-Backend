@@ -6,7 +6,7 @@ import employeeSeed from './employeeSeed';
 import emotionSeed from './emotionSeed';
 import customerSeed from './customerSeed';
 import categorySeed from './categorySeed';
-import queueSeed from './queueSeed';
+import waitingListSeed from './waitingListSeed';
 import counterSeed from './counterSeed';
 // import sessionSeed from './sessionSeed';
 import serviceSeed from './serviceSeed';
@@ -42,8 +42,8 @@ const seed = async () => {
             const timer = ms => new Promise(res => setTimeout(res, ms))
 
             async function load () { // We need to wrap the loop into an async function for this to work
-              for (var i = 0; i < queueSeed.length; i++) {
-                models.Queue.create(queueSeed[i])
+              for (var i = 0; i < waitingListSeed.length; i++) {
+                models.WaitingList.create(waitingListSeed[i])
                 await timer(1500); // then the created Promise can be awaited
               }
             }

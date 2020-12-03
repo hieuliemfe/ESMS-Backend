@@ -2,11 +2,11 @@
 
 /**
  * Queue Route
- * path: /queues
+ * path: /waiting-list
  */
 
 import express from 'express';
-import Controller from '../controllers/QueueController';
+import Controller from '../controllers/WaitingListController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
@@ -14,17 +14,17 @@ import { isBankTeller } from '../middlewares/authorization';
 
 /**
 * @swagger
-* /queues:
+* /waiting-list:
 *   get:
 *     tags:
-*       - Queues
-*     name: Get queues.
-*     summary: get a list of queues
+*       - Waiting List
+*     name: Get waiting customers.
+*     summary: get a list of waiting customers
 *     consumes:
 *       - application/json
 *     responses:
 *       200:
-*         description: A list of queues is displayed.
+*         description: A list of waiting customers is displayed.
 *       400:
 *         description: Error.
 *       401:
@@ -34,12 +34,12 @@ router.get('/', passport.authenticate('jwt', { session: false }), isBankTeller, 
 
 /**
 * @swagger
-* /queues:
+* /waiting-list:
 *   post:
 *     tags:
-*       - Queues
-*     name: Create a queue
-*     summary: Create a queue
+*       - Waiting List
+*     name: Add a customer to waiting list
+*     summary: Add a customer to waiting list
 *     consumes:
 *       - application/json
 *     requestBody:
@@ -62,12 +62,12 @@ router.post('/', Controller.create.post);
 
 /**
 * @swagger
-* /queues/assign:
+* /waiting-list/assign:
 *   post:
 *     tags:
-*       - Queues
-*     name: Assign a queue to a counter
-*     summary: Assign a queue to an counter
+*       - Waiting List
+*     name: Assign a customer to a counter
+*     summary: Assign a customer to an counter
 *     consumes:
 *       - application/json
 *     requestBody:
@@ -79,7 +79,7 @@ router.post('/', Controller.create.post);
 *             properties:
 *               counterId:
 *                 type: integer
-*               queueId:
+*               id:
 *                 type: integer
 *     responses:
 *       200:
@@ -89,62 +89,62 @@ router.post('/assign', passport.authenticate('jwt', { session: false }), isBankT
 
 /**
 * @swagger
-* /queues/{queueId}:
+* /waiting-list/{id}:
 *   delete:
 *     tags:
-*       - Queues
-*     name: Delete a queue
-*     summary: Delete a queue based on queueId
+*       - Waiting List
+*     name: Delete a customer out of waiting list
+*     summary: Delete a customer out of waiting list based on id
 *     consumes:
 *       - application/json
 *     parameters:
 *       - in: path
-*         name: queueId
+*         name: id
 *         schema:
 *          type: integer
-*         description: Queue ID to delete
+*         description: ID to delete
 *     responses:
 *       200:
-*         description: All queues deleted.
+*         description: All waiting customers deleted.
 */
-router.delete('/:queueId', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.delete.delete);
+router.delete('/:id', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.delete.delete);
 
 /**
 * @swagger
-* /queues/{queueId}:
+* /waiting-list/{id}:
 *   put:
 *     tags:
-*       - Queues
-*     name: send back a queue
-*     summary: send to back a queue based on queueId
+*       - Waiting List
+*     name: send back a customer to the end of the waiting list
+*     summary: send back a customer to the end of the waiting list
 *     consumes:
 *       - application/json
 *     parameters:
 *       - in: path
-*         name: queueId
+*         name: id
 *         schema:
 *          type: integer
 *         description: Queue ID to send to the back
 *     responses:
 *       200:
-*         description: All queues sent back.
+*         description: A customer sent to the end of the wating list.
 */
-router.put('/:queueId', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.sendBack.put);
+router.put('/:id', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.sendBack.put);
 
 
 /**
 * @swagger
-* /queues/delete-all:
+* /waiting-list/delete-all:
 *   delete:
 *     tags:
-*       - Queues
-*     name: Delete all queues
-*     summary: Delete all queues
+*       - Waiting List
+*     name: Delete all waiting customers
+*     summary: Delete all waiting customers
 *     consumes:
 *       - application/json
 *     responses:
 *       200:
-*         description: All queues deleted.
+*         description: All waiting customers deleted.
 */
 router.delete('/delete-all', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.delete_all.delete);
 

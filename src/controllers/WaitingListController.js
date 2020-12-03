@@ -29,7 +29,7 @@ export default {
             categoryIds.push(counterCategory.categoryId);
           });
           console.log(`=====CounterCategory:${counterCategory.categoryId}`);
-          models.Queue.findAll({
+          models.WaitingList.findAll({
             include: [
               {
                 model: models.Category,
@@ -66,11 +66,11 @@ export default {
   create: {
     async post(req, res, next) {
       try {
-        models.Queue.count().then((count) => {
-          models.Queue.create({
+        models.WaitingList.max('number').then((maxNum) => {
+          models.WaitingList.create({
             categoryId: req.body.categoryId,
             customerName: req.body.customerName,
-            number: count + 1,
+            number: maxNum + 1,
           }).then((queue) => {
             res.status(status.OK).send({
               success: true,
@@ -87,14 +87,14 @@ export default {
   assign_queue: {
     async post(req, res, next) {
       try {
-        const { counterId, queueId } = req.body;
-        models.Queue.update(
+        const { counterId, id } = req.body;
+        models.WaitingList.update(
           {
             counter_id: counterId,
             updatedAt: new Date(),
           },
           {
-            where: { id: queueId },
+            where: { id: id },
           }
         ).then((result) => {
           res.status(status.OK).send({
@@ -110,9 +110,9 @@ export default {
   delete: {
     async delete(req, res, next) {
       try {
-        models.Queue.destroy({
+        models.WaitingList.destroy({
           where: {
-            id: req.params.queueId,
+            id: req.params.id,
           },
         }).then((result) => {
           res.status(status.OK).send({
@@ -128,7 +128,7 @@ export default {
   sendBack: {
     async put(req, res, next) {
       try {
-        models.Queue.findByPk(req.params.queueId).then(instance => {
+        models.WaitingList.findByPk(req.params.id).then(instance => {
           if(instance == null){
             res.status(status.OK).send({
               success: false,
@@ -154,7 +154,7 @@ export default {
   delete_all: {
     async delete(req, res, next) {
       try {
-        models.Queue.destroy({
+        models.WaitingList.destroy({
           truncate: true,
         }).then((result) => {
           res.status(status.OK).send({

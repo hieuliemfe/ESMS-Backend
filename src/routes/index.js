@@ -6,7 +6,7 @@ import CustomerRoutes from './CustomerRoutes';
 import SessionServiceRoutes from './SessionServiceRoutes';
 import RoleRoutes from './RoleRoutes';
 import CounterRoutes from './CounterRoutes';
-import QueueRoutes from './QueueRoutes'
+import WaitingListRoutes from './WaitingListRoutes'
 import CategoryRoutes from './CategoryRoutes';
 import EmployeeShiftRoutes from './EmployeeShiftRoutes';
 // import ManagerRoutes from './ManagerRoutes';
@@ -50,8 +50,8 @@ const Router = [
     handler: CounterRoutes
   },
   {
-    path: '/queues',
-    handler: QueueRoutes
+    path: '/waiting-list',
+    handler: WaitingListRoutes
   },
   {
     path: '/categories',

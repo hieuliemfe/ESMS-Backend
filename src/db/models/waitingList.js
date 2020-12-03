@@ -2,7 +2,7 @@
 import { Sequelize } from 'sequelize';
 
 export default function (sequelize, DataTypes) {
-  const Queue = sequelize.define('Queue', {
+  const WaitingList = sequelize.define('WaitingList', {
     number: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -37,17 +37,17 @@ export default function (sequelize, DataTypes) {
       field: 'updated_at'
     }
   }, {
-    tableName: 'queue',
+    tableName: 'waiting_list',
   });
-  Queue.associate = function (models) {
-    Queue.belongsTo(models.Category, {
+  WaitingList.associate = function (models) {
+    WaitingList.belongsTo(models.Category, {
       foreignKey: 'category_id',
       as: 'Category'
     });
-    Queue.belongsTo(models.Counter, {
+    WaitingList.belongsTo(models.Counter, {
       foreignKey: 'counter_id',
       as: 'Counter'
     });
   }
-  return Queue;
+  return WaitingList;
 };

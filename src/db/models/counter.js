@@ -29,7 +29,7 @@ export default function (sequelize, DataTypes) {
 
   Counter.associate = function (models) {
     //A counter will have many queues from customers.
-    Counter.hasMany(models.Queue, {
+    Counter.hasMany(models.WaitingList, {
       as: 'Queue',
       foreignKey: 'counter_id',
       onDelete: 'cascade',

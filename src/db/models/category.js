@@ -27,7 +27,7 @@ export default function (sequelize, DataTypes) {
   });
 
   Category.associate = function (models) {
-    Category.hasMany(models.Queue, {
+    Category.hasMany(models.WaitingList, {
       foreignKey: "category_id",
       onDelete: 'cascade'
     });
