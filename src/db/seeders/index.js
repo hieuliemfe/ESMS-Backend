@@ -8,17 +8,17 @@ import customerSeed from './customerSeed';
 import categorySeed from './categorySeed';
 import queueSeed from './queueSeed';
 import counterSeed from './counterSeed';
-import sessionSeed from './sessionSeed';
+// import sessionSeed from './sessionSeed';
 import taskSeed from './taskSeed';
 //junction seeds
-import sessionTaskSeed from './sessionTaskSeed';
+// import sessionTaskSeed from './sessionTaskSeed';
 import counterCategorySeed from './counterCategorySeed';
 import shiftSeed from './shiftSeed'
-import employeeShiftSeed from './employeeShiftSeed';
-import negativeEmotionCriteriaSeed from './negativeEmotionCriteriaSeed';
-import negativeEmotionActionSeed from './negativeEmotionActionSeed';
-import stressCriteriaSeed from './stressCriteriaSeed';
-import stressSuggestionSeed from './stressSuggestionSeed';
+// import employeeShiftSeed from './employeeShiftSeed';
+// import negativeEmotionCriteriaSeed from './negativeEmotionCriteriaSeed';
+// import negativeEmotionActionSeed from './negativeEmotionActionSeed';
+// import stressCriteriaSeed from './stressCriteriaSeed';
+// import stressSuggestionSeed from './stressSuggestionSeed';
 const seed = async () => {
   //check if data already exists.
   await models.Role.count()
@@ -30,10 +30,10 @@ const seed = async () => {
           .then(() => models.Emotion.bulkCreate(emotionSeed))
           .then(() => models.Category.bulkCreate(categorySeed))
           .then(() => models.Shift.bulkCreate(shiftSeed))
-          .then(() => models.NegativeEmotionCriteria.bulkCreate(negativeEmotionCriteriaSeed))
-          .then(() => models.NegativeEmotionAction.bulkCreate(negativeEmotionActionSeed))
-          .then(() => models.StressCriteria.bulkCreate(stressCriteriaSeed))
-          .then(() => models.StressSuggestion.bulkCreate(stressSuggestionSeed))
+          // .then(() => models.NegativeEmotionCriteria.bulkCreate(negativeEmotionCriteriaSeed))
+          // .then(() => models.NegativeEmotionAction.bulkCreate(negativeEmotionActionSeed))
+          // .then(() => models.StressCriteria.bulkCreate(stressCriteriaSeed))
+          // .then(() => models.StressSuggestion.bulkCreate(stressSuggestionSeed))
           //sample data seeds
           .then(() => models.Counter.bulkCreate(counterSeed))
           .then(() => models.Employee.bulkCreate(employeeSeed))
@@ -52,9 +52,9 @@ const seed = async () => {
           .then(() => models.Task.bulkCreate(taskSeed))
           //junction seeds
           .then(() => models.CounterCategory.bulkCreate(counterCategorySeed))
-          .then(() => models.EmployeeShift.bulkCreate(employeeShiftSeed))
-          .then(() => models.Session.bulkCreate(sessionSeed))
-          .then(() => models.SessionTask.bulkCreate(sessionTaskSeed))
+          // .then(() => models.EmployeeShift.bulkCreate(employeeShiftSeed))
+          // .then(() => models.Session.bulkCreate(sessionSeed))
+          // .then(() => models.SessionTask.bulkCreate(sessionTaskSeed))
           .then((res, err) => {
             if (err) {
               console.log(`ERROR at seeding data: ${err}`);
