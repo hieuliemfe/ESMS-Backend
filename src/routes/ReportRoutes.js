@@ -22,12 +22,21 @@ import { isManager } from '../middlewares/authorization';
 *     consumes:
 *       - application/json
 *     parameters:
+*       - name: employeeCode
+*         in: query
+*         required: false
+*         description: employee code
+*         schema:
+*           type : string
+*           nullable: true
+*           allowEmptyValue: true
 *       - name: type
 *         in: query
 *         required: true
 *         description: json/pdf/xlsx.
 *         schema:
 *           type : string
+*           
 *       - name: startDate
 *         in: query
 *         required: false

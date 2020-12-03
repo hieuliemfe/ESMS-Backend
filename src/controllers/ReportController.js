@@ -118,7 +118,7 @@ function generateInvoiceTable(doc, data, startDate, endDate) {
     generateHr(doc, invoiceTableTop + 50);
     let j = 0
     for (i = 0; i < data.length; i++) {
-        if(j > 17){
+        if (j > 17) {
             doc.addPage()
             j = -6
             generateHr(doc, invoiceTableTop + (j + 2) * 30 - 10);
@@ -145,6 +145,13 @@ export default {
             try {
                 let config = JSON.parse(fs.readFileSync(path.join(__dirname + '/../' + process.env.ACTION_CONFIG_PATH)))
                 const type = req.query.type
+                const employeeCode = req.query.employeeCode
+                let employeeCodeCondition = ""
+                if (employeeCode !== undefined) {
+                    employeeCodeCondition = {
+                        employeeCode: employeeCode
+                    }
+                }
                 const startDate = req.query.startDate
                     ? req.query.startDate
                     // : setEpochMillisTime(0, 0, 0, 0, 0);
@@ -172,7 +179,10 @@ export default {
                         required: false
                     },
                     where: {
-                        roleId: 3
+                        [Op.and]: [
+                            { roleId: 3 },
+                            employeeCodeCondition
+                        ]
                     },
                 });
                 var empResults = [];
