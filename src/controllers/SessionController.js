@@ -154,7 +154,8 @@ export default {
             "sessionEnd",
             "sessionDuration",
             // 'info',
-            "angryWarningCount"
+            "angryWarningCount",
+            "customerName"
           ],
           where: whereCondition,
           include: [
