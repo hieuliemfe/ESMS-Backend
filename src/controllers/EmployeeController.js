@@ -86,9 +86,6 @@ export default {
         );
         if(employee.Suspensions.length > 0){
           employee.Suspensions.forEach(suspension => {
-            console.log(`aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`)
-            console.log(`==============${new Date(suspension.startTime)}`)
-            console.log(`==============${new Date()}`)
             if(new Date(suspension.startTime) <= new Date()){
               return res.status(status.BAD_REQUEST).send({
                 success: true,
