@@ -59,7 +59,7 @@ export default {
               required:false
             },
           ],
-          attributes: ["id", "employeeCode", "password", "roleId"],
+          attributes: ["id", "employeeCode", "password", "roleId", "appointments"],
         });
         if (!employee)
           throw new DefaultError(
@@ -93,7 +93,8 @@ export default {
                   employeeCode: employee.employeeCode,
                   roleName: employee.Role.roleName,
                   Counter: employee.Counter,
-                  suspensions: [ suspension ]
+                  suspensions: [ suspension ],
+                  appointments: employee.appointments
                 },
                 token,
               });
@@ -105,7 +106,8 @@ export default {
               employeeCode: employee.employeeCode,
               roleName: employee.Role.roleName,
               Counter: employee.Counter,
-              suspensions: employee.Suspensions
+              suspensions: employee.Suspensions,
+              appointments: employee.appointments
             },
             token,
           });
@@ -115,7 +117,8 @@ export default {
           message: {
             employeeCode: employee.employeeCode,
             roleName: employee.Role.roleName,
-            Counter: employee.Counter
+            Counter: employee.Counter,
+            appointments: employee.appointments
           },
           token,
         });
@@ -320,6 +323,73 @@ export default {
       }
     },
   },
+
+  add_appointment: {
+    async put(req, res, next) {
+      try {
+        console.log(`=================================================================================`)
+        console.log(`=================================================================================`)
+        console.log(`=================================================================================`)
+        console.log(req.query)
+        const { appointmentTime, bankTellerCode, managerCode } = req.query;
+        const manager = await models.Employee.findOne({
+          attributes: [
+            "id",
+            "employeeCode",
+            "appointments"
+          ],
+          where: {
+            employeeCode: managerCode,
+          },
+        });
+        const bankTeller = await models.Employee.findOne({
+          attributes: [
+            "id",
+            "employeeCode",
+            "appointments"
+          ],
+          where: {
+            employeeCode: bankTellerCode,
+          },
+        });
+        let bankTellerAppointments = []
+        let managerAppointments = []
+        if(bankTeller.appointments != null) {
+          bankTellerAppointments = JSON.parse(bankTeller.appointments)
+        }
+        if(manager.appointments != null) {
+          managerAppointments = JSON.parse(manager.appointments)
+        }
+        bankTellerAppointments.push(appointmentTime)
+        managerAppointments.push(appointmentTime)
+        const result1 = await models.Employee.update(
+          { appointments: JSON.stringify(bankTellerAppointments) },
+          {
+            where: {
+              employeeCode: bankTellerCode,
+            },
+          }
+        );
+        const result2 = await models.Employee.update(
+          { appointments: JSON.stringify(managerAppointments) },
+          {
+            where: {
+              employeeCode: managerCode,
+            },
+          }
+        );
+        if(result1 && result2) {
+          res.status(status.OK).send({
+            success: true,
+            message: 1,
+          });
+        }
+      } catch (error) {
+        next(error);
+      }
+    },
+  },
+
 
   view_one: {
     async get(req, res, next) {

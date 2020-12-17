@@ -58,6 +58,43 @@ router.get('/', passport.authenticate('jwt', { session: false }), isManager, Con
 
 /**
 * @swagger
+* /employees/add-appointment:
+*   put:
+*     tags:
+*       - Employees
+*     name: Add appointment
+*     summary: Add new appointment.
+*     consumes:
+*       - application/json
+*     parameters:
+*       - name: appointmentTime
+*         in: query
+*         required: true
+*         description: DateTime string of appointment time.
+*         schema:
+*           type : string
+*       - name: bankTellerCode
+*         in: query
+*         required: true
+*         description: employee code of bank teller to make an appointment.
+*         schema:
+*           type : string
+*       - name: managerCode
+*         in: query
+*         required: true
+*         description: employee code of manager to make an appointment.
+*         schema:
+*           type : string
+*     responses:
+*       200:
+*         description: Displays employee details
+*       401:
+*         description: Employee not found.
+*/
+router.put('/add-appointment', passport.authenticate('jwt', { session: false }), isManager, Controller.add_appointment.put);
+
+/**
+* @swagger
 * /employees/{employeeCode}:
 *   get:
 *     tags:
