@@ -306,13 +306,13 @@ export default {
           }
         }
         empResults.sort(function (a, b) {
-          if ((a.getDataValue("totalWarningSessions") - b.getDataValue("totalWarningSessions")) === 0){
+          if ((a.getDataValue("angrySessionPercent") - b.getDataValue("angrySessionPercent")) === 0){
             return (
-              b.getDataValue("angryWarningCount") -
-              a.getDataValue("angryWarningCount")
+              a.getDataValue("totalSession") -
+              b.getDataValue("totalSession")
             );
           }
-          return (b.getDataValue("totalWarningSessions") - a.getDataValue("totalWarningSessions"))
+          return (b.getDataValue("angrySessionPercent") - a.getDataValue("angrySessionPercent"))
         });
         res.status(status.OK).send({
           success: true,
