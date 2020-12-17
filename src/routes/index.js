@@ -2,7 +2,7 @@ import RootRoutes from './RootRoutes';
 import EmployeeRoutes from './EmployeeRoutes';
 import EmailRoutes from './EmailRoutes';
 import SessionRoutes from './SessionRoutes';
-import CustomerRoutes from './CustomerRoutes';
+// import CustomerRoutes from './CustomerRoutes';
 import SessionServiceRoutes from './SessionServiceRoutes';
 import RoleRoutes from './RoleRoutes';
 import CounterRoutes from './CounterRoutes';
@@ -25,10 +25,10 @@ const Router = [
     path: '/employees',
     handler: EmployeeRoutes,
   },
-  {
-    path: '/customers',
-    handler: CustomerRoutes
-  },
+  // {
+  //   path: '/customers',
+  //   handler: CustomerRoutes
+  // },
   {
     path: '/emails',
     handler: EmailRoutes,

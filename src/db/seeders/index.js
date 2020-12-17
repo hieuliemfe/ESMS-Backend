@@ -4,7 +4,6 @@ import models from '../models/index';
 import roleSeed from './roleSeed';
 import employeeSeed from './employeeSeed';
 import emotionSeed from './emotionSeed';
-import customerSeed from './customerSeed';
 import categorySeed from './categorySeed';
 import waitingListSeed from './waitingListSeed';
 import counterSeed from './counterSeed';
@@ -37,7 +36,6 @@ const seed = async () => {
           //sample data seeds
           .then(() => models.Counter.bulkCreate(counterSeed))
           .then(() => models.Employee.bulkCreate(employeeSeed))
-          .then(() => models.Customer.bulkCreate(customerSeed))
           .then(() => {
             const timer = ms => new Promise(res => setTimeout(res, ms))
 

@@ -32,10 +32,6 @@ export default function (sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 0,
     },
-    evidenceUrl: {
-      type: DataTypes.TEXT,
-      field: 'evidence_url'
-    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: Sequelize.fn('NOW'),
@@ -53,10 +49,6 @@ export default function (sequelize, DataTypes) {
     Session.hasMany(models.Period, {
       foreignKey: 'session_id',
       as: 'Period'
-    });
-    Session.belongsTo(models.Customer, {
-      foreignKey: 'customer_id',
-      as: 'Customer'
     });
     //A session can be only in a shift
     Session.belongsTo(models.EmployeeShift, {

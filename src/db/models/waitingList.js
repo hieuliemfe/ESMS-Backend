@@ -13,11 +13,6 @@ export default function (sequelize, DataTypes) {
       allowNull: false,
       field: 'category_id'
     },
-    statusId: {
-      type: DataTypes.INTEGER,
-      defaultValue: 1,
-      field: 'status_id'
-    },
     counterId: {
       type: DataTypes.INTEGER,
       field: 'counter_id'
