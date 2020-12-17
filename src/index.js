@@ -57,7 +57,7 @@ db.sequelize.authenticate()
   });
 async function syncDb() {
   //{force: true} when db structure is changed.
-  await db.sequelize.sync({ force: true, logging: true });
+  await db.sequelize.sync({ force: false, logging: false });
   console.log("Migration completed. Seeding...");
   await seed();
 }
