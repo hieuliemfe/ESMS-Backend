@@ -153,6 +153,13 @@ router.get('/mindate', passport.authenticate('jwt', { session: false }), isAutho
 *     summary: Create an employee's session with a customer.
 *     consumes:
 *       - application/json
+*     parameters:
+*       - name: customerName
+*         in: query
+*         required: true
+*         description: Customer name.
+*         schema:
+*           type : string
 *     responses:
 *       201:
 *         description: Session's created.

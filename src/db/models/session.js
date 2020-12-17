@@ -22,6 +22,10 @@ export default function (sequelize, DataTypes) {
       type: DataTypes.UUID,
       field: 'employee_id',
     },
+    customerName: {
+      type: DataTypes.STRING,
+      field: 'customer_name'
+    },
     info: {
       type: DataTypes.TEXT,
       field: 'info',

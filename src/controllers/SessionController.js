@@ -266,6 +266,7 @@ export default {
     async post(req, res, next) {
       try {
         const token = req.headers.authorization.replace("Bearer ", "");
+        const { customerName } = req.query
         const tokenDecoded = jwt.decode(token);
         //create null session
         const currentEmployeeShift = await models.EmployeeShift.findOne({
@@ -277,6 +278,7 @@ export default {
         const createdSession = await models.Session.create({
           employeeId: tokenDecoded.employeeId,
           employee_shift_id: currentEmployeeShift.id,
+          customerName: customerName,
         });
         res.status(status.CREATED).send({
           success: true,
