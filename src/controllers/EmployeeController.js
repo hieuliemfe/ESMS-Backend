@@ -85,7 +85,24 @@ export default {
           JWT_SECRET
         );
         if(employee.Suspensions.length > 0){
-          return res.status(status.BAD_REQUEST).send({
+          employee.Suspensions.forEach(suspension => {
+            console.log(`aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`)
+            console.log(`==============${new Date(suspension.startTime)}`)
+            console.log(`==============${new Date()}`)
+            if(new Date(suspension.startTime) <= new Date()){
+              return res.status(status.BAD_REQUEST).send({
+                success: true,
+                message: {
+                  employeeCode: employee.employeeCode,
+                  roleName: employee.Role.roleName,
+                  Counter: employee.Counter,
+                  suspensions: [ suspension ]
+                },
+                token,
+              });
+            }
+          });
+          return res.status(status.OK).send({
             success: true,
             message: {
               employeeCode: employee.employeeCode,
@@ -454,7 +471,7 @@ export default {
     async post(req, res, next) {
       try {
         const employeeCode = req.params.employeeCode
-        const { reason, expiration } = req.body
+        const { reason, expiration, start } = req.body
         const employee = await models.Employee.findOne({
           where: {
             employeeCode: employeeCode
@@ -471,6 +488,7 @@ export default {
           {
             employeeId: employee.id,
             reason: reason,
+            startTime: start,
             expiredOn: expiration
           })
         res.status(status.CREATED).send({

@@ -59,6 +59,11 @@ export default function (sequelize, DataTypes) {
       unique: false,
       field: 'counter_id'
     },
+    appointments:{
+      type: DataTypes.TEXT,
+      unique: false,
+      field: 'appointments'
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: Sequelize.fn('NOW'),

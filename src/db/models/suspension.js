@@ -10,6 +10,11 @@ export default function (sequelize, DataTypes) {
       primaryKey: true,
       field: 'id',
     },
+    startTime:{
+      type: DataTypes.DATE,
+      field: 'start_time',
+      allowNull: false,
+    },
     expiredOn: {
       type: DataTypes.DATE,
       field: 'expiration_time',

@@ -173,6 +173,8 @@ router.put('/:id/avatar', passport.authenticate('jwt', { session: false }), isMa
 *             properties:
 *               reason:
 *                 type: string
+*               start:
+*                 type: string
 *               expiration:
 *                 type: string
 *     responses:
