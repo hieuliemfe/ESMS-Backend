@@ -212,8 +212,8 @@ export default {
                         where: {
                             [Op.and]: [
                                 { sessionId: { [Op.in]: sessIds } },
-                                { emotionId: 8 },
-                                { duration: { [Op.gte]: 60000 } }
+                                { emotionId: 6 },
+                                { duration: { [Op.gte]: 180000 } }
                             ]
                         }
                     }).then(result => {
