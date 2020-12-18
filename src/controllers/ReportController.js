@@ -212,7 +212,7 @@ export default {
                         where: {
                             [Op.and]: [
                                 { sessionId: { [Op.in]: sessIds } },
-                                { emotionId: 6 },
+                                { emotionId: 8 },
                                 { duration: { [Op.gte]: 180000 } }
                             ]
                         }
