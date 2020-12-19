@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer';
 import path from 'path';
 import ejs from 'ejs';
 import { mailContentsConfig, mailClosingsConfig, setAppointmentDate, setVideoFrame } from './contentConfig';
+import { DatabaseError, DATEONLY } from 'sequelize';
 const emailTemplate = path.join(__dirname + "/../src/services/email-service/templates/template.ejs");
 
 export const createEmail = async (employee, type, appoinmentDate, videoUrl, startDate) => {
@@ -21,7 +22,7 @@ export const createEmail = async (employee, type, appoinmentDate, videoUrl, star
     case 'appointment': {
       email = await ejs.renderFile(emailTemplate, {
         fullname: employee.fullname,
-        content: mailContentsConfig.MAKE_APPOINTMENT + setAppointmentDate(startDate),
+        content: mailContentsConfig.MAKE_APPOINTMENT + setAppointmentDate(date),
         closing: mailClosingsConfig.MAKE_APPOINTMENT,
         regard: mailContentsConfig.REGARD,
       });
