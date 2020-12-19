@@ -22,7 +22,7 @@ export const createEmail = async (employee, type, appoinmentDate, videoUrl, star
     case 'appointment': {
       email = await ejs.renderFile(emailTemplate, {
         fullname: employee.fullname,
-        content: mailContentsConfig.MAKE_APPOINTMENT + setAppointmentDate(date),
+        content: mailContentsConfig.MAKE_APPOINTMENT + setAppointmentDate(appoinmentDate),
         closing: mailClosingsConfig.MAKE_APPOINTMENT,
         regard: mailContentsConfig.REGARD,
       });
