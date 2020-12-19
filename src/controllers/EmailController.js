@@ -8,7 +8,7 @@ export default {
   send_action_email: {
     async post(req, res, next) {
       try {
-        const { type, employeeCode, date } = req.body;
+        const { type, employeeCode, date, startDate } = req.body;
         if (type == undefined || employeeCode == undefined) {
           res.status(status.EXPECTATION_FAILED).send({
             success: false,
@@ -42,11 +42,11 @@ export default {
           });
         } else if (
           type.toLowerCase() == mailTypes.SUSPENSION &&
-          date == undefined
+          (date == undefined || startDate == undefined)
         ) {
           res.status(status.EXPECTATION_FAILED).send({
             success: false,
-            message: "Must input suspension expiration date.",
+            message: "Must input suspension start date and expiration date.",
           });
         } else {
           const employee = await models.Employee.findOne({
@@ -60,7 +60,7 @@ export default {
               message: "Employee not found.",
             });
           } else {
-            const email = await createEmail(employee, type, date);
+            const email = await createEmail(employee, type, date, "", startDate);
             const result = await sendEmail(email, employee.email);
             res.send({
               success: true,

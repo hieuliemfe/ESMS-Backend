@@ -36,6 +36,9 @@ let router = express.Router();
 *                 type: string
 *               date:
 *                 type: string
+*                 format: date                    
+*               startDate:
+*                 type: string
 *                 format: date
 *     responses:
 *       200:

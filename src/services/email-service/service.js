@@ -6,7 +6,7 @@ import ejs from 'ejs';
 import { mailContentsConfig, mailClosingsConfig, setAppointmentDate, setVideoFrame } from './contentConfig';
 const emailTemplate = path.join(__dirname + "/../src/services/email-service/templates/template.ejs");
 
-export const createEmail = async (employee, type, appoinmentDate, videoUrl) => {
+export const createEmail = async (employee, type, appoinmentDate, videoUrl, startDate) => {
   let email;
   switch (type.toLowerCase()) {
     case 'cheering': {
@@ -21,7 +21,7 @@ export const createEmail = async (employee, type, appoinmentDate, videoUrl) => {
     case 'appointment': {
       email = await ejs.renderFile(emailTemplate, {
         fullname: employee.fullname,
-        content: mailContentsConfig.MAKE_APPOINTMENT + setAppointmentDate(appoinmentDate),
+        content: mailContentsConfig.MAKE_APPOINTMENT + setAppointmentDate(startDate) + "until: <br />" + setAppointmentDate(appoinmentDate),
         closing: mailClosingsConfig.MAKE_APPOINTMENT,
         regard: mailContentsConfig.REGARD,
       });

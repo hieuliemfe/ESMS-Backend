@@ -21,7 +21,7 @@ export const mailContentsConfig = {
   SUSPENSION: "In recent days, we have found your behavior to be <b>inappropriate</b>," +
     " your behavior toward customers were <b>aggressive</b>," +
     " which can negatively affect the overall look of the customer regarding the company." + "<br />" + "<br />" +
-    "So we have decided that you should stop working and relax until: <br />",
+    "So we have decided that you should stop working and relax from: <br />",
 
   DAY_OFF: "Based on your behaviors during the past few days, we have found that <b>your mental health is declining</b>. <br/> <br/>  " +
     "Mental health is essential to everyone, especially for bank tellers. That's the reason why your manager has decided to let you take a day off. " + "<br />" + "<br />",
