@@ -48,7 +48,7 @@ export const mailClosingsConfig = {
 export const setAppointmentDate = (appointmentDate) => {
   const date = new Date(appointmentDate);
   const moment = require('moment-timezone');
-  return "<h3>" + moment(date).tz("Asia/Ho_Chi_Minh").format("dddd, MMMM Do, YYYY [at] h:mm A") + "</h3"
+  return "<h3>" + moment(date).tz("Asia/Ho_Chi_Minh").format("dddd, MMMM Do, YYYY [at] h:mm A") + "</h3>"
   // let ordinal;
   // if (date.getDate() > 3 && date.getDate() < 21) {
   //   ordinal = 'th';
