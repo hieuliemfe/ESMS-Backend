@@ -21,7 +21,7 @@ export const createEmail = async (employee, type, appoinmentDate, videoUrl, star
     case 'appointment': {
       email = await ejs.renderFile(emailTemplate, {
         fullname: employee.fullname,
-        content: mailContentsConfig.MAKE_APPOINTMENT + setAppointmentDate(startDate) + "until: <br />" + setAppointmentDate(appoinmentDate),
+        content: mailContentsConfig.MAKE_APPOINTMENT + setAppointmentDate(startDate),
         closing: mailClosingsConfig.MAKE_APPOINTMENT,
         regard: mailContentsConfig.REGARD,
       });
@@ -30,7 +30,7 @@ export const createEmail = async (employee, type, appoinmentDate, videoUrl, star
     case 'suspension': {
       email = await ejs.renderFile(emailTemplate, {
         fullname: employee.fullname,
-        content: mailContentsConfig.SUSPENSION + setAppointmentDate(appoinmentDate),
+        content: mailContentsConfig.SUSPENSION + setAppointmentDate(startDate) + "until: <br />" + setAppointmentDate(appoinmentDate),
         closing: mailClosingsConfig.SUSPENSION,
         regard: mailContentsConfig.REGARD,
       });
