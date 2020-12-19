@@ -584,14 +584,16 @@ export default {
           });
           return
         }
+        let suspension = await models.Suspension.findByPk(id) 
         let result = await models.Suspension.bulkCreate([
           {
             id: id,
             employeeId: employee.id,
             reason: reason,
-            expiredOn: expiration
+            expiredOn: expiration,
+            startTime: suspension.startTime
           }],
-          { updateOnDuplicate: ["reason", "expiredOn", "employeeId", "updatedAt"] })
+          { updateOnDuplicate: ["reason", "expiredOn", "startTime", "employeeId", "updatedAt"] })
         res.status(status.ACCEPTED).send({
           success: true,
           message: result ? 1 : 0,
