@@ -11,7 +11,7 @@ let router = express.Router();
 import fileUpload from "../middlewares/fileUpload.js";
 //auth imports
 import passport from 'passport';
-import { isAdmin } from '../middlewares/authorization';
+import { isAdmin, isAuthorized } from '../middlewares/authorization';
 import { isManager } from '../middlewares/authorization';
 
 /**
@@ -54,7 +54,7 @@ import { isManager } from '../middlewares/authorization';
 *       401:
 *         description: Employee not found.
 */
-router.get('/', passport.authenticate('jwt', { session: false }), isManager, Controller.view.get);
+router.get('/', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.view.get);
 
 /**
 * @swagger
