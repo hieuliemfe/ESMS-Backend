@@ -13,6 +13,15 @@ import { generateEmployeeInfo } from "../utils/employeeUtil";
 import { DefaultError } from "../utils/errorHandler";
 import publicRuntimeConfig from "../configurations";
 import PeriodicityIds from "../db/config/periodicityConfig";
+import stream from 'stream';
+const { Duplex } = stream;
+
+function bufferToStream(buffer) {
+  const duplexStream = new Duplex();
+  duplexStream.push(buffer);
+  duplexStream.push(null);
+  return duplexStream;
+}
 import {
   calculateShiftEmotionLevel,
   calculateStressLevel,
@@ -133,14 +142,15 @@ export default {
         if (req.file == undefined) {
           return res.status(400).send("Please upload an excel file!");
         }
-        const stream = Readable.from(req.file.buffer);
+        const stream = bufferToStream(req.file.buffer);
         await readXlsxFile(stream).then(async (rows) => {
           // skip header
           let employees = []
-          rows.shift();
+          rows.shift();         
+          
           for (let index = 0; index < rows.length; index++) {
             let row = rows[index]   
-            let employee = await generateEmployeeInfo(row[1], row[3], row[2], row[4], row[5]);
+            let employee = await generateEmployeeInfo(row[1], row[3], row[2], undefined, undefined);
             let created = await models.Employee.create(employee);
             created.setDataValue("password", employee.password)
             created.setDataValue("createdAt", undefined)
@@ -156,6 +166,7 @@ export default {
           });
         });
       } catch (error) {
+        console.log(error)
         next(error);
       }
     },
