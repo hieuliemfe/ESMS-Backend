@@ -346,6 +346,6 @@ router.delete('/:employeeCode', passport.authenticate('jwt', { session: false })
 *       401:
 *         description: Bad employee(s) in the file
 */
-router.post('/bulk-register', passport.authenticate('jwt', { session: false }), isManager, fileUpload.single("file"), Controller.bulk_register.post);
+router.post('/bulk-register', passport.authenticate('jwt', { session: false }), isAdmin, fileUpload.single("file"), Controller.bulk_register.post);
 
 export default router;
