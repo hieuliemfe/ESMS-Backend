@@ -321,7 +321,7 @@ router.delete('/:employeeCode/suspend/:suspensionId', passport.authenticate('jwt
 *       404:
 *         description: Employee not found.
 */
-router.delete('/:employeeCode', passport.authenticate('jwt', { session: false }), isManager, Controller.set_avail_status.delete);
+router.delete('/:employeeCode', passport.authenticate('jwt', { session: false }), isAdmin, Controller.set_avail_status.delete);
 
 /**
 * @swagger
