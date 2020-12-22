@@ -247,7 +247,7 @@ export default {
         }
         //employeeCode & fullname only
         const employees = await models.Employee.findAll({
-          attributes: { exclude: ["password", "role_id", "createdAt", "updatedAt", "counter_id", "counterId", "isSubscribed", "isDeleted"] },
+          attributes: { exclude: ["password", "role_id", "createdAt", "updatedAt", "counter_id", "isSubscribed", "isDeleted"] },
          include:{
           model: models.Suspension,
           attributes: {
@@ -417,6 +417,38 @@ export default {
     },
   },
 
+  update_employee: {
+    async put(req, res, next) {
+      try {
+        const { employeeCode, fullname, roleId, counterId, phoneNumber, avatarUrl, email } = req.body
+        const employee = await models.Employee.findOne({
+          where: {
+            employeeCode: employeeCode
+          }
+        })
+        if(!employee){
+          res.status(status.BAD_REQUEST).send({
+            success: false,
+            message: "Employee Code is not found!",
+          });
+          return
+        }
+        employee.fullname = fullname
+        employee.roleId = roleId        
+        employee.counterId = counterId
+        employee.phoneNumber = phoneNumber
+        employee.avatarUrl = avatarUrl
+        employee.email = email
+        let result = await employee.save()
+        res.status(status.ACCEPTED).send({
+          success: true,
+          message: result ? 1 : 0,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  },
 
   view_one: {
     async get(req, res, next) {
