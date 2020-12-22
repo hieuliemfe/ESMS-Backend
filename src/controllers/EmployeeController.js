@@ -262,8 +262,12 @@ export default {
           as: "Suspensions",
           required:false
           },
-          where: whereEmployeeCondition,
-        });
+          where: {
+            [Op.and]:[
+            {whereEmployeeCondition},
+            {isDeleted: SuspensionStatus.NOT_DELETED}
+          ],
+        }});
         var empResults = [];
         if (role === "3") {
           for (let i = 0; i < employees.length; i++) {

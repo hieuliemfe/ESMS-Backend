@@ -180,6 +180,7 @@ export default {
                     },
                     where: {
                         [Op.and]: [
+                            {isDeleted: SuspensionStatus.NOT_DELETED},
                             { roleId: 3 },
                             employeeCodeCondition
                         ]
