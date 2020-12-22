@@ -113,6 +113,34 @@ export default {
       }
     },
   },
+  update_counter_categories: {
+    async put(req, res, next) {
+      const counterId = req.params.id
+      const ids = req.body.categoryIds
+      try {
+        console.log(counterId)
+        console.log(ids)
+        await models.CounterCategory.destroy({
+          where: {
+            counterId: counterId
+          }
+        })
+        let count = 0
+        for (let index = 0; index < ids.length; index++) {
+          let result = await models.CounterCategory.create({counterId: counterId, categoryId: ids[index]})
+          if(result){
+            count++
+          }
+        }
+        res.status(status.CREATED).send({
+          success: true,
+          message: count,
+        });        
+      } catch (error) {
+        next(error);
+      }
+    },
+  },
   delete_bulk: {
     async delete(req, res, next) {
       const queryInterface = db.sequelize.getQueryInterface();

@@ -40,6 +40,43 @@ router.get('/:id', passport.authenticate('jwt', { session: false }), isAuthorize
 
 /**
 * @swagger
+* /counters/{id}:
+*   put:
+*     tags:
+*       - Counters
+*     name: Update categories of counters.
+*     summary: get a list of counters
+*     consumes:
+*       - application/json
+*     parameters:
+*       - in: path
+*         name: id
+*         schema:
+*           type: integer
+*           nullable: true
+*         description: counter id to filter counters.
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             properties:
+*               categoryIds:
+*                 type: array
+*                 items:
+*                   type: integer
+*     responses:
+*       200:
+*         description: A list of sessions is displayed.
+*       400:
+*         description: Error.
+*/
+
+router.put('/:id', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.update_counter_categories.put);
+
+/**
+* @swagger
 * /counters:
 *   post:
 *     tags:
