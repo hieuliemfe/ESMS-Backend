@@ -89,7 +89,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), isAdmin, file
 *                     name:
 *                       type: string
 *                     code:
-*                       type: integer
+*                       type: string
 *                     categoryId:
 *                       type: integer
 *     responses:
