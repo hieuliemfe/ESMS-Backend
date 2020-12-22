@@ -461,6 +461,7 @@ export default {
             "fullname",
             "phoneNumber",
             "roleId",
+            "counterId",
             "isDeleted",
             "createdAt",
             "updatedAt",

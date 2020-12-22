@@ -118,7 +118,7 @@ router.put('/add-appointment', passport.authenticate('jwt', { session: false }),
 *       404:
 *         description: Employee not found.
 */
-router.get('/:employeeCode', passport.authenticate('jwt', { session: false }), isManager, Controller.view_one.get);
+router.get('/:employeeCode', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.view_one.get);
 
 /**
 * @swagger
