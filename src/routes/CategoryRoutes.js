@@ -10,7 +10,7 @@ import Controller from '../controllers/CategoryController';
 let router = express.Router();
 //auth imports
 import passport from 'passport';
-import { isAdmin, isBankTeller, isManagerOrAdmin } from '../middlewares/authorization';
+import { isAdmin, isAuthorized, isBankTeller, isManagerOrAdmin } from '../middlewares/authorization';
 
 /**
 * @swagger
@@ -56,7 +56,7 @@ router.get('/', Controller.view_all.get);
 *       401:
 *         description: Forbidden.
 */
-router.get('/counters/:counterId', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_by_counter_id.get);
+router.get('/counters/:counterId', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.view_by_counter_id.get);
 
 
 /**
@@ -83,7 +83,7 @@ router.get('/counters/:counterId', passport.authenticate('jwt', { session: false
 *       401:
 *         description: Forbidden.
 */
-router.get('/:categoryId/services', passport.authenticate('jwt', { session: false }), isBankTeller, Controller.view_services_by_category_id.get);
+router.get('/:categoryId/services', passport.authenticate('jwt', { session: false }), isAuthorized, Controller.view_services_by_category_id.get);
 
 /**
 * @swagger
@@ -188,6 +188,6 @@ router.put('/', passport.authenticate('jwt', { session: false }), isAdmin, Contr
 *       401:
 *         description: Forbidden.
 */
-router.delete('/', passport.authenticate('jwt', { session: false }), isManagerOrAdmin, Controller.bulk_delete.delete);
+router.delete('/', passport.authenticate('jwt', { session: false }), isAdmin, Controller.bulk_delete.delete);
 
 export default router;
