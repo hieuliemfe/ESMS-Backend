@@ -31,6 +31,7 @@ import { setEpochMillisTime } from "../utils/timeUtil";
 import { Readable } from "stream";
 import { id } from "date-fns/locale";
 import { SuspensionStatus } from "../db/config/statusConfig";
+import { employeeRole } from "../db/models/employee";
 
 const JWT_SECRET = publicRuntimeConfig.JWT_SECRET;
 
@@ -176,9 +177,20 @@ export default {
     async post(req, res, next) {
       try {
         const { fullname, roleId, phoneNumber, avatarUrl } = req.body;
+        let role = undefined
+        switch(roleId) {
+          case employeeRole.ADMIN:
+            role = "Admin"
+            break;
+          case employeeRole.MANAGER:
+            role = "Manager"
+            break;
+          case employeeRole.BANK_TELLER:
+            role = "Bank teller"
+        }
         const employee = await generateEmployeeInfo(
           fullname,
-          roleId,
+          role,
           phoneNumber,
           avatarUrl
         );
