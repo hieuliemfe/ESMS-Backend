@@ -4,6 +4,7 @@ import models from "../db/models/index";
 import status from "http-status";
 import { createEmail, sendEmail } from "../services/email-service/service";
 import { mailTypes } from "../services/email-service/contentConfig";
+import jwt from "jsonwebtoken";
 export default {
   send_action_email: {
     async post(req, res, next) {
@@ -62,6 +63,20 @@ export default {
           } else {
             const email = await createEmail(employee, type, date, "", startDate);
             const result = await sendEmail(email, employee.email);
+            if(type.toLowerCase() == mailTypes.MAKE_APPOINTMENT){
+              const token = req.headers.authorization.replace("Bearer ", "");
+              const tokenDecoded = jwt.decode(token);
+              const manager = await models.Employee.findOne({
+                attributes: { exclude: ["password", "role_id", "roleId"] },
+                include: {
+                  model: models.Role,
+                  as: "Role",
+                },
+                where: { id: tokenDecoded.employeeId },
+              })
+              const managerMail = await createEmail(manager, mailTypes.MANAGER_APPOINTMENT, date, "", null, employee.fullname)
+              const managerMailReslt = await sendEmail(managerMail, manager.email)
+            }
             res.send({
               success: true,
               message: result,

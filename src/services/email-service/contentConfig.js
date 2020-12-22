@@ -3,7 +3,8 @@ export const mailTypes = {
   DAY_OFF: 'day_off',
   CHEERING: 'cheering',
   MAKE_APPOINTMENT: 'appointment',
-  SUSPENSION: 'suspension'
+  SUSPENSION: 'suspension',
+  MANAGER_APPOINTMENT: 'manager_appointment'
 }
 export const mailContentsConfig = {
   CHEERING: "In recent days, we have found your behavior to be a bit <b>unstable</b>," +
@@ -17,6 +18,10 @@ export const mailContentsConfig = {
     " where you would talk to customers with <b>moderate levels of aggression</b>," +
     " which can negatively affect the overall look of the customer regarding the company." + "<br />" + "<br />" +
     "So we have decided to arrange a private meeting between you and the manager on: <br />",
+
+  MANAGER_APPOINTMENT: "You have made an appointment <b>successfully</b>.<br />" +
+    "The information regard of the appointment is below:" + "<br />" + "<br />" +
+    "The appointment between you and Mr. or Ms. ",
   
   SUSPENSION: "In recent days, we have found your behavior to be <b>inappropriate</b>," +
     " your behavior toward customers were <b>aggressive</b>," +
@@ -36,6 +41,8 @@ export const mailClosingsConfig = {
   CHERRING: "Don't hesitate to contact us by any means.<br/> ",
 
   MAKE_APPOINTMENT: "It will be a casual meeting, so relax before coming and remember to be on time!<br/> ",
+
+  MANAGER_APPOINTMENT: "It will be a casual meeting, so relax before coming and remember to be on time!<br/> ",
 
   SUSPENSION: "Please takes time to relax and watch some relax videos and guideline.<br/> ",
 

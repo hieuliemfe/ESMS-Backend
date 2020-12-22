@@ -7,7 +7,7 @@ import { mailContentsConfig, mailClosingsConfig, setAppointmentDate, setVideoFra
 import { DatabaseError, DATEONLY } from 'sequelize';
 const emailTemplate = path.join(__dirname + "/../src/services/email-service/templates/template.ejs");
 
-export const createEmail = async (employee, type, appoinmentDate, videoUrl, startDate) => {
+export const createEmail = async (employee, type, appoinmentDate, videoUrl, startDate, targetName) => {
   let email;
   switch (type.toLowerCase()) {
     case 'cheering': {
@@ -24,6 +24,15 @@ export const createEmail = async (employee, type, appoinmentDate, videoUrl, star
         fullname: employee.fullname,
         content: mailContentsConfig.MAKE_APPOINTMENT + setAppointmentDate(appoinmentDate),
         closing: mailClosingsConfig.MAKE_APPOINTMENT,
+        regard: mailContentsConfig.REGARD,
+      });
+      break;
+    }
+    case 'manager_appointment':{
+      email = await ejs.renderFile(emailTemplate, {
+        fullname: employee.fullname,
+        content: mailContentsConfig.MANAGER_APPOINTMENT + "<b>" + targetName + "</b>" + " will be on:" + setAppointmentDate(appoinmentDate),
+        closing: mailClosingsConfig.MANAGER_APPOINTMENT,
         regard: mailContentsConfig.REGARD,
       });
       break;
