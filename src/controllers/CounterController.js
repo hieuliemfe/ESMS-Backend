@@ -5,6 +5,16 @@ import status from "http-status";
 import jwt from "jsonwebtoken";
 import { Op, Sequelize } from "sequelize";
 import db from "../db/models/index";
+import stream from 'stream';
+import readXlsxFile from "read-excel-file/node";
+const { Duplex } = stream;
+
+function bufferToStream(buffer) {
+  const duplexStream = new Duplex();
+  duplexStream.push(buffer);
+  duplexStream.push(null);
+  return duplexStream;
+}
 
 export default {
   view: {
@@ -71,8 +81,21 @@ export default {
   },
   create_bulk: {
     async post(req, res, next) {
-      const counters = req.body.counters
+      let counters = []
       try {
+        if (req.file == undefined) {
+          return res.status(400).send("Please upload an excel file!");
+        }
+        const stream = bufferToStream(req.file.buffer);
+        await readXlsxFile(stream).then(async (rows) => {
+          // skip header
+          rows.shift();         
+          
+          for (let index = 0; index < rows.length; index++) {
+            let row = rows[index]   
+            counters.push({name: row[1], number: row[2]})
+          }
+        })
         if(counters.length > 0){
           const result = await models.Counter.bulkCreate(counters)
           if(result){

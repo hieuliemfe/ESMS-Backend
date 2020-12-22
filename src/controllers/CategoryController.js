@@ -4,6 +4,16 @@ import models from "../db/models/index";
 import status from "http-status";
 import db from "../db/models/index";
 import { Op } from "sequelize";
+import stream from 'stream';
+import readXlsxFile from "read-excel-file/node";
+const { Duplex } = stream;
+
+function bufferToStream(buffer) {
+  const duplexStream = new Duplex();
+  duplexStream.push(buffer);
+  duplexStream.push(null);
+  return duplexStream;
+}
 
 export default {
   view_all: {
@@ -26,7 +36,20 @@ export default {
   bulk_create: {
     async post(req, res, next) {
       try {
-        const { categories } = req.body
+        if (req.file == undefined) {
+          return res.status(400).send("Please upload an excel file!");
+        }
+        const stream = bufferToStream(req.file.buffer);
+        let categories = []
+        await readXlsxFile(stream).then(async (rows) => {
+          // skip header
+          rows.shift();         
+          
+          for (let index = 0; index < rows.length; index++) {
+            let row = rows[index]   
+            categories.push({categoryName: row[1], subtitle: row[2]})
+          }
+        })
         let result = await models.Category.bulkCreate(categories)
         if(result.length > 0){
           result.forEach(element => {

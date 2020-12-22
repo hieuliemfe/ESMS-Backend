@@ -11,7 +11,7 @@ let router = express.Router();
 //auth imports
 import passport from 'passport';
 import { isAdmin, isAuthorized,isBankTeller, isManager, isManagerOrAdmin } from '../middlewares/authorization';
-
+import fileUpload from "../middlewares/fileUpload.js";
 /**
 * @swagger
 * /counters/{id}:
@@ -45,7 +45,7 @@ router.get('/:id', passport.authenticate('jwt', { session: false }), isAuthorize
 *     tags:
 *       - Counters
 *     name: Update categories of counters.
-*     summary: get a list of counters
+*     summary: Update categories of counters
 *     consumes:
 *       - application/json
 *     parameters:
@@ -86,21 +86,14 @@ router.put('/:id', passport.authenticate('jwt', { session: false }), isAuthorize
 *     consumes:
 *       - application/json
 *     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             type: object
-*             properties:
-*               counters:
-*                 type: array
-*                 items:
-*                   type: object
-*                   properties:
-*                     name:
-*                       type: string
-*                     number:
-*                       type: integer
+*           content:
+*             multipart/form-data:
+*               schema:
+*                 type: object
+*                 properties:
+*                   file:
+*                     type: string
+*                     format: binary
 *     responses:
 *       201:
 *         description: A list of counters added is displayed.
@@ -109,7 +102,7 @@ router.put('/:id', passport.authenticate('jwt', { session: false }), isAuthorize
 *       401:
 *         description: Forbidden.
 */
-router.post('/', passport.authenticate('jwt', { session: false }), isManagerOrAdmin, Controller.create_bulk.post);
+router.post('/', passport.authenticate('jwt', { session: false }), isManagerOrAdmin, fileUpload.single("file"), Controller.create_bulk.post);
 
 /**
 * @swagger

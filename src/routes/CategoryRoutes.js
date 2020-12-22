@@ -11,6 +11,7 @@ let router = express.Router();
 //auth imports
 import passport from 'passport';
 import { isAdmin, isAuthorized, isBankTeller, isManagerOrAdmin } from '../middlewares/authorization';
+import fileUpload from "../middlewares/fileUpload.js";
 
 /**
 * @swagger
@@ -96,21 +97,14 @@ router.get('/:categoryId/services', passport.authenticate('jwt', { session: fals
 *     consumes:
 *       - application/json
 *     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             type: object
-*             properties:
-*               categories:
-*                 type: array
-*                 items:
-*                   type: object
-*                   properties:
-*                     categoryName:
-*                       type: string
-*                     subtitle:
-*                       type: string
+*           content:
+*             multipart/form-data:
+*               schema:
+*                 type: object
+*                 properties:
+*                   file:
+*                     type: string
+*                     format: binary
 *     responses:
 *       201:
 *         description: A list of categories added is displayed.
@@ -119,7 +113,7 @@ router.get('/:categoryId/services', passport.authenticate('jwt', { session: fals
 *       401:
 *         description: Forbidden.
 */
-router.post('/', passport.authenticate('jwt', { session: false }), isAdmin, Controller.bulk_create.post);
+router.post('/', passport.authenticate('jwt', { session: false }), isAdmin, fileUpload.single("file"), Controller.bulk_create.post);
 
 /**
 * @swagger
