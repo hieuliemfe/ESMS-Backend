@@ -420,7 +420,7 @@ export default {
   update_employee: {
     async put(req, res, next) {
       try {
-        const { employeeCode, fullname, roleId, counterId, phoneNumber, avatarUrl, email } = req.body
+        const { employeeCode, fullname, roleId, counterId, phoneNumber, email } = req.body
         const employee = await models.Employee.findOne({
           where: {
             employeeCode: employeeCode
@@ -437,7 +437,6 @@ export default {
         employee.roleId = roleId        
         employee.counterId = counterId
         employee.phoneNumber = phoneNumber
-        employee.avatarUrl = avatarUrl
         employee.email = email
         let result = await employee.save()
         res.status(status.ACCEPTED).send({

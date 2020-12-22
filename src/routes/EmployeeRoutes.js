@@ -289,8 +289,6 @@ router.put('/:employeeCode/suspend', passport.authenticate('jwt', { session: fal
 *                 type: integer  
 *               phoneNumber:
 *                 type: string
-*               avatarUrl:
-*                 type: string
 *               email:
 *                 type: string
 *     responses:
