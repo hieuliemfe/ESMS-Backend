@@ -264,7 +264,7 @@ export default {
           },
           where: {
             [Op.and]:[
-            {whereEmployeeCondition},
+            whereEmployeeCondition,
             {isDeleted: SuspensionStatus.NOT_DELETED}
           ],
         }});
